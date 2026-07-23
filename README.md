@@ -118,10 +118,10 @@ More: [how it works](docs/how-it-works.md), [FAQ](docs/faq.md),
 
 ## Current status
 
-This repository is a private preview under active review. The bilingual
-templates, three access modes, documentation links, and repository integrity are
-checked automatically. Public visibility and a release require a separate owner
-decision.
+Project Corpus is an early-stage open-source project intended for public use.
+The bilingual templates, three access modes, documentation links, and repository
+integrity are checked automatically. The protocol and guides may continue to
+evolve before the first tagged release.
 
 ## Feedback
 

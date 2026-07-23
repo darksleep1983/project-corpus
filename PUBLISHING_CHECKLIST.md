@@ -13,7 +13,8 @@
    - manual session and replacement-file handoff.
 6. Review Git history for local paths, user names, credentials, and obsolete
    server instructions.
-7. Update `private preview` wording and the security reporting route.
+7. Confirm that public-facing status wording and the security reporting route
+   are current.
 8. Configure description, topics, and Private Vulnerability Reporting.
 9. Prepare `v0.1.0-preview` as a draft release only after the content is frozen.
 10. Change visibility to Public only after a separate owner decision.

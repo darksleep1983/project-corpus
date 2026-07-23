@@ -6,9 +6,10 @@ Do not open a public issue for a vulnerability that could cause unauthorized
 file access, destructive synchronization, instruction-boundary bypass, secret
 disclosure, or unsafe client/MCP configuration.
 
-During private preview, contact the repository owner through the private channel
-listed on their GitHub profile. Before public release, enable GitHub Private
-Vulnerability Reporting and update this page with the verified reporting route.
+Use GitHub Private Vulnerability Reporting from the repository's **Security**
+tab when it is available. If it is unavailable, contact the maintainer through
+a private method listed on their GitHub profile. Do not put sensitive details in
+a public issue.
 
 Never include real tokens, cookies, credentials, private keys, seed phrases,
 private Corpus files, or identifying local paths in a report.

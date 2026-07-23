@@ -2,7 +2,7 @@
 
 [Русская версия](CHANGELOG.ru.md)
 
-## Unreleased — private preview
+## Unreleased
 
 - Reframed Project Corpus as a Markdown protocol rather than a bundled server.
 - Added three equal access modes: direct folder, owner-provided MCP, and manual
@@ -14,7 +14,8 @@
   metadata, and required user-side Python dependency.
 - Preserved English/Russian parity, protected-file rules, GitHub Issues
   feedback, and voluntary USDT-on-TON support.
+- Prepared public-facing status and vulnerability-reporting guidance.
 
-## 0.1.0 — historical private preview
+## 0.1.0 — historical server preview
 
-- Initial combined protocol and MCP-server preview.
+- Initial combined protocol and bundled MCP-server preview.
