@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -54,6 +55,28 @@ class SetupHelperTests(unittest.TestCase):
             self.assertIn("Дисциплина полного чтения", agents)
             config = json.loads((fake_repo / ".project-corpus.local.json").read_text(encoding="utf-8"))
             self.assertEqual(config["language"], "ru")
+
+    def test_setup_project_emits_russian_with_cp1252_default(self):
+        repo = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as td:
+            fake_repo = Path(td) / "repo"
+            fake_repo.mkdir()
+            scripts = fake_repo / "scripts"
+            scripts.mkdir()
+            for file in ("setup_project.py", "init_corpus.py"):
+                (scripts / file).write_bytes((repo / "scripts" / file).read_bytes())
+            import shutil
+            shutil.copytree(repo / "template", fake_repo / "template")
+            home = Path(td) / "Project"
+            env = os.environ.copy()
+            env["PYTHONIOENCODING"] = "cp1252"
+            result = subprocess.run([
+                sys.executable, str(fake_repo / "scripts/setup_project.py"),
+                "--project-home", str(home), "--repo-root", str(fake_repo), "--language", "ru"
+            ], capture_output=True, encoding="utf-8", env=env)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("Project Corpus готов:", result.stdout)
+            self.assertIn("Запустите сервер", result.stdout)
 
 
 if __name__ == "__main__":

@@ -50,7 +50,7 @@
     "pyproject.toml": "bc357e6bddba310f82139ec8d06e9d5818cfa6f88810a1b6c12bcb12af2265fd",
     "scripts/init_corpus.py": "f0590b51cb627afbe5f692cee20fbe89fb0364936c33741da42861bb2035cfaf",
     "scripts/print_client_config.py": "dee531f6c347f9e5c91438c3685242f7c0f0c61457b8e8511896f0375250cc61",
-    "scripts/setup_project.py": "a0f924071b402e08d5dcdbc2b81235e94a16f59450340d6c3541140e8715674f",
+    "scripts/setup_project.py": "904dbcf283f9b532f249d57344a2d7eda85a345a6cc4f3e9d0b3624cd3ed9c70",
     "scripts/validate_corpus.py": "b308c24787ac2caa76e647b0eeb56cfd0d7c3923e4a8fc593c77e244e278f1b8",
     "scripts/verify_mcp.py": "c65baa5085742beaf0f948ab98208a12918229f8853272e468de1586c52b67c9",
     "src/project_corpus_mcp/__init__.py": "c943790e8e43f9aee326dd7bc8cc8859cd0fe218149dcd2fccecee5f3bc7c3ba",
@@ -80,6 +80,6 @@
     "tests/test_core.py": "4769b3b948242e4eeb69b1c4eac473cf0db68ef3c0d3c932fca28251f12292a6",
     "tests/test_mcp_integration.py": "8726023f3b90d8f57ef36cfcfd0efff1d7aad70eceb2605c62639f79773a6f73",
     "tests/test_scripts.py": "0670763d855f1e18b244c9856258ac4cd55115dea12b970ba15c0a23bd9198a0",
-    "tests/test_setup_helpers.py": "54c25ab9505f9ce07cb9d486f9fa5e17e677d933cae23f1947f15690791509f1"
+    "tests/test_setup_helpers.py": "b368c518a5d2d9df98f10ec404e8116c2be965a1ac35e1a814e20ef43511a0d2"
   }
 }

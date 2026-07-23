@@ -19,7 +19,15 @@ MESSAGES = {
 }
 
 
+def configure_utf8_stdio() -> None:
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is not None:
+            reconfigure(encoding="utf-8", errors="backslashreplace")
+
+
 def main() -> int:
+    configure_utf8_stdio()
     parser = argparse.ArgumentParser(description="Create a local Project Corpus")
     parser.add_argument("--project-home", type=Path, required=True)
     parser.add_argument("--repo-root", type=Path, required=True)
