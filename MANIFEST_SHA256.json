@@ -1,6 +1,7 @@
 {
   "format": "project-corpus-repository-manifest-v1",
   "files": {
+    ".gitattributes": "d60f352d0db1404c70afb4bb8b2ca3fd1c610572aa40720e8a0b7baa7885418c",
     ".github/ISSUE_TEMPLATE/bug_report.md": "9d405494053c4277166c883db98d10cbd0882712834c81bf5050934028986753",
     ".github/ISSUE_TEMPLATE/feature_request.md": "e62b7f689a783ae2ed4226adf491ce44626ebd982027bdcf84685f0a1a04a90d",
     ".github/pull_request_template.md": "1e96c2661ed592c7709e4e84214955dae62b0fa82b7bfd47718d7994b1eafd2f",
