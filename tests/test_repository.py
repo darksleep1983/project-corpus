@@ -14,6 +14,7 @@ class RepositoryTests(unittest.TestCase):
             path.relative_to(self.root).as_posix(): path
             for path in self.root.rglob("*")
             if path.is_file()
+            and ".git" not in path.parts
             and "__pycache__" not in path.parts
             and path.suffix != ".pyc"
             and path.name != "MANIFEST_SHA256.json"
@@ -94,6 +95,7 @@ class RepositoryTests(unittest.TestCase):
         self.assertEqual(data["format"], "project-corpus-repository-manifest-v1")
 
         sources = self.source_files()
+        self.assertFalse(any(".git" in Path(relative).parts for relative in sources))
         self.assertEqual(set(data["files"]), set(sources))
         for relative, path in sources.items():
             actual = hashlib.sha256(path.read_bytes()).hexdigest()

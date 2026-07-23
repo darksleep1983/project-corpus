@@ -71,6 +71,6 @@
     "template/ru/SESSION_HANDOFF_FULL_CURRENT.md": "4eb0d3eed3c3879a89e951e42bdd061702b495601ace348641031a718c86e115",
     "template/ru/Tasks/.gitkeep": "83aa4d4b1475a6f47f69590f73776b6b6db6b786928dd531f381d583744c7ff7",
     "tests/test_bilingual_templates.py": "6ad831692b57708b2b59a3417987158dab368a5bd5fe67a4082487f1c7a465c6",
-    "tests/test_repository.py": "3aeab59dfbb4bc24a590439b0df2364f560f6b8cc3cdfa9aa34d2d92abdbe661"
+    "tests/test_repository.py": "098ad594a0dcb96af4ee60b464846d5199a98ce87b104c165f5058ba9e37ffad"
   }
 }
