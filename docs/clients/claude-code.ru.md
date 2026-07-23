@@ -1,33 +1,36 @@
-# Подключение к Claude Code
+# Использование Project Corpus с Claude Code
 
-Для локального Project Corpus сначала используйте stdio. Claude Code сам запускает
-сервер как локальный дочерний процесс, поэтому отдельный HTTP-сервер держать
-включённым не нужно.
+[English](claude-code.md)
 
-1. Установите Project Corpus.
-2. Выведите готовую команду:
+## Рекомендуется: прямая папка
 
-```powershell
-.\.venv\Scripts\python.exe .\scripts\print_client_config.py claude-code
-```
+Поместите Corpus внутрь workspace проекта или разрешите его как дополнительную
+рабочую папку. Claude Code читает `CLAUDE.md`, а не `AGENTS.md`, поэтому:
 
-3. Выполните напечатанную команду в терминале. Она добавит `project-corpus` как
-   локальный stdio MCP-сервер в user scope Claude Code.
-4. В Claude Code выполните `/mcp` и убедитесь, что `project-corpus` подключён.
-5. Добавьте `PROJECT_INSTRUCTION_TEMPLATE.ru.md` в инструкции проекта либо дайте
-   Claude ту же инструкцию перед началом работы.
+1. вставляйте `PROJECT_INSTRUCTION_TEMPLATE.ru.md` в начале работы; либо
+2. добавьте короткий project `CLAUDE.md`, который требует до работы полностью
+   прочитать и соблюдать `Corpus/AGENTS.md`.
 
-## Необязательно: локальный Streamable HTTP
+Не дублируйте весь протокол внутри `CLAUDE.md`; оставьте одну authority-копию в
+Corpus.
 
-Если вам осознанно нужен отдельно работающий сервер, запустите `.\start.ps1`, а
-затем добавьте его командой:
+Официальная инструкция по memory:
+<https://docs.anthropic.com/en/docs/claude-code/memory>
+
+## Свой MCP
+
+Добавьте доверенный remote или local MCP-сервер, используя его настоящую команду
+или URL. Общий синтаксис для локального stdio-сервера:
 
 ```bash
-claude mcp add --transport http project-corpus http://127.0.0.1:8334/mcp
+claude mcp add --transport stdio <name> -- <command> [args...]
 ```
 
-Используйте HTTP для удалённого сервера только при нормальной аутентификации. В
-JSON-конфигурации transport должен быть `http` или `streamable-http`; URL без type
-не является корректной конфигурацией.
+Выполните `/mcp` внутри Claude Code для проверки соединения. Ограничьте сервер
+точным root Corpus и запишите реальные возможности в
+`CORPUS_ACCESS_CURRENT.md`.
 
-Официальная документация: https://code.claude.com/docs/en/mcp
+Официальная инструкция MCP:
+<https://docs.anthropic.com/en/docs/claude-code/mcp>
+
+Project Corpus не поставляет команду сервера.

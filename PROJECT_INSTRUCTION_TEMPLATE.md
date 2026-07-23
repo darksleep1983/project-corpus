@@ -1,18 +1,53 @@
-This AI project works with a local Project Corpus through its connected MCP server.
+# Project instruction template
 
-At the beginning of every new chat:
+Use this common instruction in every mode:
 
-1. Call `corpus_health`.
-2. Verify that `status=ok`, the exact `corpusRoot` matches this project, and the server/write-policy versions satisfy `AGENTS.md`.
-3. Fully read `AGENTS.md`.
-4. Follow its loading order and all of its rules.
+```text
+This AI project uses Project Corpus, a seven-file Markdown authority set for one
+active project.
 
-Use only `corpus_*` tools for the Corpus. Do not replace the Corpus with chat memory, another MCP server, or files from another project.
+At the beginning of a new session, obtain the seven exact current files through
+the selected access mode. Fully read AGENTS.md first, then follow its loading
+order and rules. Do not replace the Corpus with chat memory or files from another
+project. Separate saved statements from fresh live evidence.
 
-If the MCP server is unavailable or the root does not match, stop and report:
+Before strong decisions, provide a loading receipt and a short semantic summary:
+files received, complete-read status, roles, relationships, authority center,
+gaps, and readiness.
 
-`CORPUS_MCP_NOT_CONNECTED`
+During ordinary work, never rewrite AGENTS.md or OPERATOR_PROFILE.md. Update only
+factually changed mutable current files and relevant Task/Report artifacts.
+```
 
-Follow the create/update, SHA-256, backup, readback, and audit-receipt rules defined in `AGENTS.md`.
+Then add one mode-specific block.
 
-Do not treat saved files or Reports as proof of current live state without a fresh instrumental check.
+## Direct folder
+
+```text
+Mode: DIRECT_FOLDER.
+Use only the explicitly granted Corpus/project filesystem boundary. Confirm the
+exact folder and actual read/write permissions. Before writes, reread the current
+file and preserve a backup or version-control checkpoint. Read changed files
+back and report before/after hashes when available.
+```
+
+## Your own MCP
+
+```text
+Mode: OWNER_MCP.
+Use only the configured trusted MCP tools for this Corpus. Verify the exact root
+and available capabilities with the server's real tools. Do not assume a
+universal health command or claim backups, atomic writes, hashes, or receipts
+unless the server actually provides and verifies them.
+```
+
+## Manual session
+
+```text
+Mode: MANUAL_SESSION.
+Treat uploaded files as snapshots. Confirm that all seven canonical current files
+are present and that duplicate names are not ambiguous. At synchronization,
+return only current files whose content changed plus new or changed Task/Report
+files, a change list, old/new SHA-256 when computable, and the exact next action.
+Do not claim that anything was saved on my computer.
+```

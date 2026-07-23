@@ -1,32 +1,37 @@
-# Connect Claude Code
+# Use Project Corpus with Claude Code
 
-For a local Project Corpus, use the stdio route first. Claude Code launches the
-server as a local subprocess, so you do not need to keep an HTTP server running.
+[Русская версия](claude-code.ru.md)
 
-1. Install Project Corpus.
-2. Print the ready command:
+## Recommended: direct folder
 
-```powershell
-.\.venv\Scripts\python.exe .\scripts\print_client_config.py claude-code
-```
+Put the Corpus inside the project workspace or grant it as an additional working
+directory. Claude Code reads `CLAUDE.md`, not `AGENTS.md`, so use one of these
+approaches:
 
-3. Run the printed command in a terminal. It adds `project-corpus` as a local
-   stdio MCP server in your Claude Code user scope.
-4. In Claude Code, run `/mcp` and confirm that `project-corpus` is connected.
-5. Put `PROJECT_INSTRUCTION_TEMPLATE.md` into your project instructions, or give
-   Claude the same instruction at the beginning of work.
+1. paste `PROJECT_INSTRUCTION_TEMPLATE.md` at the start of work; or
+2. add a short project `CLAUDE.md` that tells Claude to fully read and follow
+   `Corpus/AGENTS.md` before project work.
 
-## Optional: local Streamable HTTP
+Do not duplicate the whole protocol inside `CLAUDE.md`; keep one authority copy
+in the Corpus.
 
-If you deliberately want a separately running server, start it with
-`.\start.ps1`, then add it with:
+Official memory guide:
+<https://docs.anthropic.com/en/docs/claude-code/memory>
+
+## Your own MCP
+
+Add a trusted remote or local MCP server using the server's real command or URL.
+For a local stdio server, the general syntax is:
 
 ```bash
-claude mcp add --transport http project-corpus http://127.0.0.1:8334/mcp
+claude mcp add --transport stdio <name> -- <command> [args...]
 ```
 
-Use HTTP for a remote server only when it has appropriate authentication. In
-JSON configuration, the transport type must be `http` or `streamable-http`; a
-URL without a type is not a valid configuration.
+Run `/mcp` inside Claude Code to inspect the connection. Restrict the server to
+the exact Corpus root and record its actual capabilities in
+`CORPUS_ACCESS_CURRENT.md`.
 
-Official reference: https://code.claude.com/docs/en/mcp
+Official MCP guide:
+<https://docs.anthropic.com/en/docs/claude-code/mcp>
+
+Project Corpus does not provide the server command.

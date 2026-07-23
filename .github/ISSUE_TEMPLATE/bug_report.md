@@ -9,6 +9,6 @@ about: Report a reproducible problem / Сообщить о воспроизво�
 
 ## Expected result / Ожидаемый результат
 
-## Operating system, Python version, and MCP client / ОС, версия Python и MCP-клиент
+## Access mode and AI client / Режим доступа и AI-клиент
 
 ## Logs without secrets / Логи без секретов

@@ -4,16 +4,16 @@
 
 ```text
 Status: NO_ACTIVE_PROJECT
-Corpus root: {{CORPUS_ROOT}}
+Corpus access: not selected
 Project root: not assigned
 ```
 
 ## Operating model
 
-The corpus supports one active project. `AGENTS.md` controls procedure and write
-authority. `OPERATOR_PROFILE.md` is protected. Five mutable current files hold
-current state. `Tasks/` and `Report/` hold scoped artifacts. Saved state and live
-runtime evidence remain separate.
+The corpus supports one active project and three access modes. `AGENTS.md`
+controls procedure and authority. `OPERATOR_PROFILE.md` is protected. Five
+mutable current files hold current state. `Tasks/` and `Report/` hold scoped
+artifacts. Saved state and live evidence remain separate.
 
 ## Exact next action
 

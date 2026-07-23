@@ -2,9 +2,11 @@
 
 **Status:** `NO_ACTIVE_PROJECT`
 **Corpus readiness:** `REUSABLE_CORPUS_READY`
+**Access mode:** `UNSET`
 
-The corpus is initialized and no active project is assigned.
+The corpus is initialized, no access mode is selected, and no active project is
+assigned.
 
 ## Exact next action
 
-The owner describes a project in ordinary language.
+The owner selects an access mode and describes a project in ordinary language.

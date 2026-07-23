@@ -10,4 +10,5 @@
 
 - [ ] No secrets or local user paths were added / Не добавлены секреты или локальные пути пользователя
 - [ ] Tests pass / Тесты проходят
-- [ ] Documentation was updated / Документация обновлена
+- [ ] English and Russian documentation were updated together / Русская и английская документация обновлены вместе
+- [ ] No embedded server or required user runtime was added / Не добавлены встроенный сервер или обязательный runtime

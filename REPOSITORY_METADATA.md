@@ -11,22 +11,23 @@ project-corpus
 Description:
 
 ```text
-Local project memory and auditable MCP workflow for long-running AI projects. Works with ChatGPT, Claude Code, Claude Desktop, and other MCP clients.
+Bilingual Markdown project memory for long-running AI work. Use a local folder, your own MCP, or manual file uploads.
 ```
 
 Topics:
 
 ```text
-mcp
-model-context-protocol
 ai-agents
 project-memory
 agents-md
-claude-code
 chatgpt
+codex
+claude-code
 local-first
+markdown
 workflow
-python
+mcp
 ```
 
-Recommended first publication: `Private`. Review the complete Git history and GitHub Actions output before switching to `Public`.
+Keep the repository Private until the publication checklist is complete and the
+owner separately approves Public visibility.

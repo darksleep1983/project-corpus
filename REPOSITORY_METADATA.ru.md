@@ -1,27 +1,33 @@
 # Рекомендуемые метаданные GitHub
 
+[English](REPOSITORY_METADATA.md)
+
 Имя репозитория:
 
-    project-corpus
+```text
+project-corpus
+```
 
 Описание:
 
-    Local project memory and auditable MCP workflow for long-running AI projects.
-    Works with ChatGPT, Claude Code, Claude Desktop, and other MCP clients.
+```text
+Bilingual Markdown project memory for long-running AI work. Use a local folder, your own MCP, or manual file uploads.
+```
 
 Topics:
 
-    mcp
-    model-context-protocol
-    ai-agents
-    project-memory
-    agents-md
-    claude-code
-    chatgpt
-    local-first
-    workflow
-    python
+```text
+ai-agents
+project-memory
+agents-md
+chatgpt
+codex
+claude-code
+local-first
+markdown
+workflow
+mcp
+```
 
-Первое размещение должно быть Private. Просмотрите всю Git history и результат
-GitHub Actions до переключения на Public.
-
+Оставляйте репозиторий Private до завершения publishing checklist и отдельного
+решения владельца о Public.

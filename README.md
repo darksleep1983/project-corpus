@@ -2,56 +2,33 @@
 
 [Русская версия](README.ru.md)
 
-[Language policy](docs/languages.md)
+> A small, readable project memory that survives new AI chats.
 
-> Give your AI a stable, local memory for a long-running project.
+Chats end. Models change. A new session may not know what the project is, what
+has already been decided, what was actually verified, or what should happen
+next.
 
-Project Corpus keeps the important parts of a project in a small set of Markdown files: the goal, current state, decisions, tasks, reports, and the exact next step. An MCP server lets compatible AI clients read those files and update them under a strict write policy.
+Project Corpus keeps that state in a compact set of ordinary Markdown files on
+your computer. There is no application to install and no required Python
+runtime. MCP is optional.
 
-You do not need to understand MCP internals to use it.
-
-## What problem does it solve?
-
-Chats end. Context gets lost. A new model or a new session may not know:
-
-- what the project is;
-- what has already been decided;
-- which task is active;
-- what was actually verified;
-- what the AI is allowed to change;
-- what should happen next.
-
-Project Corpus keeps that state outside the chat, on your own computer.
-
-## The simple version
+## The idea in one minute
 
 ```text
-Install Project Corpus
-→ choose a folder
-→ connect your AI client
-→ describe your project in normal language
-→ continue in new chats without rebuilding the context from scratch
+copy a clean Corpus template
+→ choose how your AI can access it
+→ describe the project in normal language
+→ keep the current files synchronized
+→ continue in a new session from the exact next action
 ```
 
-## What is included?
-
-```text
-project-corpus/
-├── template/          Clean reusable project memory
-├── src/               MCP server
-├── scripts/           Setup, start, validation, client helpers
-├── docs/              Plain-language guides
-├── examples/          Small sanitized example
-└── tests/             Write-policy and setup tests
-```
-
-The initialized corpus contains:
+The Corpus contains:
 
 ```text
 AGENTS.md
 OPERATOR_PROFILE.md
 PROJECT_ROADMAP_CURRENT.md
-MCP_CONNECTION_CURRENT.md
+CORPUS_ACCESS_CURRENT.md
 LOADER_PROMPT_CURRENT.md
 SESSION_HANDOFF_CURRENT.md
 SESSION_HANDOFF_FULL_CURRENT.md
@@ -59,97 +36,104 @@ Tasks/
 Report/
 ```
 
+`AGENTS.md` defines the rules. The roadmap and handoffs preserve current state.
+`Tasks/` contains scoped work orders; `Report/` contains evidence of completed
+work.
+
+## Choose one access mode
+
+| Mode | Best for | What happens |
+| --- | --- | --- |
+| Direct folder | Codex, Claude Code, ChatGPT Work, and other local agents | Give the client access only to the Corpus folder and let it read or update the files directly. |
+| Your own MCP | Clients that support an MCP server or file connector | Connect a trusted server of your choice, restrict it to the Corpus root, and record its real capabilities. |
+| Manual session | Any AI chat, with no setup | Upload the seven current files at the start; at the end, save only the replacement files the AI returns. |
+
+The three modes use the same protocol. An unavailable MCP server is not a
+blocker: switch to direct-folder or manual access.
+
+Read the detailed guides:
+
+- [Direct folder](docs/access/direct-folder.md)
+- [Your own MCP](docs/access/own-mcp.md)
+- [Manual sessions](docs/access/manual.md)
+
 ## Five-minute start
 
-### Windows
+1. Download or clone this repository.
+2. Copy one language folder to a safe location and name it `Corpus`:
+   - `template/en` for English;
+   - `template/ru` for Russian.
+3. Open `CORPUS_ACCESS_CURRENT.md` and choose an access mode.
+4. Give your AI the matching text from
+   [`PROJECT_INSTRUCTION_TEMPLATE.md`](PROJECT_INSTRUCTION_TEMPLATE.md).
+5. Say what you want to build in normal language.
 
-Requirements: Python 3.11 or newer.
+Example:
 
-Open PowerShell in the repository folder:
+> Start a new project. I want to build a local photo organizer. First help me
+> define the architecture. Do not install, delete, publish, or contact anyone.
 
-```powershell
-.\install.ps1 -ProjectHome "D:\AI\MyProject" -Language en
-.\start.ps1
-```
-
-### macOS or Linux
-
-```bash
-./install.sh "$HOME/AI/MyProject" --language en
-./start.sh
-```
-
-The installer creates:
-
-```text
-<ProjectHome>/Corpus
-<ProjectHome>/mcp-state
-```
-
-Choose `en` or `ru` at installation. It creates a matching Corpus and a local
-configuration file in the repository. No project secrets are required.
-
-## Choose your AI client
+## Client guides
 
 - [ChatGPT](docs/clients/chatgpt.md)
+- [Codex](docs/clients/codex.md)
 - [Claude Code](docs/clients/claude-code.md)
 - [Claude Desktop](docs/clients/claude-desktop.md)
-- [Any other MCP client](docs/clients/generic-mcp-client.md)
+- [Other AI clients](docs/clients/other-clients.md)
 
-More: [how it works](docs/how-it-works.md), [FAQ](docs/faq.md),
-[security model](docs/security.md), and [uninstalling](docs/uninstall.md).
+Client interfaces and plan availability can change. Each guide keeps volatile
+client setup separate from the stable Corpus protocol and links to official
+documentation.
 
-After connection, use the short project instruction from:
+## Manual mode really works
 
-```text
-PROJECT_INSTRUCTION_TEMPLATE.md
-```
+If you do not want to configure local folders or MCP:
 
-Then start with something ordinary, for example:
+1. upload the seven current files in a new session;
+2. upload only the Tasks and Reports relevant to the request;
+3. ask the AI to read `AGENTS.md` first and issue a loading receipt;
+4. work normally;
+5. ask for a manual synchronization package;
+6. back up the old local files and save the returned replacements.
 
-> Start a new project. I want to build a local photo organizer. The working folder is D:\AI\PhotoOrganizer. First, help me define the architecture. Do not install or delete anything yet.
-
-## What the server protects
-
-The server is restricted to one configured Corpus root. It provides:
-
-- full-file reads and SHA-256;
-- separate create and update operations;
-- stale-write protection through `expected_sha256`;
-- backups before updates;
-- atomic replacement;
-- readback verification;
-- audit receipts;
-- protected protocol files;
-- no arbitrary filesystem access outside the Corpus root.
-
-Read [How it works](docs/how-it-works.md) for the plain-language explanation.
+Ordinary synchronization must not rewrite `AGENTS.md` or
+`OPERATOR_PROFILE.md`. The AI should return only files that actually changed and
+must not claim that it saved them on your computer.
 
 ## Important limits
 
-- This is a project memory and controlled file workflow, not a general computer-control agent.
-- A saved report is not proof that a service or application is currently running.
-- Do not store passwords, tokens, cookies, or API keys in the Corpus.
-- Keep the HTTP server on loopback unless you place it behind a trusted authenticated tunnel or gateway.
-- Connect only MCP servers whose code and permissions you trust.
+- Project Corpus is a documentation protocol, not a security sandbox.
+- Real access is controlled by your AI client, filesystem permissions, or your
+  chosen MCP server.
+- This repository does not provide, run, or audit an MCP server.
+- A saved Report is not proof that a service or external system is currently
+  healthy.
+- Do not store passwords, tokens, cookies, seed phrases, or API keys in the
+  Corpus.
+- Keep one active project per Corpus.
+
+More: [how it works](docs/how-it-works.md), [FAQ](docs/faq.md),
+[security model](docs/security.md), [languages](docs/languages.md), and
+[moving or removing a Corpus](docs/uninstall.md).
 
 ## Current status
 
-`v0.1.0` is a private preview, not a production-ready release. The setup scripts,
-write-policy core, and both MCP transports are tested. Client interfaces and
-availability can change, so each client guide links to the official documentation.
+This repository is a private preview under active review. The bilingual
+templates, three access modes, documentation links, and repository integrity are
+checked automatically. Public visibility and a release require a separate owner
+decision.
 
 ## Feedback
 
 Use [GitHub Issues](https://github.com/darksleep1983/project-corpus/issues) for
-bug reports, setup questions, and improvement ideas. Search existing issues
-first and do not post secrets or private Corpus contents.
+bugs, setup questions, and improvement ideas. Do not post secrets or private
+Corpus contents.
 
 ## Support the project
 
 Project Corpus is free and MIT-licensed. Voluntary support is available through
-USDT on TON; see the [support page and wallet address](SUPPORT.md). A donation
-is not a purchase and does not provide additional rights or guarantees.
+USDT on TON; see the [support page and wallet address](SUPPORT.md). A donation is
+not a purchase and does not provide additional rights or guarantees.
 
 ## License
 

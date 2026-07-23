@@ -2,11 +2,19 @@
 
 [Русская версия](CHANGELOG.ru.md)
 
-## 0.1.0 — private preview
+## Unreleased — private preview
 
-- One unified repository containing the protocol, template, server, setup scripts, client guides, tests, and examples.
-- Streamable HTTP and stdio transports.
-- Human-readable English and Russian quick starts.
-- Hash-guarded writes, verified backups, atomic publication, readback, and audit receipts.
-- English and Russian Corpus templates with installer language selection.
-- GitHub Issues feedback and voluntary USDT-on-TON project support in both languages.
+- Reframed Project Corpus as a Markdown protocol rather than a bundled server.
+- Added three equal access modes: direct folder, owner-provided MCP, and manual
+  session uploads.
+- Replaced `MCP_CONNECTION_CURRENT.md` with neutral
+  `CORPUS_ACCESS_CURRENT.md`.
+- Added paired access guides and Codex client guides.
+- Removed the embedded MCP runtime, transports, ports, installers, package
+  metadata, and required user-side Python dependency.
+- Preserved English/Russian parity, protected-file rules, GitHub Issues
+  feedback, and voluntary USDT-on-TON support.
+
+## 0.1.0 — historical private preview
+
+- Initial combined protocol and MCP-server preview.

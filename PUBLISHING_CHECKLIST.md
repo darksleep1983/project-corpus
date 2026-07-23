@@ -1,12 +1,19 @@
 # Pre-publication checklist
 
-1. Create the project-corpus repository as Private.
-2. Upload the contents of this folder to the repository root.
-3. Confirm that .project-corpus.local.json, .venv, .env, a user Corpus, and MCP
-   backups are not in Git.
-4. Check GitHub Actions.
-5. Review all Git history for local paths, user names, and secrets.
-6. Review the README on a clean computer or new virtual machine.
-7. Create v0.1.0-preview as a draft release.
-8. Change visibility to Public only after a separate owner decision.
+[Русская версия](PUBLISHING_CHECKLIST_RU.md)
 
+1. Confirm the repository is still Private while preparing.
+2. Verify that the embedded server, installers, ports, package runtime, and
+   machine-specific configuration are absent.
+3. Run the complete test suite and verify the repository manifest.
+4. Review English/Russian parity and every internal Markdown link.
+5. Test each quick-start path from a clean copy:
+   - direct folder;
+   - owner-provided MCP documentation;
+   - manual session and replacement-file handoff.
+6. Review Git history for local paths, user names, credentials, and obsolete
+   server instructions.
+7. Update `private preview` wording and the security reporting route.
+8. Configure description, topics, and Private Vulnerability Reporting.
+9. Prepare `v0.1.0-preview` as a draft release only after the content is frozen.
+10. Change visibility to Public only after a separate owner decision.

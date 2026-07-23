@@ -1,32 +1,27 @@
-# Подключение к Claude Desktop
+# Использование Project Corpus с Claude Desktop
 
-Claude Desktop теперь поддерживает установку Desktop Extensions одним нажатием, но
-в этом репозитории пока нет пакета расширения `.mcpb`. Для первого preview самый
-прозрачный путь — локальная конфигурация stdio.
+[English](claude-desktop.md)
 
-После установки выполните:
+## Проще всего: ручной режим
 
-```powershell
-.\.venv\Scripts\python.exe .\scripts\print_client_config.py claude-desktop
-```
+Приложите семь current-файлов к новому проекту или разговору, добавьте только
+нужные Tasks и Reports и используйте инструкцию ручного режима. В конце сами
+сохраните возвращённые файлы-замены.
 
-Скрипт выведет готовый JSON с абсолютными путями. Затем в Claude Desktop:
+## Свой MCP
 
-1. Откройте **Settings → Developer → Edit Config**.
-2. Добавьте выведенный блок `project-corpus` в раздел `mcpServers`.
-3. Сохраните файл и перезапустите Claude Desktop.
-4. Откройте список connectors и убедитесь, что появились инструменты Project
-   Corpus.
+Claude Desktop поддерживает desktop extensions и управляемые организацией
+connectors. Используйте проверенное extension или свой упакованный сервер только
+после проверки permissions и ограничения файлового root. Репозиторий не
+поставляет `.mcpb`-пакет или локальный сервер.
 
-На Windows конфигурационный файл обычно находится в
-`%APPDATA%\Claude\claude_desktop_config.json`. Сохраните сгенерированные
-абсолютные пути: относительные пути ненадёжны, когда сервер запускает desktop app.
+В Claude Desktop подключённые tools можно проверить через меню Connectors или
+developer settings. Точная доступность может зависеть от тарифа и политики
+организации.
 
-Когда появится подписанный или проверенный пакет `.mcpb`, его можно будет
-установить через **Settings → Extensions**. До этого предпочитайте проверяемый
-JSON-вариант.
+Официальные инструкции:
 
-Официальные материалы:
+- <https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop>
+- <https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp>
 
-- https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop
-- https://modelcontextprotocol.io/docs/develop/connect-local-servers
+Не открывайте неаутентифицированный локальный endpoint в публичный интернет.

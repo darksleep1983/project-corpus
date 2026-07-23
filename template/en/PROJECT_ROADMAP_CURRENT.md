@@ -3,7 +3,7 @@
 **Status:** `NO_ACTIVE_PROJECT`
 **Corpus role:** `REUSABLE_SINGLE_ACTIVE_PROJECT_SHELL`
 **Project root:** `not assigned`
-**Corpus root:** `{{CORPUS_ROOT}}`
+**Corpus access:** `see CORPUS_ACCESS_CURRENT.md`
 
 ## Current state
 
@@ -13,8 +13,8 @@ No active project is assigned.
 
 - Exactly one active project per corpus.
 - No inheritance from a prior project without explicit owner input.
-- Writes follow expected-hash, backup, atomic publication, readback, and audit
-  rules.
+- Protected files and access-mode limits remain in force.
+- Only factually changed mutable current files are synchronized.
 - Saved state does not prove live runtime state.
 
 ## Exact next action

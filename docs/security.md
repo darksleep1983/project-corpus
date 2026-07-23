@@ -1,24 +1,38 @@
 # Security model
 
-Project Corpus is intentionally narrow.
+[Русская версия](security.ru.md)
 
-- One server instance is configured for one Corpus root.
-- The server resolves and validates every path under that root.
-- Root writes are limited to known current files.
-- New files may be created only directly in `Tasks/` or `Report/` and must be Markdown.
-- `OPERATOR_PROFILE.md` is not writable.
-- `AGENTS.md` requires explicit protocol-change authorization.
-- Updates require the exact current SHA-256.
-- Backups and audit receipts live outside the Corpus.
-- Streamable HTTP is loopback-only by default, and the SDK rejects requests with
-  untrusted Origin headers.
+Project Corpus is a documentation protocol, not a security boundary by itself.
 
-## What this does not protect against
+## Direct-folder mode
 
-- a malicious person who already controls your operating-system account;
-- a second independent writer changing files behind the server;
-- exposing the HTTP endpoint to an untrusted network;
-- secrets deliberately placed inside Markdown;
-- unsafe instructions accepted by the AI client.
+The AI client's sandbox and filesystem permissions decide what can be read or
+changed. Grant only the project and Corpus folders that are actually needed.
 
-Run the server on loopback, review the code, use one authoritative writer per Corpus, and keep secrets elsewhere.
+## Your-own-MCP mode
+
+Security depends on the server you choose, its authentication, root restriction,
+path validation, write policy, network exposure, and audit behavior. This
+repository does not provide or certify those controls.
+
+Prefer a server that restricts one exact root, blocks traversal, protects
+specific files, verifies stale writes, backs up old content, performs readback,
+and returns receipts. Verify these features rather than assuming them.
+
+## Manual mode
+
+The AI sees only the files you upload, but the cloud client receives their
+contents according to its own data policy. The AI cannot save local replacements
+for you or prove that you performed readback.
+
+## Universal rules
+
+- Keep secrets, credentials, tokens, cookies, private keys, and seed phrases
+  outside the Corpus.
+- Review every requested permission.
+- Keep one authoritative writer at a time.
+- Back up files before replacement.
+- Treat saved runtime claims as stale until freshly checked.
+- Do not expose an unauthenticated local MCP endpoint to the public internet.
+
+Instructions can guide an AI but cannot enforce operating-system permissions.
