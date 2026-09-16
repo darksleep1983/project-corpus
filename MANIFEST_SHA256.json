@@ -5,7 +5,7 @@
     ".github/ISSUE_TEMPLATE/bug_report.md": "9d405494053c4277166c883db98d10cbd0882712834c81bf5050934028986753",
     ".github/ISSUE_TEMPLATE/feature_request.md": "e62b7f689a783ae2ed4226adf491ce44626ebd982027bdcf84685f0a1a04a90d",
     ".github/pull_request_template.md": "1e96c2661ed592c7709e4e84214955dae62b0fa82b7bfd47718d7994b1eafd2f",
-    ".github/workflows/test.yml": "80ec5590aa98a2586950f405a8769827dabddd2e2ea3ac2d2b7d819419cd0f42",
+    ".github/workflows/test.yml": "724644fe8f8a633c5764ec5d5b7733cbee532267fe3a708cd5da6e057aee3bd8",
     ".gitignore": "c6fd7f7f8fddd5a2c093a3becc0d1074915b03d340b6cd6eda6289d6ecfdce7c",
     "CHANGELOG.md": "092fcdfd40b18383005fe23a8e8c75e358682b97608260060a60b5f7edf6e28f",
     "CHANGELOG.ru.md": "830f15ff33ce8cdb44d1044f707d040bf978a0713e9335fbbe4f1507f7ca34dc",
@@ -64,6 +64,15 @@
     "protocol/v2/policy-semantics.md": "990bd1a76501c2208577c3068e02c8c408e0a06946d89d3035d2d9611d84e242",
     "protocol/v2/specification.md": "445397c422a5970b5ab7535932e25ec9fb238bb061e1a7088400e8898d28c6f8",
     "protocol/v2/state-documents.md": "ac3e8813469bc593e83ea320646396715633db4d7648d0ae556e0d355f401cb7",
+    "prototypes/filesystem_security/PROTOTYPE_RESULTS.md": "94af410923208de255a1fc751718ac1f05cf86046958ad389d0e30a00dd80e23",
+    "prototypes/filesystem_security/README.md": "b3de2899657184ff894bcccd84e48e49e0f888608f217f863eb2a230bd4f031d",
+    "prototypes/filesystem_security/__init__.py": "244c5c855563e5081e6144fb6297b8348a7bc10bb30c475505d21cc7b299d05c",
+    "prototypes/filesystem_security/cas_probe.py": "001b8ae225f71cc4fd56e775b3798ec5bac8c2859ff6b5db7339d7aeb9626945",
+    "prototypes/filesystem_security/common.py": "85a9d79e9e8b128966d10b483b9a7c6924274327e7a7d8a8a031823f987e34c0",
+    "prototypes/filesystem_security/posix_native.py": "7cb4dbe6e8d0f2a54d39564f55ef2dcab8ef36e1c3a3fd82723aa9b66b04acb0",
+    "prototypes/filesystem_security/prototype_lock.py": "288a38fc65c09703725a510d9c907561068f73ad6142ca92bf0672736fecd575",
+    "prototypes/filesystem_security/recovery_model.py": "1151cb4b92e34068a79955e059effe617589075ab0df286c1a3a4f537986fe01",
+    "prototypes/filesystem_security/windows_native.py": "5b3c303b51a40a320e86bf088fa90507953caaab6d1c31b88ba4c1953c0ec746",
     "template/en/AGENTS.md": "b622d20c16da05e5e4b3382d4cb999bb574767a9fe65f054bf22b882d8d8d652",
     "template/en/CORPUS_ACCESS_CURRENT.md": "45c82832f393ce76c79c5e2a62e0d777ccf68a216ce7e1e71ea5fb7204f17e32",
     "template/en/LOADER_PROMPT_CURRENT.md": "da04257c87026ccee57892ff986611fc70cef254ca326116768ed1f699840f8f",
@@ -83,6 +92,7 @@
     "template/ru/SESSION_HANDOFF_FULL_CURRENT.md": "4eb0d3eed3c3879a89e951e42bdd061702b495601ace348641031a718c86e115",
     "template/ru/Tasks/.gitkeep": "83aa4d4b1475a6f47f69590f73776b6b6db6b786928dd531f381d583744c7ff7",
     "tests/test_bilingual_templates.py": "6ad831692b57708b2b59a3417987158dab368a5bd5fe67a4082487f1c7a465c6",
+    "tests/test_filesystem_security_prototypes.py": "16a1875fb4dc8e9b9b9b37f80844740c81d04b5bafb951803e51a6ba92f6676d",
     "tests/test_repository.py": "098ad594a0dcb96af4ee60b464846d5199a98ce87b104c165f5058ba9e37ffad"
   }
 }
