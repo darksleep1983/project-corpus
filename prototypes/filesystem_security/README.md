@@ -30,9 +30,9 @@ platform matrix, concurrency, crash recovery, and backend-choice gates pass.
 
 ## Current evidence status
 
-- Windows local NTFS: exercised; see `PROTOTYPE_RESULTS.md`.
-- Linux: pending the cross-platform CI run for this branch.
-- macOS: pending the cross-platform CI run for this branch.
+- Windows local NTFS and GitHub-hosted Windows NTFS: exercised.
+- GitHub-hosted Ubuntu ext4: exercised.
+- GitHub-hosted macOS APFS: exercised.
 - Network, SMB, NFS, FUSE, and unknown filesystems: unsupported for managed
   mutations in V2.0 unless separately qualified.
 
