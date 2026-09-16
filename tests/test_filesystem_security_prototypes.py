@@ -242,6 +242,7 @@ class ConcurrencyProbeTests(unittest.TestCase):
             lock = base / "owner-runtime" / "project.lock"
             barrier = threading.Barrier(2)
             outcomes: list[tuple[str, str]] = []
+            unexpected: list[BaseException] = []
 
             def writer(value: bytes):
                 barrier.wait()
@@ -250,6 +251,8 @@ class ConcurrencyProbeTests(unittest.TestCase):
                     outcomes.append(("published", value.decode().strip()))
                 except StaleWriteError:
                     outcomes.append(("stale", value.decode().strip()))
+                except BaseException as exc:
+                    unexpected.append(exc)
 
             threads = [
                 threading.Thread(target=writer, args=(b"writer-a\n",)),
@@ -259,6 +262,7 @@ class ConcurrencyProbeTests(unittest.TestCase):
                 thread.start()
             for thread in threads:
                 thread.join()
+            self.assertEqual(unexpected, [])
             self.assertEqual(sorted(kind for kind, _ in outcomes), ["published", "stale"])
             published = next(value for kind, value in outcomes if kind == "published")
             self.assertEqual(target.read_text(encoding="utf-8").strip(), published)
