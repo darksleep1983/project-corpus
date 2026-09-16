@@ -6,6 +6,8 @@ import re
 import tomllib
 import unittest
 
+from project_corpus.validation import validate_state_pair
+
 
 PROJECT_METADATA = ("Protocol-Version", "Project-ID", "Logical-Name")
 STATUS_METADATA = (
@@ -102,6 +104,13 @@ class ProtocolV2ConformanceTests(unittest.TestCase):
                 errors = validate_pair(case / "PROJECT.md", case / "STATUS.md")
                 self.assertEqual(errors, expected["errors"])
                 self.assertEqual(not errors, expected["valid"])
+                runtime_errors = sorted({
+                    issue.code for issue in validate_state_pair(
+                        (case / "PROJECT.md").read_bytes(),
+                        (case / "STATUS.md").read_bytes(),
+                    )
+                })
+                self.assertEqual(runtime_errors, expected["errors"])
 
     def test_minimal_v2_template_is_conforming(self):
         state = self.root / "templates" / "v2" / "minimal" / ".project-corpus" / "state"
