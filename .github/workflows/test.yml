@@ -14,4 +14,22 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Record Linux filesystem evidence
+        if: runner.os == 'Linux'
+        run: |
+          uname -a
+          findmnt -T . -o FSTYPE,SOURCE,TARGET -n
+      - name: Record macOS filesystem evidence
+        if: runner.os == 'macOS'
+        run: |
+          sw_vers
+          diskutil info . | grep -E 'File System Personality|Type \(Bundle\)'
+      - name: Record Windows filesystem evidence
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $drive = (Get-Item .).PSDrive.Name
+          Get-Volume -DriveLetter $drive |
+            Select-Object DriveLetter, FileSystem, HealthStatus |
+            Format-List
       - run: python -m unittest discover -s tests -v
