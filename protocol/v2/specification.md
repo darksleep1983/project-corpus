@@ -1,6 +1,6 @@
 # Project Corpus Protocol V2
 
-Status: implementation draft based on owner-approved architecture decisions.
+Status: normative V2.0 draft
 
 Project Corpus Protocol is a vendor-neutral Markdown protocol for restoring and
 continuing one logical project from a clean AI context. The Protocol is usable
@@ -22,6 +22,35 @@ AGENTS.md
 
 Audit and generated views are optional and are not canonical state.
 
+The required directories may be empty. A transport or archive may omit an empty
+directory only if it recreates it before declaring the project conforming.
+
+## Text and path conventions
+
+- Normative state is UTF-8 Markdown using LF or CRLF line endings.
+- Portable relative paths use `/` separators.
+- Project IDs match `[a-z0-9][a-z0-9._-]{2,63}`.
+- Artifact IDs use the same grammar.
+- Timestamps are RFC 3339 UTC timestamps or the literal `UNVERIFIED` where the
+  relevant field permits it.
+- Machine-specific absolute paths are forbidden in portable project identity.
+- Markdown labels and section headings defined by this Protocol are
+  case-sensitive ASCII.
+
+## Authority order
+
+When sources disagree, authority descends in this order:
+
+1. the Protocol version declared by `PROJECT.md`;
+2. `PROJECT.md` for stable project identity and boundaries;
+3. `STATUS.md` for current operational state;
+4. the active Task for bounded requested work;
+5. cited Reports for evidence;
+6. history and generated views.
+
+Project policy is a portable request to Runtime. It never outranks an external
+owner trust grant or Runtime hard limits.
+
 ## Normative principles
 
 1. Model or chat memory is never authoritative project state.
@@ -36,4 +65,3 @@ Audit and generated views are optional and are not canonical state.
 
 The detailed authority, lifecycle, policy, migration, and conformance rules are
 defined by the other documents in this directory.
-
