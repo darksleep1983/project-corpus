@@ -18,3 +18,28 @@ Effective capabilities are the intersection of runtime hard limits, external
 owner trust, project policy, and the current session subset. A project policy
 digest mismatch produces `POLICY_DRIFT` and suspends mutations.
 
+## Project policy shape
+
+The portable TOML policy uses these tables:
+
+```toml
+policy_version = "2.0"
+project_id = "example-project"
+profile = "READ_ONLY"
+
+[capabilities]
+allow = ["corpus.read", "corpus.stat", "corpus.validate"]
+
+[scopes]
+read = [".project-corpus/state/**"]
+write = []
+
+[requirements]
+expected_hash = true
+verified_readback = true
+audit_receipt = true
+```
+
+Unknown keys are rejected. Paths are portable relative patterns; absolute,
+drive, UNC, device, ADS and traversal syntax is invalid. The policy cannot name
+a physical project root.

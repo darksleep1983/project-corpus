@@ -172,6 +172,9 @@ project_id = "{project_id}"
 profile = "READ_ONLY"
 
 [capabilities]
+allow = ["corpus.read", "corpus.stat", "corpus.validate", "migration.plan"]
+
+[scopes]
 read = [".project-corpus/state/**", ".project-corpus/tasks/**", ".project-corpus/reports/**"]
 write = []
 

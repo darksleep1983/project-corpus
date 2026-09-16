@@ -114,7 +114,8 @@ class ProtocolV2ConformanceTests(unittest.TestCase):
         self.assertNotRegex(raw, r"(?im)^(?:root|path)\s*=")
         self.assertEqual(policy["project_id"], "example-project")
         self.assertEqual(policy["profile"], "READ_ONLY")
-        self.assertEqual(policy["capabilities"]["write"], [])
+        self.assertEqual(policy["scopes"]["write"], [])
+        self.assertNotIn("state.update", policy["capabilities"]["allow"])
 
 
 if __name__ == "__main__":
