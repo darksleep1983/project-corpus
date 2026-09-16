@@ -23,7 +23,9 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           sw_vers
-          diskutil info . | grep -E 'File System Personality|Type \(Bundle\)'
+          device="$(df . | awk 'END {print $1}')"
+          diskutil info "$device" |
+            grep -E 'File System Personality|Type \(Bundle\)'
       - name: Record Windows filesystem evidence
         if: runner.os == 'Windows'
         shell: pwsh
