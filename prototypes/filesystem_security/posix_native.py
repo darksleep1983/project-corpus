@@ -73,10 +73,9 @@ def _component_walk(root_fd: int, parts: tuple[str, ...], *, final_flags: int) -
             )
             os.close(current)
             current = next_fd
-        nofollow_any = getattr(os, "O_NOFOLLOW_ANY", 0)
-        nofollow = nofollow_any or getattr(os, "O_NOFOLLOW", 0)
         fd = os.open(
-            parts[-1], final_flags | nofollow | getattr(os, "O_CLOEXEC", 0),
+            parts[-1], final_flags | getattr(os, "O_NOFOLLOW", 0) |
+            getattr(os, "O_CLOEXEC", 0),
             dir_fd=current,
         )
         return fd
