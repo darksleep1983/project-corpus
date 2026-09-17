@@ -71,13 +71,16 @@ No Runtime, MCP server, or package installation is required.
    with the same project ID, verified baseline, blockers, evidence references,
    and exact next action.
 5. Give ChatGPT, Codex, Claude, or another agent access to the project folder.
-   In a manual chat, upload `AGENTS.md`, `PROJECT.md`, and `STATUS.md`. Then say:
+   In a manual chat, upload `AGENTS.md`, `PROJECT.md`, and `STATUS.md`. If you
+   are uploading files manually, also upload the active Task and any Reports
+   referenced by `STATUS.md`. Then say:
 
    > Load Project Corpus for this project. Follow `AGENTS.md`; read
    > `.project-corpus/state/PROJECT.md` and
-   > `.project-corpus/state/STATUS.md` completely; load only the active Task
-   > and cited Reports; state the project ID, current status, active Task, and
-   > exact next action; then continue from that action.
+   > `.project-corpus/state/STATUS.md` completely; if an active Task or cited
+   > Reports are available, load only those relevant artifacts; state the
+   > project ID, current status, active Task, and exact next action; then
+   > continue from that action.
 
 ### Want enforcement too?
 
