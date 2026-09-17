@@ -56,7 +56,7 @@
     "docs/runtime/doctor.md": "45c8dc7569cce7fb30f147d9618d9289fc609fd0478933c5722dc0a7896226d9",
     "docs/security.md": "20084da32b563a4fe0f1f0cb1469405896fdcae8a2e659d80561c910aac4b25c",
     "docs/security.ru.md": "be0e8142a1c92d6878dd90c7f4b8dcde61253384c9440f122d7e4cd2be79980d",
-    "docs/security/platform-guarantees.md": "fffe83c009143a99142f48062fe01d81dbb696abab8d843e29f724f51cf7139f",
+    "docs/security/platform-guarantees.md": "cd11dde4ab877f26c6bae2951e94cf65b69d78a480ff333a6d406fddc08c00b2",
     "docs/uninstall.md": "3c65d4938f5a9e56b86d5b13a156120b0d9ed2245b2a340e27a394d66f5ba82e",
     "docs/uninstall.ru.md": "2014e8288537c397c826b34d776b87ab112b96b4e8a34737d8222d78690e0368",
     "examples/sample-active-project/PROJECT_ROADMAP_CURRENT.md": "90cd9f0262dae937df9b55b193dde29f3aefe22065bd0e9cf842382b8d64775a",
@@ -143,7 +143,7 @@
     "src/project_corpus/platform/posix.py": "d60d67903a004be5620d39ef47e321dea43007e7befb13684d510b59f597fd74",
     "src/project_corpus/platform/windows.py": "6b86c6e72f6f47cb7a7430d9b901e75b28bd7199ae7cb555dd2bd1d96320a8d5",
     "tests/test_native_path_backend.py": "2723ef1ea878109e99d5caec8d36fca238d6d2e0daf5d66045e8a6fb7d89e676",
-    "docs/runtime/transactions.md": "643cdf15e18252fa5143437b5b9b3a96f3e5b36f5c19d1d63662caeed72afe26",
+    "docs/runtime/transactions.md": "909ce127d08c37557c936b97dd84572ed7aa5aaad66328efa2b14c7f1b0a1e31",
     "src/project_corpus/transactions.py": "458581d6996c887ee00c85d82895e7415466f3c9e5236397057b7c35aa357a61",
     "templates/v2/minimal/.project-corpus/audit/.gitkeep": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
     "tests/test_transactions.py": "434529e92cf07aa34d2518e897ee88446b798b073a14845d31145db27a2ef200"

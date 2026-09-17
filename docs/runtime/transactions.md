@@ -1,6 +1,6 @@
 # Controlled filesystem transactions
 
-Status: implementation under platform qualification
+Status: production core matrix passed; controlled adapters not yet qualified
 
 The transaction engine is a Runtime component, not part of the Markdown
 Protocol definition. It composes the native path backend with current external
@@ -52,3 +52,15 @@ Any third state, missing backup, metadata mismatch or conflicting audit records
 
 The lock is local inter-process serialization. No distributed-locking claim is
 made, and an out-of-band writer is not treated as a cooperating transaction.
+
+## Evidence boundary
+
+GitHub Actions run `35182044031` passed all six OS/Python jobs on qualified
+Windows/NTFS, Ubuntu/ext4 and macOS/APFS filesystems. The suite exercised
+authority denial, expected-hash conflicts, create/update separation, local
+writer serialization, exact backup/readback, audit conflicts, corrupt journals,
+all six crash checkpoints and unexpected post-crash content.
+
+This qualifies the transaction core only. Controlled CLI and stdio MCP claims
+require their own adapter tests proving that untrusted arguments cannot bypass
+this core.
