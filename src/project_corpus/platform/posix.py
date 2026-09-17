@@ -2,16 +2,16 @@ from __future__ import annotations
 
 import ctypes
 import errno
+import fcntl
 import hashlib
 import os
 from pathlib import Path
 import platform
 import stat as stat_module
 import unicodedata
-from uuid import uuid4
 
 from .base import BackendError, NativePathBackend, PathStat, StagedWrite
-from .common import validate_relative_path
+from .common import normalize_stage_id, validate_relative_path
 
 
 class _PosixStage:
@@ -28,6 +28,31 @@ class _PosixStage:
         self.temp_name = temp_name
         self.target_name = target_name
         self.parent_parts = parent_parts
+
+
+class _PosixLock:
+    def __init__(self, parent_fd: int, file_fd: int):
+        self.parent_fd = parent_fd
+        self.file_fd = file_fd
+
+    def __enter__(self) -> None:
+        try:
+            fcntl.flock(self.file_fd, fcntl.LOCK_EX)
+        except Exception:
+            os.close(self.file_fd)
+            os.close(self.parent_fd)
+            self.file_fd = -1
+            self.parent_fd = -1
+            raise
+
+    def __exit__(self, *_: object) -> None:
+        if self.file_fd >= 0:
+            fcntl.flock(self.file_fd, fcntl.LOCK_UN)
+            os.close(self.file_fd)
+            self.file_fd = -1
+        if self.parent_fd >= 0:
+            os.close(self.parent_fd)
+            self.parent_fd = -1
 
 
 def _linux_filesystem(fd: int) -> str:
@@ -206,6 +231,15 @@ class PosixNativeBackend(NativePathBackend):
             f"posix:{info.st_dev:x}:{info.st_ino:x}",
         )
 
+    def stat_optional(self, relative: str) -> PathStat | None:
+        try:
+            return self.stat(relative)
+        except BackendError as exc:
+            cause = exc.__cause__
+            if exc.code == "PATH_OPEN" and isinstance(cause, OSError) and cause.errno == errno.ENOENT:
+                return None
+            raise
+
     def _open_parent(self, parts: tuple[str, ...]) -> int:
         current = os.dup(self._root_fd)
         try:
@@ -230,11 +264,14 @@ class PosixNativeBackend(NativePathBackend):
             if existing != target and unicodedata.normalize("NFC", existing).casefold() == key:
                 raise BackendError("PORTABLE_NAME_COLLISION", target)
 
-    def stage_bytes(self, relative: str, content: bytes) -> StagedWrite:
+    def stage_bytes(
+        self, relative: str, content: bytes, *, stage_id: str | None = None
+    ) -> StagedWrite:
         parts = validate_relative_path(relative, windows=False)
         parent_fd = self._open_parent(parts)
         file_fd = -1
-        temp_name = f".pc-stage-{uuid4().hex}.tmp"
+        normalized_stage_id = normalize_stage_id(stage_id)
+        temp_name = f".pc-stage-{normalized_stage_id}.tmp"
         try:
             self._reject_collision(parent_fd, parts[-1])
             file_fd = os.open(
@@ -249,9 +286,8 @@ class PosixNativeBackend(NativePathBackend):
             os.fsync(file_fd)
             return StagedWrite(
                 relative, hashlib.sha256(content).hexdigest(),
-                _PosixStage(
-                    parent_fd, file_fd, temp_name, parts[-1], parts[:-1]
-                ),
+                _PosixStage(parent_fd, file_fd, temp_name, parts[-1], parts[:-1]),
+                normalized_stage_id,
             )
         except Exception:
             if file_fd >= 0:
@@ -262,6 +298,107 @@ class PosixNativeBackend(NativePathBackend):
                 pass
             os.close(parent_fd)
             raise
+
+    @staticmethod
+    def _xattrs(fd: int) -> tuple[tuple[str, bytes], ...]:
+        if not hasattr(os, "listxattr"):
+            return ()
+        names = sorted(os.listxattr(fd))
+        return tuple((name, os.getxattr(fd, name)) for name in names)
+
+    @staticmethod
+    def _darwin_acl_equal(left_fd: int, right_fd: int) -> bool:
+        if platform.system() != "Darwin":
+            return True
+        libc = ctypes.CDLL(None, use_errno=True)
+        acl_get_fd = libc.acl_get_fd
+        acl_get_fd.argtypes = [ctypes.c_int]
+        acl_get_fd.restype = ctypes.c_void_p
+        acl_to_text = libc.acl_to_text
+        acl_to_text.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_ssize_t)]
+        acl_to_text.restype = ctypes.c_void_p
+        acl_free = libc.acl_free
+        acl_free.argtypes = [ctypes.c_void_p]
+        left = acl_get_fd(left_fd)
+        right = acl_get_fd(right_fd)
+        if not left or not right:
+            if left:
+                acl_free(left)
+            if right:
+                acl_free(right)
+            code = ctypes.get_errno()
+            raise BackendError("METADATA_QUERY", os.strerror(code), native_code=code)
+        left_text = ctypes.c_void_p()
+        right_text = ctypes.c_void_p()
+        try:
+            left_size = ctypes.c_ssize_t()
+            right_size = ctypes.c_ssize_t()
+            left_text = ctypes.c_void_p(acl_to_text(left, ctypes.byref(left_size)))
+            right_text = ctypes.c_void_p(acl_to_text(right, ctypes.byref(right_size)))
+            if not left_text.value or not right_text.value:
+                code = ctypes.get_errno()
+                raise BackendError(
+                    "METADATA_QUERY", os.strerror(code), native_code=code
+                )
+            return (
+                left_size.value == right_size.value and
+                ctypes.string_at(left_text, left_size.value) ==
+                ctypes.string_at(right_text, right_size.value)
+            )
+        finally:
+            if left_text.value:
+                acl_free(left_text)
+            if right_text.value:
+                acl_free(right_text)
+            acl_free(left)
+            acl_free(right)
+
+    @classmethod
+    def _metadata_for_fd(cls, fd: int) -> tuple[tuple[object, ...], str]:
+        info = os.fstat(fd)
+        fields: tuple[object, ...] = (
+            info.st_uid, info.st_gid, stat_module.S_IMODE(info.st_mode),
+            getattr(info, "st_flags", 0), cls._xattrs(fd),
+        )
+        return fields, hashlib.sha256(repr(fields).encode("utf-8")).hexdigest()
+
+    def prepare_replacement(self, staged: StagedWrite) -> str:
+        data = staged.platform_data
+        if not isinstance(data, _PosixStage) or staged.published:
+            raise BackendError("STAGE_STATE", staged.relative_path)
+        if replace and staged.metadata_fingerprint is None:
+            raise BackendError("METADATA_NOT_PREPARED", staged.relative_path)
+        target_fd = self._open_read(staged.relative_path)
+        try:
+            target = os.fstat(target_fd)
+            candidate = os.fstat(data.file_fd)
+            mode = stat_module.S_IMODE(target.st_mode)
+            if mode & 0o7000:
+                raise BackendError("CUSTOM_METADATA_UNSUPPORTED", "special mode bits")
+            if (target.st_uid, target.st_gid) != (candidate.st_uid, candidate.st_gid):
+                raise BackendError("CUSTOM_METADATA_UNSUPPORTED", "owner or group differs")
+            if self._xattrs(target_fd) != self._xattrs(data.file_fd):
+                raise BackendError("CUSTOM_METADATA_UNSUPPORTED", "extended attributes differ")
+            if not self._darwin_acl_equal(target_fd, data.file_fd):
+                raise BackendError("CUSTOM_METADATA_UNSUPPORTED", "ACL differs")
+            os.fchmod(data.file_fd, mode)
+            os.fsync(data.file_fd)
+            fields, fingerprint = self._metadata_for_fd(data.file_fd)
+            target_fields, _ = self._metadata_for_fd(target_fd)
+            if fields != target_fields:
+                raise BackendError("METADATA_VERIFY", "replacement metadata differs")
+            staged.metadata_fingerprint = fingerprint
+            return fingerprint
+        finally:
+            os.close(target_fd)
+
+    def metadata_fingerprint(self, relative: str) -> str:
+        fd = self._open_read(relative)
+        try:
+            _, fingerprint = self._metadata_for_fd(fd)
+            return fingerprint
+        finally:
+            os.close(fd)
 
     def publish(self, staged: StagedWrite, *, replace: bool) -> PathStat:
         data = staged.platform_data
@@ -318,3 +455,44 @@ class PosixNativeBackend(NativePathBackend):
         if data.parent_fd >= 0:
             os.close(data.parent_fd)
             data.parent_fd = -1
+
+    def abandon(self, staged: StagedWrite) -> None:
+        data = staged.platform_data
+        if not isinstance(data, _PosixStage) or staged.published:
+            return
+        if data.file_fd >= 0:
+            os.close(data.file_fd)
+            data.file_fd = -1
+        if data.parent_fd >= 0:
+            os.close(data.parent_fd)
+            data.parent_fd = -1
+
+    def discard_stage(self, relative: str, stage_id: str) -> None:
+        parts = validate_relative_path(relative, windows=False)
+        normalized = normalize_stage_id(stage_id)
+        parent_fd = self._open_parent(parts)
+        try:
+            try:
+                os.unlink(f".pc-stage-{normalized}.tmp", dir_fd=parent_fd)
+                os.fsync(parent_fd)
+            except FileNotFoundError:
+                pass
+        finally:
+            os.close(parent_fd)
+
+    def writer_lock(self, relative: str) -> _PosixLock:
+        parts = validate_relative_path(relative, windows=False)
+        parent_fd = self._open_parent(parts)
+        try:
+            self._reject_collision(parent_fd, parts[-1])
+            file_fd = os.open(
+                parts[-1], os.O_RDWR | os.O_CREAT | getattr(os, "O_NOFOLLOW", 0) |
+                getattr(os, "O_CLOEXEC", 0), 0o600, dir_fd=parent_fd,
+            )
+            if not stat_module.S_ISREG(os.fstat(file_fd).st_mode):
+                os.close(file_fd)
+                raise BackendError("LOCK_NOT_REGULAR", relative)
+            return _PosixLock(parent_fd, file_fd)
+        except Exception:
+            os.close(parent_fd)
+            raise

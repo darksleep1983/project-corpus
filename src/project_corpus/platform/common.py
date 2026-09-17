@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import PurePosixPath
 import re
 import unicodedata
+from uuid import uuid4
 
 
 class PathValidationError(ValueError):
@@ -15,6 +16,15 @@ WINDOWS_RESERVED = {
     *(f"LPT{i}" for i in range(1, 10)),
     "COM¹", "COM²", "COM³", "LPT¹", "LPT²", "LPT³",
 }
+
+STAGE_ID = re.compile(r"^[0-9a-f]{32}$")
+
+
+def normalize_stage_id(value: str | None) -> str:
+    result = uuid4().hex if value is None else value
+    if not STAGE_ID.fullmatch(result):
+        raise PathValidationError("stage_id must be 32 lowercase hexadecimal characters")
+    return result
 
 
 def validate_relative_path(value: str, *, windows: bool) -> tuple[str, ...]:

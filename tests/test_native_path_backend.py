@@ -6,6 +6,8 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import threading
+import time
 import unittest
 import unicodedata
 
@@ -68,9 +70,13 @@ class NativePathBackendTests(unittest.TestCase):
                 backend.read_bytes("state/STATUS.md", max_bytes=2)
 
             staged = backend.stage_bytes("state/STATUS.md", b"new")
+            expected_metadata = backend.prepare_replacement(staged)
             replaced = backend.publish(staged, replace=True)
             self.assertEqual(replaced.sha256, hashlib.sha256(b"new").hexdigest())
             self.assertNotEqual(old.identity, replaced.identity)
+            self.assertEqual(
+                backend.metadata_fingerprint("state/STATUS.md"), expected_metadata
+            )
 
             staged = backend.stage_bytes("state/CREATED.md", b"created")
             created = backend.publish(staged, replace=False)
@@ -82,6 +88,74 @@ class NativePathBackendTests(unittest.TestCase):
 
         self.assertEqual((self.root / "state" / "STATUS.md").read_bytes(), b"new")
         self.assertEqual((self.root / "PROJECT.md").read_bytes(), b"project")
+
+    def test_replace_requires_metadata_preparation(self):
+        with open_native_backend(self.root) as backend:
+            staged = backend.stage_bytes("state/STATUS.md", b"new")
+            with self.assertRaisesRegex(BackendError, "METADATA_NOT_PREPARED"):
+                backend.publish(staged, replace=True)
+            backend.discard(staged)
+
+    def test_custom_replacement_metadata_fails_closed(self):
+        target = self.root / "state" / "STATUS.md"
+        if sys.platform == "win32":
+            result = subprocess.run(
+                ["icacls.exe", str(target), "/inheritance:d"],
+                capture_output=True,
+                text=True,
+            )
+            if result.returncode:
+                self.skipTest("custom DACL fixture unavailable")
+        else:
+            target.chmod(0o1644)
+        with open_native_backend(self.root) as backend:
+            staged = backend.stage_bytes("state/STATUS.md", b"new")
+            with self.assertRaisesRegex(BackendError, "CUSTOM_METADATA_UNSUPPORTED"):
+                backend.prepare_replacement(staged)
+            backend.discard(staged)
+
+    def test_optional_stat_and_deterministic_orphan_cleanup(self):
+        stage_id = "a" * 32
+        with open_native_backend(self.root) as backend:
+            self.assertIsNone(backend.stat_optional("state/MISSING.md"))
+            staged = backend.stage_bytes(
+                "state/ORPHAN.md", b"orphan", stage_id=stage_id
+            )
+            backend.abandon(staged)
+            backend.discard_stage("state/ORPHAN.md", stage_id)
+            backend.discard_stage("state/ORPHAN.md", stage_id)
+            with self.assertRaises(PathValidationError):
+                backend.stage_bytes("state/BAD.md", b"bad", stage_id="not-valid")
+        self.assertEqual(list((self.root / "state").glob(".pc-stage-*")), [])
+
+    def test_writer_lock_serializes_backend_instances(self):
+        entered = threading.Event()
+        finished = threading.Event()
+
+        def contender():
+            with open_native_backend(self.root) as other:
+                with other.writer_lock("state/writer.lock"):
+                    entered.set()
+            finished.set()
+
+        with open_native_backend(self.root) as backend:
+            with backend.writer_lock("state/writer.lock"):
+                thread = threading.Thread(target=contender)
+                thread.start()
+                time.sleep(0.1)
+                self.assertFalse(entered.is_set())
+            self.assertTrue(entered.wait(2))
+            self.assertTrue(finished.wait(2))
+            thread.join(2)
+
+    def test_one_character_target_name_can_be_replaced(self):
+        target = self.root / "state" / "x"
+        target.write_bytes(b"old")
+        with open_native_backend(self.root) as backend:
+            staged = backend.stage_bytes("state/x", b"new")
+            backend.prepare_replacement(staged)
+            backend.publish(staged, replace=True)
+        self.assertEqual(target.read_bytes(), b"new")
 
     def test_failed_create_preserves_target_and_discard_removes_stage(self):
         with open_native_backend(self.root) as backend:

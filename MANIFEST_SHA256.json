@@ -56,7 +56,7 @@
     "docs/runtime/doctor.md": "45c8dc7569cce7fb30f147d9618d9289fc609fd0478933c5722dc0a7896226d9",
     "docs/security.md": "20084da32b563a4fe0f1f0cb1469405896fdcae8a2e659d80561c910aac4b25c",
     "docs/security.ru.md": "be0e8142a1c92d6878dd90c7f4b8dcde61253384c9440f122d7e4cd2be79980d",
-    "docs/security/platform-guarantees.md": "b6be414a2c5291db1fb3d90cf7ab9f8913f0797eb2fd4a73f7a99d49b3e20c54",
+    "docs/security/platform-guarantees.md": "fffe83c009143a99142f48062fe01d81dbb696abab8d843e29f724f51cf7139f",
     "docs/uninstall.md": "3c65d4938f5a9e56b86d5b13a156120b0d9ed2245b2a340e27a394d66f5ba82e",
     "docs/uninstall.ru.md": "2014e8288537c397c826b34d776b87ab112b96b4e8a34737d8222d78690e0368",
     "examples/sample-active-project/PROJECT_ROADMAP_CURRENT.md": "90cd9f0262dae937df9b55b193dde29f3aefe22065bd0e9cf842382b8d64775a",
@@ -135,13 +135,13 @@
     "tests/test_protocol_v2_conformance.py": "499dac1ca44e6412a3a110452c4d6cf5f1e7c82e53a2e65b54fedaf3dc74d27c",
     "tests/test_repository.py": "d99a97551c3bcb14412ba93fa2addefac0ded30c580f1a92f2d3e3c594b11532",
     "tests/test_v1_compatibility.py": "71685211886c6a480f151c2f757c75ae029a25a46e7b5782ce415807c2aceaea",
-    "docs/runtime/native-path-backend.md": "dc22dbf85da7c72fd732946922d39166ec0980fc623447f4743b567d5f4744a1",
+    "docs/runtime/native-path-backend.md": "b0f6561ec2c4a286efdd56fc23be9a31eaa4c0095555a90ac1b0326bdac14938",
     "src/project_corpus/platform/__init__.py": "43cdf06b843dc7d994f46930029ba9d7200d8407d3ba24a2424c7ba6d9046cb8",
-    "src/project_corpus/platform/base.py": "e2d7a6b69928a03931210c64b2bcc8e19b07d395f07589da837d93e4f949f2af",
-    "src/project_corpus/platform/common.py": "b8e303ff7a8d172c5f03c2cc693b0d61f6d530f36e506eddf193b4757a54051a",
+    "src/project_corpus/platform/base.py": "62e5ddcf9d451ffc2c2dc9e59fae5313cc227c4c734db3a7b3e27eed92d1e728",
+    "src/project_corpus/platform/common.py": "0334b28a81a645aaf6de58cbda2fa2f54389b9c0ed40aa76e7cf7f3f7416ea05",
     "src/project_corpus/platform/factory.py": "34074cc014720bdb2e7c1bac93b638cba75cd600d7eb3ece9fc147e77385399c",
-    "src/project_corpus/platform/posix.py": "a954cc336bc555b325198cb34d131ffa0cec2c59719aadb6699d301aee6b61ef",
-    "src/project_corpus/platform/windows.py": "e361faa29564a37a8b87c2cf4b7447cae52761635220ec474e6a859da1ffb473",
-    "tests/test_native_path_backend.py": "93b65d704b716941c8b0d3e699ef3297ea8e9e6cfd71d204efe787908e65172f"
+    "src/project_corpus/platform/posix.py": "f8a426b00b6a6af30c08c170c73090ca5671547ec2b2da308ee37bb68d8a1543",
+    "src/project_corpus/platform/windows.py": "6b86c6e72f6f47cb7a7430d9b901e75b28bd7199ae7cb555dd2bd1d96320a8d5",
+    "tests/test_native_path_backend.py": "efe9d67ce51fe04bab4461197c3d6ac44383164d16adbb96bbfab55194797a5c"
   }
 }

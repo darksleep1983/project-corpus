@@ -71,8 +71,13 @@ not qualify exFAT or SMB, and successful Linux ext4 tests do not qualify NFS.
 
 On tested NTFS, replacement creates a new file identity, removes alternate data
 streams attached to the old target and retained an equal default inherited
-owner/group/DACL descriptor. Custom ACL preservation was not proven. Production
-must set and verify required metadata or reject the mutation.
+owner/group/DACL descriptor. Custom ACL preservation was not proven. The
+production backend therefore compares owner/group/DACL before replacement and
+rejects a non-equivalent descriptor rather than silently discarding it.
+
+On POSIX, the production backend preserves ordinary mode bits and requires
+owner, group, ACL and extended attributes to match the staged object's inherited
+metadata. Special mode bits and non-equivalent custom metadata fail closed.
 
 V2 managed-document paths forbid ADS. Audit receipts must record the active
 guarantee level and filesystem qualification without recording secret content.

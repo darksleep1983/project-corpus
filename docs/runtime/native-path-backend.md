@@ -19,13 +19,20 @@ The backend:
 - stages bytes in the target directory, flushes the staged file and publishes
   by same-directory native rename/link semantics;
 - supports create-if-absent separately from replacement;
+- requires an explicit metadata-preparation check before every replacement;
+- preserves ordinary POSIX mode bits and rejects unsupported custom ownership,
+  ACL, extended-attribute or special-mode cases; on Windows it rejects a target
+  whose owner/group/DACL differs from the staged file's inherited descriptor;
 - returns content hash and file identity from native handles;
+- provides a local inter-process writer lock and deterministic orphan-stage
+  cleanup for the later transaction/recovery layer;
 - fails managed mutation closed on a filesystem not explicitly qualified.
 
 The backend does **not** grant authority, select a policy, implement optimistic
 concurrency, create backups, write a journal or emit audit receipts. Those are
-transaction-layer responsibilities. Calling this low-level component directly
-is therefore not a controlled CLI/MCP mutation.
+transaction-layer responsibilities. Its lock is local, not distributed.
+Calling this low-level component directly is therefore not a controlled CLI/MCP
+mutation.
 
 ## Platform implementations
 
