@@ -134,6 +134,14 @@
     "tests/test_policy_trust.py": "42f7006f48a5e71cea599ad814b33e0d37da612a8eac48376424e55a29efb660",
     "tests/test_protocol_v2_conformance.py": "499dac1ca44e6412a3a110452c4d6cf5f1e7c82e53a2e65b54fedaf3dc74d27c",
     "tests/test_repository.py": "d99a97551c3bcb14412ba93fa2addefac0ded30c580f1a92f2d3e3c594b11532",
-    "tests/test_v1_compatibility.py": "71685211886c6a480f151c2f757c75ae029a25a46e7b5782ce415807c2aceaea"
+    "tests/test_v1_compatibility.py": "71685211886c6a480f151c2f757c75ae029a25a46e7b5782ce415807c2aceaea",
+    "docs/runtime/native-path-backend.md": "af9246c2814a2e846f30f5e0df41ce25c7139404c67d3aa2675765de9ef8c4a4",
+    "src/project_corpus/platform/__init__.py": "43cdf06b843dc7d994f46930029ba9d7200d8407d3ba24a2424c7ba6d9046cb8",
+    "src/project_corpus/platform/base.py": "e2d7a6b69928a03931210c64b2bcc8e19b07d395f07589da837d93e4f949f2af",
+    "src/project_corpus/platform/common.py": "b8e303ff7a8d172c5f03c2cc693b0d61f6d530f36e506eddf193b4757a54051a",
+    "src/project_corpus/platform/factory.py": "34074cc014720bdb2e7c1bac93b638cba75cd600d7eb3ece9fc147e77385399c",
+    "src/project_corpus/platform/posix.py": "3b3ea13fdf8267714938703d89aa24122d762d5dc2fcd4e908c086b26ab1296f",
+    "src/project_corpus/platform/windows.py": "e361faa29564a37a8b87c2cf4b7447cae52761635220ec474e6a859da1ffb473",
+    "tests/test_native_path_backend.py": "93b65d704b716941c8b0d3e699ef3297ea8e9e6cfd71d204efe787908e65172f"
   }
 }
