@@ -64,7 +64,7 @@ def parse_document(content: bytes, path: str) -> ParsedDocument:
                 metadata[f"__duplicate__{key}"] = match.group(2)
             else:
                 metadata[key] = match.group(2)
-    sections = tuple(re.findall(r"^## ([^\r\n]+)$", text, re.MULTILINE))
+    sections = tuple(re.findall(r"^## ([^\r\n]+)\r?$", text, re.MULTILINE))
     return ParsedDocument(metadata, sections, text)
 
 

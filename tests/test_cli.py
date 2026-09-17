@@ -203,9 +203,10 @@ class CliTests(unittest.TestCase):
         project = self.project / ".project-corpus" / "state" / "PROJECT.md"
         project.write_text(
             project.read_text(encoding="utf-8").replace(
-                "Project-ID: fixture-project", "Project-ID: different-project"
+                "Project-ID: transaction-fixture", "Project-ID: different-project"
             ),
             encoding="utf-8",
+            newline="\n",
         )
         code, error = invoke([
             "trust", "create", str(self.project), "--trust", str(self.trust),

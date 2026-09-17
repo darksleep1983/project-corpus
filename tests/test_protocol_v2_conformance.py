@@ -116,6 +116,12 @@ class ProtocolV2ConformanceTests(unittest.TestCase):
         state = self.root / "templates" / "v2" / "minimal" / ".project-corpus" / "state"
         self.assertEqual(validate_pair(state / "PROJECT.md", state / "STATUS.md"), [])
 
+    def test_runtime_validator_accepts_crlf_markdown(self):
+        state = self.root / "templates" / "v2" / "minimal" / ".project-corpus" / "state"
+        project = (state / "PROJECT.md").read_bytes().replace(b"\n", b"\r\n")
+        status = (state / "STATUS.md").read_bytes().replace(b"\n", b"\r\n")
+        self.assertEqual(validate_state_pair(project, status), ())
+
     def test_portable_policy_has_no_physical_root_or_write_grant(self):
         path = self.root / "templates" / "v2" / "minimal" / ".project-corpus" / "policy.toml"
         raw = path.read_text(encoding="utf-8")
