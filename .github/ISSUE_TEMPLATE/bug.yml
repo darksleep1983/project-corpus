@@ -1,0 +1,56 @@
+name: Bug report
+description: Report a reproducible problem without secrets or private paths.
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve Project Corpus. Do not include credentials,
+        tokens, private Corpus content, or machine-specific paths.
+  - type: dropdown
+    id: layer
+    attributes:
+      label: Affected layer
+      options:
+        - Protocol documentation or template
+        - Manual workflow
+        - Direct-folder workflow
+        - Runtime CLI
+        - Runtime stdio MCP
+        - Documentation site
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: "v2.0.0 or commit SHA"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction steps
+      placeholder: Describe the smallest safe reproduction.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result and redacted output
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed secrets, private URLs, and identifying local paths.
+          required: true

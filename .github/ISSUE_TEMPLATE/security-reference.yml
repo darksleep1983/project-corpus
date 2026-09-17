@@ -1,0 +1,24 @@
+name: Security reference (non-sensitive)
+description: Ask for a public clarification without reporting a vulnerability.
+title: "security docs: "
+labels: [security]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form is only for non-sensitive documentation questions. Do not report
+        a vulnerability here. Use the private route in SECURITY.md instead.
+  - type: textarea
+    id: question
+    attributes:
+      label: Public security documentation question
+      placeholder: Ask about a documented guarantee level or usage boundary.
+    validations:
+      required: true
+  - type: checkboxes
+    id: disclosure
+    attributes:
+      label: Disclosure check
+      options:
+        - label: This contains no exploit details, secrets, private infrastructure, or identifying paths.
+          required: true

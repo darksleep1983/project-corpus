@@ -1,0 +1,37 @@
+name: Feature proposal
+description: Propose a bounded improvement with Protocol and Runtime implications.
+title: "feature: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Describe the user problem, not only a preferred implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed outcome
+    validations:
+      required: true
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Likely impact
+      options:
+        - Documentation or examples only
+        - Protocol clarification
+        - Optional Runtime behavior
+        - Compatibility or migration
+        - Unsure
+    validations:
+      required: true
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: Authority, security, or compatibility considerations
+      description: State why the proposal cannot silently expand Runtime authority.
+    validations:
+      required: true

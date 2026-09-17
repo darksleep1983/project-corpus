@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/darksleep1983/project-corpus/security/policy
+    about: Use private vulnerability reporting. Do not disclose sensitive details in a public issue.
+  - name: Documentation and protocol reference
+    url: https://github.com/darksleep1983/project-corpus/tree/main/docs
+    about: Read the documentation before opening an issue for a usage question.

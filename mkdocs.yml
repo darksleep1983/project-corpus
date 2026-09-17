@@ -1,0 +1,46 @@
+site_name: Project Corpus
+site_description: Persistent project state and authority for AI agents.
+site_url: https://darksleep1983.github.io/project-corpus/
+repo_url: https://github.com/darksleep1983/project-corpus
+repo_name: darksleep1983/project-corpus
+edit_uri: edit/main/
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Home: index.md
+  - Quick Start: quickstart.md
+  - Concepts:
+      - Project state: concepts/project-state.md
+      - Authority: concepts/authority.md
+      - Evidence: concepts/evidence.md
+      - Protocol vs Runtime: concepts/protocol-vs-runtime.md
+  - Protocol: protocol.md
+  - Runtime:
+      - Overview: runtime.md
+      - CLI: runtime/cli.md
+      - Doctor: runtime/doctor.md
+      - Transactions: runtime/transactions.md
+      - Stdio MCP: runtime/stdio-mcp.md
+  - Security: security.md
+  - Migration: migration/v1-read-only-planner.md
+  - MCP: mcp.md
+  - Examples: examples.md
+  - FAQ: faq.md
+  - Contributing: contributing.md

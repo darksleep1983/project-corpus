@@ -1,0 +1,31 @@
+name: Documentation improvement
+description: Report an unclear, missing, or inconsistent documentation path.
+title: "docs: "
+labels: [documentation]
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Documentation location
+      placeholder: README.md, docs/runtime/cli.md, or a site URL
+    validations:
+      required: true
+  - type: textarea
+    id: gap
+    attributes:
+      label: What was unclear or missing?
+    validations:
+      required: true
+  - type: textarea
+    id: improvement
+    attributes:
+      label: Suggested clarification
+    validations:
+      required: true
+  - type: checkboxes
+    id: languages
+    attributes:
+      label: Language consideration
+      options:
+        - label: I considered whether the English and Russian documentation should change together.
+          required: true
