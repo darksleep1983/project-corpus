@@ -1,6 +1,6 @@
 # Local stdio MCP adapter
 
-Status: optional Runtime adapter under platform qualification
+Status: optional Runtime adapter qualified on the listed local filesystems
 
 The adapter exposes a deliberately small tool set over newline-delimited UTF-8
 JSON-RPC on stdin/stdout. It implements the MCP `initialize`, `ping`,
@@ -40,3 +40,12 @@ protocol and lifecycle failures use JSON-RPC errors. Stdout contains protocol
 messages only. Project Corpus does not claim that a third-party MCP host safely
 handles or displays tool results; its guarantee ends at the local stdio adapter
 and the verified filesystem operation.
+
+## Qualification evidence
+
+GitHub Actions run `35206204618` passed 90 tests in all six Windows/Ubuntu/macOS
+and Python 3.11/3.12 jobs. The adapter suite covers lifecycle framing, strict
+arguments, scoped reads, capability/transport denial and a mutation through the
+production transaction engine. The run qualifies only local stdio on the
+platform/filesystem combinations listed in `platform-guarantees.md`; it is not
+evidence for HTTP, remote clients or network filesystems.

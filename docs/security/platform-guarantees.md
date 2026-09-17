@@ -93,6 +93,15 @@ guarantee level and filesystem qualification without recording secret content.
   primitive, not the transaction engine.
 - GitHub Actions run `35182044031` passed the production transaction,
   concurrency, recovery, policy and audit suite in all six OS/Python jobs. This
-  qualifies the transaction core, not an unimplemented CLI or MCP adapter.
-- Controlled CLI/MCP guarantees activate only after the corresponding adapter
-  suite passes; core success is not certification of an unimplemented adapter.
+  qualifies the transaction core.
+- GitHub Actions run `35182881428` passed the controlled CLI adapter suite in
+  all six jobs.
+- GitHub Actions runs `35183223557` and `35183457729` passed the prototype and
+  production create-only directory publication gates used by migration.
+- GitHub Actions run `35205827671` passed controlled, non-destructive V1-to-V2
+  migration in all six jobs.
+- GitHub Actions run `35206204618` passed the local stdio MCP adapter suite in
+  all six jobs.
+
+These runs qualify only the named adapters and local filesystems. They do not
+extend guarantees to an MCP host, network transport or unsupported filesystem.
