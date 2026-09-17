@@ -2,6 +2,11 @@
 
 [Русская версия](CHANGELOG.ru.md)
 
+## Unreleased
+
+- Improved post-v2.0.0 README onboarding with a visual project-state flow, a
+  60-second manual V2 quick start, and clearer optional Runtime setup.
+
 ## 2.0.0 — 2026-09-17
 
 - Added the independent Markdown-first Project Corpus Protocol V2 with
