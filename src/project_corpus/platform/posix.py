@@ -366,8 +366,6 @@ class PosixNativeBackend(NativePathBackend):
         data = staged.platform_data
         if not isinstance(data, _PosixStage) or staged.published:
             raise BackendError("STAGE_STATE", staged.relative_path)
-        if replace and staged.metadata_fingerprint is None:
-            raise BackendError("METADATA_NOT_PREPARED", staged.relative_path)
         target_fd = self._open_read(staged.relative_path)
         try:
             target = os.fstat(target_fd)
@@ -404,6 +402,8 @@ class PosixNativeBackend(NativePathBackend):
         data = staged.platform_data
         if not isinstance(data, _PosixStage) or staged.published:
             raise BackendError("STAGE_STATE", staged.relative_path)
+        if replace and staged.metadata_fingerprint is None:
+            raise BackendError("METADATA_NOT_PREPARED", staged.relative_path)
         try:
             current_parent = self._open_parent(
                 data.parent_parts + (data.target_name,)

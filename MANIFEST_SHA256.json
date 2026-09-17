@@ -140,7 +140,7 @@
     "src/project_corpus/platform/base.py": "62e5ddcf9d451ffc2c2dc9e59fae5313cc227c4c734db3a7b3e27eed92d1e728",
     "src/project_corpus/platform/common.py": "0334b28a81a645aaf6de58cbda2fa2f54389b9c0ed40aa76e7cf7f3f7416ea05",
     "src/project_corpus/platform/factory.py": "34074cc014720bdb2e7c1bac93b638cba75cd600d7eb3ece9fc147e77385399c",
-    "src/project_corpus/platform/posix.py": "f8a426b00b6a6af30c08c170c73090ca5671547ec2b2da308ee37bb68d8a1543",
+    "src/project_corpus/platform/posix.py": "54f54ec28357d43175b7d5b8921a0192dc75b1a9fa1cc09f5a548fb4a0bd6d38",
     "src/project_corpus/platform/windows.py": "6b86c6e72f6f47cb7a7430d9b901e75b28bd7199ae7cb555dd2bd1d96320a8d5",
     "tests/test_native_path_backend.py": "efe9d67ce51fe04bab4461197c3d6ac44383164d16adbb96bbfab55194797a5c"
   }
