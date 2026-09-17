@@ -168,3 +168,105 @@ def publish_bytes(root: Path, relative: str, data: bytes, *, replace: bool) -> N
                 pass
             os.close(parent_fd)
         os.close(root_fd)
+
+
+def publish_tree(root: Path, target: str, files: dict[str, bytes]) -> str:
+    """Prototype create-only publication of a fully staged directory tree."""
+    target_parts = validate_relative_path(target, windows=False)
+    if len(target_parts) != 1:
+        raise PrototypePathError("tree target must be one root child")
+    root_fd = os.open(
+        root,
+        os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) |
+        getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_CLOEXEC", 0),
+    )
+    stage = f".pc-tree-{uuid4().hex}"
+    try:
+        _portable_collision(root_fd, target_parts[0])
+        os.mkdir(stage, 0o700, dir_fd=root_fd)
+        stage_fd = os.open(
+            stage,
+            os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) |
+            getattr(os, "O_NOFOLLOW", 0),
+            dir_fd=root_fd,
+        )
+        try:
+            for relative, content in sorted(files.items()):
+                parts = validate_relative_path(relative, windows=False)
+                parent_fd = os.dup(stage_fd)
+                try:
+                    for part in parts[:-1]:
+                        _portable_collision(parent_fd, part)
+                        try:
+                            os.mkdir(part, 0o700, dir_fd=parent_fd)
+                            os.fsync(parent_fd)
+                        except FileExistsError:
+                            pass
+                        child_fd = os.open(
+                            part,
+                            os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) |
+                            getattr(os, "O_NOFOLLOW", 0),
+                            dir_fd=parent_fd,
+                        )
+                        os.close(parent_fd)
+                        parent_fd = child_fd
+                    _portable_collision(parent_fd, parts[-1])
+                    file_fd = os.open(
+                        parts[-1],
+                        os.O_WRONLY | os.O_CREAT | os.O_EXCL |
+                        getattr(os, "O_NOFOLLOW", 0),
+                        0o600,
+                        dir_fd=parent_fd,
+                    )
+                    try:
+                        view = memoryview(content)
+                        while view:
+                            view = view[os.write(file_fd, view):]
+                        os.fsync(file_fd)
+                    finally:
+                        os.close(file_fd)
+                    os.fsync(parent_fd)
+                finally:
+                    os.close(parent_fd)
+            os.fsync(stage_fd)
+        finally:
+            os.close(stage_fd)
+
+        libc = ctypes.CDLL(None, use_errno=True)
+        if platform.system() == "Linux":
+            rename = libc.renameat2
+            rename.argtypes = [
+                ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p,
+                ctypes.c_uint,
+            ]
+            result = rename(
+                root_fd, stage.encode(), root_fd, target_parts[0].encode(), 1
+            )
+        elif platform.system() == "Darwin":
+            rename = libc.renameatx_np
+            rename.argtypes = [
+                ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p,
+                ctypes.c_uint,
+            ]
+            result = rename(
+                root_fd, stage.encode(), root_fd, target_parts[0].encode(), 0x4
+            )
+        else:
+            raise NativeProbeError("exclusive directory rename is unsupported")
+        if result != 0:
+            code = ctypes.get_errno()
+            raise OSError(code, os.strerror(code), target)
+        os.fsync(root_fd)
+        published_fd = os.open(
+            target_parts[0],
+            os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) |
+            getattr(os, "O_NOFOLLOW", 0),
+            dir_fd=root_fd,
+        )
+        try:
+            identity = os.fstat(published_fd)
+            return f"posix:{identity.st_dev:x}:{identity.st_ino:x}"
+        finally:
+            os.close(published_fd)
+    finally:
+        os.close(root_fd)

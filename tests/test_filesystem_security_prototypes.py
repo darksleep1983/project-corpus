@@ -85,6 +85,21 @@ class WindowsNativeProbeTests(unittest.TestCase):
             "old",
         )
 
+    def test_create_only_directory_tree_publish(self):
+        from prototypes.filesystem_security.windows_native import publish_tree
+
+        identity = publish_tree(
+            self.root, "migrated",
+            {"AGENTS.md": b"bootstrap", "state/STATUS.md": b"state"},
+        )
+        self.assertTrue(identity.startswith("windows:"))
+        self.assertEqual(
+            (self.root / "migrated" / "state" / "STATUS.md").read_bytes(),
+            b"state",
+        )
+        with self.assertRaises(Exception):
+            publish_tree(self.root, "migrated", {"other.md": b"no"})
+
     def test_blocked_replace_keeps_target_and_cleans_temp(self):
         from prototypes.filesystem_security.windows_native import (
             open_without_delete_share, publish_bytes,
@@ -172,6 +187,21 @@ class PosixNativeProbeTests(unittest.TestCase):
         with self.assertRaises(OSError):
             open_confined(self.root, "linked/sentinel.md")
         self.assertEqual((self.outside / "sentinel.md").read_text(encoding="utf-8"), "outside")
+
+    def test_create_only_directory_tree_publish(self):
+        from prototypes.filesystem_security.posix_native import publish_tree
+
+        identity = publish_tree(
+            self.root, "migrated",
+            {"AGENTS.md": b"bootstrap", "state/STATUS.md": b"state"},
+        )
+        self.assertTrue(identity.startswith("posix:"))
+        self.assertEqual(
+            (self.root / "migrated" / "state" / "STATUS.md").read_bytes(),
+            b"state",
+        )
+        with self.assertRaises((FileExistsError, OSError)):
+            publish_tree(self.root, "migrated", {"other.md": b"no"})
 
     def test_case_and_unicode_collisions_fail_portably(self):
         from prototypes.filesystem_security.posix_native import publish_bytes

@@ -183,6 +183,8 @@ def _nt_open_relative(parent: Handle, name: str, *, directory: bool,
     if directory:
         access |= FILE_LIST_DIRECTORY
         options |= FILE_DIRECTORY_FILE
+        if create:
+            access |= DELETE
     else:
         options |= FILE_NON_DIRECTORY_FILE
         access |= GENERIC_READ
@@ -392,3 +394,44 @@ def publish_bytes(root: Path, relative: str, data: bytes, *, replace: bool) -> s
         if not result_identity.file_id:
             raise NativeProbeError("missing final file identity")
     return hashlib.sha256(data).hexdigest()
+
+
+def publish_tree(root: Path, target: str, files: dict[str, bytes]) -> str:
+    """Prototype handle-relative create-only directory tree publication."""
+    target_parts = validate_relative_path(target, windows=True)
+    if len(target_parts) != 1:
+        raise PrototypePathError("tree target must be one root child")
+    stage = f".pc-tree-{uuid4().hex}"
+    with _open_root(root) as root_handle:
+        with _nt_open_relative(
+            root_handle, stage, directory=True, create=True
+        ) as stage_handle:
+            for relative, content in sorted(files.items()):
+                parts = validate_relative_path(relative, windows=True)
+                current = _nt_open_relative(root_handle, stage, directory=True)
+                try:
+                    for part in parts[:-1]:
+                        try:
+                            child = _nt_open_relative(
+                                current, part, directory=True, create=True
+                            )
+                        except NativeProbeError:
+                            child = _nt_open_relative(current, part, directory=True)
+                        current.close()
+                        current = child
+                    with _nt_open_relative(
+                        current, parts[-1], directory=False, create=True
+                    ) as file_handle:
+                        _write_all(file_handle, content)
+                finally:
+                    current.close()
+            _rename_relative(
+                stage_handle, root_handle, target_parts[0], replace=False
+            )
+        with _nt_open_relative(
+            root_handle, target_parts[0], directory=True
+        ) as published:
+            if is_reparse(published):
+                raise NativeProbeError("published directory became a reparse point")
+            value = identity(published)
+            return f"windows:{value.volume_serial:x}:{value.file_id.hex()}"
