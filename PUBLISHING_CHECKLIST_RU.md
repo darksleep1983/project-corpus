@@ -11,8 +11,13 @@
    - прямая папка;
    - документация своего MCP;
    - ручная сессия и передача файлов-замен.
-6. Просмотреть Git history на локальные пути, имена пользователей, credentials и
-   устаревшие серверные инструкции.
+6. Получить все доступные branches/tags/refs, убедиться, что clone не shallow,
+   и выполнить `project-corpus security scan-history REPOSITORY_ROOT`.
+   Проверять только редактированные категории/locations и никогда не копировать
+   найденные значения. Gate должен охватывать reachable history, удалённые
+   файлы, commits, patches, binaries, metadata и локально доступные
+   dangling/unreachable objects. Не заявлять coverage server-side объектов,
+   которые GitHub не передал.
 7. Убедиться, что публичный статус и путь сообщения об уязвимостях актуальны.
 8. Настроить description, topics и Private Vulnerability Reporting.
 9. Подготовить `v0.1.0-preview` как draft release только после заморозки content.

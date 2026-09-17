@@ -19,6 +19,7 @@ from .migration import (
 from .mcp_stdio import run_stdio
 from .platform import open_native_backend
 from .policy import parse_project_policy
+from .security_scan import scan_git_history
 from .transactions import ABSENT, MAX_MANAGED_BYTES, TransactionEngine, path_matches_scopes
 from .trust import (
     TrustGrant, load_trust_grant, provision_runtime_state, runtime_state_path,
@@ -289,6 +290,12 @@ def _cmd_mcp(args: argparse.Namespace) -> None:
     run_stdio(Path(args.trust), capabilities)
 
 
+def _cmd_security_scan(args: argparse.Namespace) -> object:
+    report = scan_git_history(Path(args.root))
+    args.result_exit_code = 0 if report.release_gate_pass else 3
+    return report.public_receipt()
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="project-corpus")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -382,6 +389,13 @@ def build_parser() -> argparse.ArgumentParser:
     command.add_argument("--trust", required=True)
     command.add_argument("--allow", action="append", default=[])
     command.set_defaults(handler=_cmd_mcp)
+
+    security = commands.add_parser("security").add_subparsers(
+        dest="security_command", required=True
+    )
+    command = security.add_parser("scan-history")
+    command.add_argument("root")
+    command.set_defaults(handler=_cmd_security_scan)
     return parser
 
 
@@ -398,7 +412,7 @@ def main(argv: list[str] | None = None) -> int:
         result = args.handler(args)
         if result is not None:
             _json(result)
-        return 0
+        return getattr(args, "result_exit_code", 0)
     except (OSError, UnicodeError, ValueError, RuntimeError, PermissionError) as exc:
         _json(
             {
