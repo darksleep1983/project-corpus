@@ -8,59 +8,113 @@ Project Corpus is a Markdown-first, vendor-neutral protocol that lets ChatGPT,
 Codex, Claude, and other AI agents resume a project from clean context without
 relying on chat memory.
 
-It defines what the project is, which state is current, which rules are
-authoritative, what has been verified, what comes next, and which authority may
-change that state.
+It records the project's canonical identity, current state, evidence, exact
+next action, and authority boundaries in files that remain available when an
+AI session ends. The [Protocol](protocol/v2/README.md) needs only Markdown; the
+[optional Runtime](docs/runtime/cli.md) adds technical enforcement.
 
-The [Protocol](protocol/v2/README.md) works with plain Markdown and requires no
-Runtime, database, or MCP server. It can be used manually and is independent of
-any AI vendor.
+```mermaid
+flowchart LR
+  subgraph without_corpus["Without Project Corpus"]
+    direction TB
+    A1["AI Session A"] --> M["chat memory / ad-hoc notes"]
+    M --> E["session ends"]
+    E --> B1["AI Session B"]
+    B1 --> I["reconstruct from incomplete context"]
+  end
+  subgraph with_corpus["With Project Corpus"]
+    direction TB
+    A2["AI Session A"] --> C["Project Corpus"]
+    C --> P["PROJECT.md — what the project is"]
+    C --> S["STATUS.md — where the project is now"]
+    C --> T["Tasks — authorized work"]
+    C --> R["Reports — evidence"]
+    C --> Y["Policy — project-side limits"]
+    C --> B2["AI Session B"]
+    B2 --> L["load canonical state"]
+    L --> N["continue from exact next action"]
+  end
+```
 
-An [optional reference Runtime](docs/runtime/cli.md) adds declarative policy
-enforcement, expected-hash filesystem transactions, audit/recovery, CLI
-tooling, and local stdio MCP. Runtime behavior does not define or silently
-amend the Protocol. Its enforced guarantees apply only in controlled modes on
-the qualified local filesystems listed in the
-[platform matrix](docs/security/platform-guarantees.md).
+> AI sessions are disposable. Project state is not.
 
-> A memory bank tells an agent what it remembers. Project Corpus defines what
-> the project currently considers authoritative.
+## More than a memory bank
 
-## Why Project Corpus?
+A memory bank helps an agent remember information. Project Corpus additionally
+defines what is canonical, what is current, what counts as evidence, what comes
+next, and who may change state.
 
-AI sessions are disposable. Projects are not. Typical memory files help an
-agent recall information; Project Corpus also separates and defines:
+## 60-second Quick Start
 
-- canonical project identity;
-- current operational state;
-- authority boundaries and change permissions;
-- cited evidence versus saved claims that need re-verification;
-- the exact next action;
-- controlled state changes when the optional Runtime is used.
+No Runtime, MCP server, or package installation is required.
+
+1. Download or clone this repository.
+2. Copy the contents of [`templates/v2/minimal/`](templates/v2/minimal/) into
+   the root of your project. From a repository checkout:
+
+   macOS/Linux:
+
+   ```sh
+   cp -R templates/v2/minimal/. /path/to/your-project/
+   ```
+
+   PowerShell:
+
+   ```powershell
+   Copy-Item -Force .\templates\v2\minimal\AGENTS.md C:\path\to\your-project\
+   Copy-Item -Recurse -Force .\templates\v2\minimal\.project-corpus C:\path\to\your-project\
+   ```
+
+3. Fill in [`.project-corpus/state/PROJECT.md`](templates/v2/minimal/.project-corpus/state/PROJECT.md)
+   with the project ID and durable project identity.
+4. Fill in [`.project-corpus/state/STATUS.md`](templates/v2/minimal/.project-corpus/state/STATUS.md)
+   with the same project ID, verified baseline, blockers, evidence references,
+   and exact next action.
+5. Give ChatGPT, Codex, Claude, or another agent access to the project folder.
+   In a manual chat, upload `AGENTS.md`, `PROJECT.md`, and `STATUS.md`. Then say:
+
+   > Load Project Corpus for this project. Follow `AGENTS.md`; read
+   > `.project-corpus/state/PROJECT.md` and
+   > `.project-corpus/state/STATUS.md` completely; load only the active Task
+   > and cited Reports; state the project ID, current status, active Task, and
+   > exact next action; then continue from that action.
+
+### Want enforcement too?
+
+The optional Runtime is currently installed from a local clone, not from PyPI:
+
+```sh
+git clone https://github.com/darksleep1983/project-corpus.git
+cd project-corpus
+python -m pip install .
+project-corpus validate /path/to/your-project
+project-corpus doctor /path/to/your-project
+```
+
+It adds validation/doctor, external owner trust, policy enforcement,
+expected-hash transactions, audit/recovery, and optional local stdio MCP.
+Controlled writes require an external owner trust grant; follow the
+[Runtime CLI guide](docs/runtime/cli.md) rather than treating project content as
+authority.
 
 ## Protocol and Runtime
 
-| Project Corpus Protocol | Project Corpus Runtime |
+| Project Corpus Protocol | Optional Project Corpus Runtime |
 | --- | --- |
-| Markdown-first and vendor-neutral | Optional reference implementation |
-| No installation or database | CLI and validation |
-| Manual workflow supported | Policy enforcement and external owner trust |
-| MCP optional | Verified transactions, audit/recovery, local stdio MCP |
+| Markdown-first and vendor-neutral | Validation and controlled CLI |
+| No installation or database | External owner trust and policy enforcement |
+| Manual workflow supported | Verified writes and audit/recovery |
+| MCP optional | Optional local stdio MCP |
 
-The Protocol is the product contract. The Runtime is an optional enforcement
-layer for users who need stronger technical controls.
+The Protocol is the portable product contract. The Runtime implements it but
+does not define or silently amend it. Enforced guarantees apply only in
+controlled modes on the qualified local filesystems listed in the
+[platform matrix](docs/security/platform-guarantees.md).
 
-## The idea in one minute
+## Maintained V1 workflow
 
-```text
-copy a clean Corpus template
-→ choose how your AI can access it
-→ describe the project in normal language
-→ keep the current files synchronized
-→ continue in a new session from the exact next action
-```
-
-The maintained V1 Corpus template contains:
+The original V1 workflow remains available for existing projects. Its template
+contains:
 
 ```text
 AGENTS.md
@@ -78,7 +132,7 @@ Report/
 `Tasks/` contains scoped work orders; `Report/` contains evidence of completed
 work.
 
-## Choose one access mode
+## Choose one V1 access mode
 
 | Mode | Best for | What happens |
 | --- | --- | --- |
@@ -95,7 +149,7 @@ Read the detailed guides:
 - [Your own MCP](docs/access/own-mcp.md)
 - [Manual sessions](docs/access/manual.md)
 
-## Five-minute start
+## V1 five-minute start
 
 1. Download or clone this repository.
 2. Copy one language folder to a safe location and name it `Corpus`:
@@ -123,7 +177,7 @@ Client interfaces and plan availability can change. Each guide keeps volatile
 client setup separate from the stable Corpus protocol and links to official
 documentation.
 
-## Manual mode really works
+## V1 manual mode really works
 
 If you do not want to configure local folders or MCP:
 
