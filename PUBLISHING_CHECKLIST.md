@@ -11,8 +11,12 @@
    - direct folder;
    - owner-provided MCP documentation;
    - manual session and replacement-file handoff.
-6. Review Git history for local paths, user names, credentials, and obsolete
-   server instructions.
+6. Fetch every available branch/tag/ref, confirm the clone is not shallow, and
+   run `project-corpus security scan-history REPOSITORY_ROOT`. Review only the
+   redacted categories/locations; never copy matched values. The gate must cover
+   reachable history, deleted files, commits, patches, binaries, metadata, and
+   locally available dangling/unreachable objects. Do not claim coverage of
+   server-side objects that GitHub did not transfer.
 7. Confirm that public-facing status wording and the security reporting route
    are current.
 8. Configure description, topics, and Private Vulnerability Reporting.

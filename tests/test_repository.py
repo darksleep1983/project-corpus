@@ -20,23 +20,12 @@ class RepositoryTests(unittest.TestCase):
             and path.name != "MANIFEST_SHA256.json"
         }
 
-    def test_embedded_runtime_is_absent(self):
-        forbidden = (
-            ".env.example",
-            "install.ps1",
-            "install.sh",
-            "start.ps1",
-            "start.sh",
-            "pyproject.toml",
-            "scripts",
-            "src",
-            "tests/test_core.py",
-            "tests/test_mcp_integration.py",
-            "tests/test_scripts.py",
-            "tests/test_setup_helpers.py",
-        )
-        for relative in forbidden:
-            self.assertFalse((self.root / relative).exists(), relative)
+    def test_v1_templates_and_v2_layers_remain_separate(self):
+        self.assertTrue((self.root / "template" / "en" / "AGENTS.md").is_file())
+        self.assertTrue((self.root / "template" / "ru" / "AGENTS.md").is_file())
+        self.assertTrue((self.root / "protocol" / "v2" / "specification.md").is_file())
+        self.assertTrue((self.root / "src" / "project_corpus" / "__init__.py").is_file())
+        self.assertTrue((self.root / "pyproject.toml").is_file())
 
     def test_active_docs_have_no_obsolete_runtime_contract(self):
         active = [

@@ -1,0 +1,18 @@
+policy_version = "2.0"
+project_id = "example-project"
+profile = "READ_ONLY"
+
+[capabilities]
+allow = ["corpus.read", "corpus.stat", "corpus.validate"]
+
+[scopes]
+read = [".project-corpus/state/**", ".project-corpus/tasks/**", ".project-corpus/reports/**"]
+write = []
+
+[requirements]
+expected_hash = true
+verified_readback = true
+audit_receipt = true
+
+# This portable file never contains or grants a physical filesystem root.
+# Runtime treats it as a request bounded by an external owner trust grant.

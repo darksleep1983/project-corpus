@@ -4,6 +4,17 @@
 
 ## Unreleased
 
+- Добавлен независимый Markdown-first Project Corpus Protocol V2 с разделёнными
+  ролями canonical state и явными conformance rules.
+- Добавлен необязательный reference Runtime для Python 3.11+: внешний owner
+  trust, нативные confined transactions, audit/recovery, CLI и локальный stdio
+  MCP.
+- Добавлены read-only планирование и controlled create-only миграция V1→V2;
+  V1-шаблоны остаются неизменными и работоспособными.
+- Добавлен обязательный редактированный release gate всей доступной локальной
+  Git history.
+- Не включены Git commit/push, HTTP/remote MCP, arbitrary shell execution,
+  sandbox, orchestration, distributed locking и multi-project operation.
 - Project Corpus переосмыслен как Markdown-протокол, а не встроенный сервер.
 - Добавлены три равноправных режима: прямая папка, MCP владельца и ручная
   загрузка в сессию.

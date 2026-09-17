@@ -12,6 +12,20 @@ Project Corpus keeps that state in a compact set of ordinary Markdown files on
 your computer. There is no application to install and no required Python
 runtime. MCP is optional.
 
+## V2 implementation preview
+
+This branch adds the Markdown-first, vendor-neutral
+[Project Corpus Protocol V2](protocol/v2/README.md) while keeping the existing
+V1 templates and workflow intact. Protocol V2 remains usable manually with no
+installation.
+
+An [optional reference Runtime](docs/runtime/cli.md) for Python 3.11+ implements
+validation, externally granted policy enforcement, native confined filesystem
+transactions, audit/recovery, non-destructive V1 migration, a local CLI, and a
+local stdio MCP adapter. Runtime behavior does not define or silently amend the
+Protocol. The exact guarantee levels and qualified local filesystems are listed
+in the [platform matrix](docs/security/platform-guarantees.md).
+
 ## The idea in one minute
 
 ```text
@@ -105,7 +119,9 @@ must not claim that it saved them on your computer.
 - Project Corpus is a documentation protocol, not a security sandbox.
 - Real access is controlled by your AI client, filesystem permissions, or your
   chosen MCP server.
-- This repository does not provide, run, or audit an MCP server.
+- V1 direct-folder and manual workflows do not gain Runtime enforcement.
+- The optional V2 Runtime provides local CLI and stdio MCP only; it does not
+  provide HTTP/remote MCP or audit third-party servers.
 - A saved Report is not proof that a service or external system is currently
   healthy.
 - Do not store passwords, tokens, cookies, seed phrases, or API keys in the
