@@ -1,6 +1,6 @@
 # Native path backend
 
-Status: production component; platform qualification is test-gated
+Status: production primitive; backend matrix passed, transaction guarantee inactive
 
 The Runtime uses an explicit native path backend for all controlled reads and
 for the filesystem primitives that a later transaction layer will compose.
@@ -52,6 +52,12 @@ On NTFS, staged file data is flushed and namespace replacement is atomic in the
 tested cases; directory-flush-equivalent sudden-power-loss durability is not
 claimed. See [platform guarantees](../security/platform-guarantees.md).
 
-Production guarantee activation requires the backend suite to pass on the
-corresponding operating system and filesystem. Prototype results alone do not
-activate this component's guarantees.
+GitHub Actions run `35180605924` passed the production backend suite in all six
+OS/Python jobs: Windows/NTFS, Ubuntu/ext4 and macOS/APFS on Python 3.11 and
+3.12. An earlier run failed because the macOS fallback exposed `ENOTDIR` as a
+raw exception; confinement held, the error contract was normalized, and the
+complete matrix was rerun.
+
+This qualifies only the native path primitive. The controlled CLI/MCP mutation
+guarantee remains inactive until the independent transaction, concurrency,
+recovery, policy and audit suites pass.

@@ -83,5 +83,9 @@ guarantee level and filesystem qualification without recording secret content.
   `prototypes/filesystem_security/`.
 - GitHub Actions run `35121332371` passed all six OS/Python jobs and recorded
   NTFS, ext4 and APFS as the backing filesystems.
-- Production guarantees activate only after the production implementation passes
-  its own matrix; prototype success is a gate, not certification of future code.
+- GitHub Actions run `35180605924` passed the production native path backend
+  suite in all six OS/Python jobs. This qualifies the confinement/publication
+  primitive, not the transaction engine.
+- Controlled mutation guarantees activate only after the production
+  transaction, concurrency, recovery, policy and audit suites pass; prototype
+  and backend success are gates, not certification of unimplemented layers.
