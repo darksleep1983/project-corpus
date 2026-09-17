@@ -55,6 +55,7 @@ project-corpus task create --trust GRANT --input FILE --id ARTIFACT_ID
 project-corpus report create --trust GRANT --input FILE --id ARTIFACT_ID
 project-corpus audit-read --trust GRANT --transaction-id ID
 project-corpus runtime recover --trust GRANT
+project-corpus mcp --trust GRANT --allow mcp.stdio [--allow CAPABILITY ...]
 ```
 
 Read and stat evaluate the same four-way authority intersection and portable
@@ -66,6 +67,9 @@ current SHA-256.
 
 The CLI contains no Git commit/push, HTTP MCP, shell execution, sandbox,
 orchestration, distributed locking or multi-project server operation.
+The `mcp` command starts the optional local stdio adapter documented in
+[`stdio-mcp.md`](stdio-mcp.md); it adds no capabilities beyond the explicit
+client subset.
 
 ## Qualification evidence
 

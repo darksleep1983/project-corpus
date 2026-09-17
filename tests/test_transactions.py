@@ -72,7 +72,7 @@ project_id = "transaction-fixture"
 profile = "SAFE_EDIT"
 
 [capabilities]
-allow = ["corpus.read", "corpus.stat", "corpus.validate", "state.update", "task.create", "report.create", "audit.read"]
+allow = ["corpus.read", "corpus.stat", "corpus.validate", "state.update", "task.create", "report.create", "audit.read", "mcp.stdio"]
 
 [scopes]
 read = [".project-corpus/state/**", ".project-corpus/tasks/**", ".project-corpus/reports/**", ".project-corpus/audit/**"]

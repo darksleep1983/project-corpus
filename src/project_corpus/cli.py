@@ -16,6 +16,7 @@ from .migration import (
     apply_migration, authorize_migration, load_migration_authorization,
     plan_v1_migration,
 )
+from .mcp_stdio import run_stdio
 from .platform import open_native_backend
 from .policy import parse_project_policy
 from .transactions import ABSENT, MAX_MANAGED_BYTES, TransactionEngine, path_matches_scopes
@@ -280,6 +281,14 @@ def _cmd_audit_read(args: argparse.Namespace) -> object:
     return _controlled_read(args, "audit.read")
 
 
+def _cmd_mcp(args: argparse.Namespace) -> None:
+    capabilities = frozenset(args.allow or ())
+    outside = capabilities - RUNTIME_HARD_LIMITS
+    if outside:
+        raise ValueError(f"capabilities outside runtime hard limits: {sorted(outside)}")
+    run_stdio(Path(args.trust), capabilities)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="project-corpus")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -368,6 +377,11 @@ def build_parser() -> argparse.ArgumentParser:
     command.add_argument("--trust", required=True)
     command.add_argument("--transaction-id", required=True)
     command.set_defaults(handler=_cmd_audit_read)
+
+    command = commands.add_parser("mcp")
+    command.add_argument("--trust", required=True)
+    command.add_argument("--allow", action="append", default=[])
+    command.set_defaults(handler=_cmd_mcp)
     return parser
 
 
@@ -382,7 +396,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         args = parser.parse_args(argv)
         result = args.handler(args)
-        _json(result)
+        if result is not None:
+            _json(result)
         return 0
     except (OSError, UnicodeError, ValueError, RuntimeError, PermissionError) as exc:
         _json(
