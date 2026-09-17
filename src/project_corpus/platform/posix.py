@@ -319,15 +319,26 @@ class PosixNativeBackend(NativePathBackend):
         acl_to_text.restype = ctypes.c_void_p
         acl_free = libc.acl_free
         acl_free.argtypes = [ctypes.c_void_p]
-        left = acl_get_fd(left_fd)
-        right = acl_get_fd(right_fd)
-        if not left or not right:
-            if left:
-                acl_free(left)
-            if right:
-                acl_free(right)
+        def read_acl(fd: int) -> int | None:
+            ctypes.set_errno(0)
+            value = acl_get_fd(fd)
+            if value:
+                return value
             code = ctypes.get_errno()
-            raise BackendError("METADATA_QUERY", os.strerror(code), native_code=code)
+            if code == errno.ENOENT:
+                return None
+            raise BackendError(
+                "METADATA_QUERY", os.strerror(code), native_code=code
+            )
+
+        left = read_acl(left_fd)
+        right = read_acl(right_fd)
+        if left is None or right is None:
+            if left is not None:
+                acl_free(left)
+            if right is not None:
+                acl_free(right)
+            return left is None and right is None
         left_text = ctypes.c_void_p()
         right_text = ctypes.c_void_p()
         try:
