@@ -8,7 +8,7 @@
     ".github/ISSUE_TEMPLATE/feature.yml": "d982ef81150418e491d0b2d397dab634c8a42ddd7ab65991890e0f2f6f42ec91",
     ".github/ISSUE_TEMPLATE/security-reference.yml": "51dd8056975609ebaf2a7f060256994f16149bc1576f2d23ec462c5dc2c49f11",
     ".github/pull_request_template.md": "d741315978affa4dc604eb1dfcd2113d93c1790de5160aa4f6049f27b0a67cd2",
-    ".github/workflows/docs.yml": "1ea5650da3ef98c229bdd943f07844f42d448c1d6c1f0034b178a70fbcc1559f",
+    ".github/workflows/docs.yml": "e55de3c1a47f23ab05d5cbb4823e749803c55fdc3933751b7fffae97f6d8880d",
     ".github/workflows/publish-pypi.yml.example": "8defe58f6ff11257867db97d91b740c7087c21b14f440381a7f85c0510088dba",
     ".github/workflows/release-qualification.yml": "73fd926197a186e7e1e75b30001acc202211736439fcf126ce9d614aa20d9475",
     ".github/workflows/test.yml": "ff2567122798a5669ef6fb0a3f807fcf299ce12d58a9b394a76dad650dd9b766",
