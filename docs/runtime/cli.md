@@ -12,10 +12,17 @@ fail-closed validation, authority, confinement or transaction error.
 project-corpus doctor PROJECT_ROOT [--trust OWNER_GRANT]
 project-corpus validate PROJECT_ROOT
 project-corpus migration plan V1_ROOT --project-id ID --logical-name NAME
+project-corpus migration authorize V1_ROOT --destination NEW_V2_ROOT \
+  --authorization OWNER_FILE --project-id ID --logical-name NAME
+project-corpus migration apply V1_ROOT --authorization OWNER_FILE \
+  --trust NEW_TRUST_GRANT [--allow CAPABILITY ...]
 ```
 
-These commands do not mutate the project. `validate` is direct-folder
-observation; it does not claim Runtime enforcement.
+`plan` does not mutate the project. `authorize` writes only external owner
+configuration and provisions its external lock state. `apply` creates a
+separate, previously absent V2 destination with create-only directory
+publication; neither command changes V1. `validate` is direct-folder
+observation and does not claim Runtime enforcement.
 
 ## Owner trust and Runtime state
 

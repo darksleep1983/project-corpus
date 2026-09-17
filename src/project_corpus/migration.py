@@ -1,11 +1,23 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime, timezone
 import hashlib
 import json
+import os
+from pathlib import Path
 import re
 
-from .compatibility import LegacySnapshot
+from .authority import RUNTIME_HARD_LIMITS
+from .compatibility import LegacySnapshot, load_v1_corpus_confined
+from .platform import open_native_backend
+from .platform.common import validate_relative_path
+from .policy import parse_project_policy
+from .trust import (
+    TrustGrant, load_trust_grant, provision_runtime_state, runtime_state_path,
+    write_trust_grant,
+)
+from .validation import validate_v2_project
 
 
 PROJECT_ID = re.compile(r"^[a-z0-9][a-z0-9._-]{2,63}$")
@@ -172,10 +184,10 @@ project_id = "{project_id}"
 profile = "READ_ONLY"
 
 [capabilities]
-allow = ["corpus.read", "corpus.stat", "corpus.validate", "migration.plan"]
+allow = ["corpus.read", "corpus.stat", "corpus.validate", "migration.plan", "audit.read"]
 
 [scopes]
-read = [".project-corpus/state/**", ".project-corpus/tasks/**", ".project-corpus/reports/**"]
+read = [".project-corpus/state/**", ".project-corpus/tasks/**", ".project-corpus/reports/**", ".project-corpus/audit/**"]
 write = []
 
 [requirements]
@@ -194,6 +206,9 @@ generated views are non-authoritative unless current state explicitly cites them
         _planned_text("AGENTS.md", agents_text, ("AGENTS.md",)),
         _planned_text(".project-corpus/policy.toml", policy_text, ("CORPUS_ACCESS_CURRENT.md",)),
         PlannedFile(".project-corpus/audit/.gitkeep", b"\n", ()),
+        PlannedFile(".project-corpus/history/.gitkeep", b"\n", ()),
+        PlannedFile(".project-corpus/tasks/.gitkeep", b"\n", ()),
+        PlannedFile(".project-corpus/reports/.gitkeep", b"\n", ()),
         _planned_text(
             ".project-corpus/state/PROJECT.md", project_text,
             ("AGENTS.md", "PROJECT_ROADMAP_CURRENT.md"),
@@ -220,3 +235,288 @@ generated views are non-authoritative unless current state explicitly cites them
         trust_root_suggestion=_root_suggestion(roadmap),
         warnings=tuple(warnings),
     )
+
+
+@dataclass(frozen=True)
+class MigrationAuthorization:
+    project_id: str
+    logical_name: str
+    source_manifest: dict[str, str]
+    plan_sha256: str
+    destination_parent: Path
+    destination_name: str
+    parent_identity: str
+    filesystem: str
+    approved_at: str
+
+    def to_bytes(self) -> bytes:
+        value = {
+            "format": "project-corpus-migration-authorization-v1",
+            "project_id": self.project_id,
+            "logical_name": self.logical_name,
+            "source_manifest": dict(sorted(self.source_manifest.items())),
+            "plan_sha256": self.plan_sha256,
+            "destination_parent": str(self.destination_parent),
+            "destination_name": self.destination_name,
+            "parent_identity": self.parent_identity,
+            "filesystem": self.filesystem,
+            "approved_at": self.approved_at,
+        }
+        return (json.dumps(value, indent=2, sort_keys=True) + "\n").encode()
+
+
+def migration_plan_sha256(plan: MigrationPlan) -> str:
+    return hashlib.sha256(plan.public_receipt_json().encode()).hexdigest()
+
+
+def _require_disjoint(left: Path, right: Path, code: str) -> None:
+    left_path = left.resolve(strict=False)
+    right_path = right.resolve(strict=False)
+    try:
+        common = Path(os.path.commonpath((left_path, right_path)))
+    except ValueError:
+        return
+    same_left = os.path.normcase(str(common)) == os.path.normcase(str(left_path))
+    same_right = os.path.normcase(str(common)) == os.path.normcase(str(right_path))
+    if same_left or same_right:
+        raise ValueError(code)
+
+
+def _write_external(path: Path, content: bytes) -> None:
+    path = path.absolute().resolve(strict=False)
+    if path.is_symlink() or path.exists():
+        raise ValueError("migration authorization target must be absent and regular")
+    path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    temp = path.with_name(f".{path.name}.{os.urandom(8).hex()}.tmp")
+    descriptor = os.open(temp, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    try:
+        view = memoryview(content)
+        while view:
+            view = view[os.write(descriptor, view):]
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+    try:
+        os.replace(temp, path)
+        if os.name != "nt":
+            directory = os.open(path.parent, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
+            try:
+                os.fsync(directory)
+            finally:
+                os.close(directory)
+    finally:
+        try:
+            temp.unlink()
+        except FileNotFoundError:
+            pass
+
+
+def authorize_migration(
+    source: Path, destination: Path, authorization_path: Path, *,
+    project_id: str, logical_name: str,
+) -> MigrationAuthorization:
+    destination = destination.absolute()
+    _require_disjoint(source, destination, "MIGRATION_DESTINATION_NOT_SEPARATE")
+    _require_disjoint(source, authorization_path, "MIGRATION_AUTH_NOT_EXTERNAL")
+    _require_disjoint(destination, authorization_path, "MIGRATION_AUTH_NOT_EXTERNAL")
+    parent = destination.parent.resolve()
+    parts = validate_relative_path(destination.name, windows=os.name == "nt")
+    if len(parts) != 1:
+        raise ValueError("migration destination must be one portable directory name")
+    if destination.exists():
+        raise ValueError("migration destination must not exist")
+    with open_native_backend(source) as source_backend:
+        snapshot = load_v1_corpus_confined(source_backend)
+    plan = plan_v1_migration(
+        snapshot, project_id=project_id, logical_name=logical_name
+    )
+    with open_native_backend(parent) as parent_backend:
+        if destination.name in parent_backend.root_entries():
+            raise ValueError("migration destination already exists")
+        authorization = MigrationAuthorization(
+            project_id, logical_name.strip(), dict(plan.source_manifest),
+            migration_plan_sha256(plan), parent, destination.name,
+            parent_backend.root_identity, parent_backend.filesystem,
+            datetime.now(timezone.utc).isoformat(timespec="seconds").replace(
+                "+00:00", "Z"
+            ),
+        )
+    provision_runtime_state(runtime_state_path(authorization_path, project_id))
+    _write_external(authorization_path, authorization.to_bytes())
+    return authorization
+
+
+def load_migration_authorization(path: Path) -> MigrationAuthorization:
+    path = path.absolute()
+    if path.is_symlink():
+        raise ValueError("migration authorization cannot be a symlink")
+    try:
+        value = json.loads(path.read_bytes().decode())
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"invalid migration authorization: {exc}") from exc
+    expected = {
+        "format", "project_id", "logical_name", "source_manifest", "plan_sha256",
+        "destination_parent", "destination_name", "parent_identity", "filesystem",
+        "approved_at",
+    }
+    if not isinstance(value, dict) or set(value) != expected:
+        raise ValueError("invalid migration authorization schema")
+    string_fields = (
+        "format", "project_id", "logical_name", "plan_sha256",
+        "destination_parent", "destination_name", "parent_identity",
+        "filesystem", "approved_at",
+    )
+    if any(not isinstance(value.get(key), str) or not value[key] for key in string_fields):
+        raise ValueError("invalid migration authorization field type")
+    if value["format"] != "project-corpus-migration-authorization-v1":
+        raise ValueError("unsupported migration authorization")
+    if not PROJECT_ID.fullmatch(value["project_id"]):
+        raise ValueError("invalid authorized project id")
+    if not re.fullmatch(r"[0-9a-f]{64}", value["plan_sha256"]):
+        raise ValueError("invalid authorized plan digest")
+    manifest = value["source_manifest"]
+    if not isinstance(manifest, dict) or not all(
+        isinstance(key, str) and isinstance(item, str) and re.fullmatch(r"[0-9a-f]{64}", item)
+        for key, item in manifest.items()
+    ):
+        raise ValueError("invalid authorized source manifest")
+    return MigrationAuthorization(
+        value["project_id"], value["logical_name"], manifest,
+        value["plan_sha256"], Path(value["destination_parent"]),
+        value["destination_name"], value["parent_identity"], value["filesystem"],
+        value["approved_at"],
+    )
+
+
+def _expected_tree(plan: MigrationPlan, authorization: MigrationAuthorization) -> dict[str, bytes]:
+    files = {item.relative_path: item.content for item in plan.planned_files}
+    receipt_path = f".project-corpus/audit/{authorization.plan_sha256[:32]}.json"
+    receipt = {
+        "format": "project-corpus-migration-audit-v1",
+        "project_id": authorization.project_id,
+        "plan_sha256": authorization.plan_sha256,
+        "source_manifest": dict(sorted(authorization.source_manifest.items())),
+        "filesystem": authorization.filesystem,
+        "guarantee_level": "CONTROLLED_MIGRATION_BOOTSTRAP",
+        "approved_at": authorization.approved_at,
+    }
+    files[receipt_path] = (json.dumps(receipt, indent=2, sort_keys=True) + "\n").encode()
+    return files
+
+
+def _verify_tree(backend, prefix: str, files: dict[str, bytes]) -> None:
+    expected_entries: dict[str, set[str]] = {prefix: set()}
+    for relative in files:
+        parts = relative.split("/")
+        parent = prefix
+        for index, part in enumerate(parts):
+            expected_entries.setdefault(parent, set()).add(part)
+            if index < len(parts) - 1:
+                parent = f"{parent}/{part}"
+                expected_entries.setdefault(parent, set())
+    for directory, names in sorted(expected_entries.items()):
+        if set(backend.directory_entries(directory)) != names:
+            raise ValueError(f"migration tree mismatch: {directory}")
+    for relative, content in files.items():
+        actual = backend.read_bytes(f"{prefix}/{relative}")
+        if actual != content:
+            raise ValueError(f"migration content mismatch: {relative}")
+
+
+def apply_migration(
+    source: Path, authorization_path: Path, trust_path: Path, *,
+    capabilities: frozenset[str],
+) -> dict[str, object]:
+    if capabilities - RUNTIME_HARD_LIMITS or "migration.apply" in capabilities:
+        raise ValueError("invalid post-migration capability ceiling")
+    authorization = load_migration_authorization(authorization_path)
+    destination_path = (
+        authorization.destination_parent / authorization.destination_name
+    )
+    _require_disjoint(source, destination_path, "MIGRATION_DESTINATION_NOT_SEPARATE")
+    _require_disjoint(source, authorization_path, "MIGRATION_AUTH_NOT_EXTERNAL")
+    _require_disjoint(destination_path, authorization_path, "MIGRATION_AUTH_NOT_EXTERNAL")
+    _require_disjoint(destination_path, trust_path, "TRUST_GRANT_NOT_EXTERNAL")
+    with open_native_backend(source) as source_backend:
+        snapshot = load_v1_corpus_confined(source_backend)
+    plan = plan_v1_migration(
+        snapshot, project_id=authorization.project_id,
+        logical_name=authorization.logical_name,
+    )
+    if (
+        plan.source_manifest != authorization.source_manifest or
+        migration_plan_sha256(plan) != authorization.plan_sha256
+    ):
+        raise ValueError("migration source or plan changed after owner authorization")
+    files = _expected_tree(plan, authorization)
+    runtime = runtime_state_path(authorization_path, authorization.project_id)
+    with open_native_backend(runtime) as runtime_backend:
+        with runtime_backend.writer_lock("locks/migration.lock"):
+            with open_native_backend(authorization.destination_parent) as parent:
+                if (
+                    parent.root_identity != authorization.parent_identity or
+                    parent.filesystem != authorization.filesystem
+                ):
+                    raise ValueError("authorized destination parent changed")
+                stage = f".pc-migration-{authorization.plan_sha256[:24]}"
+                destination = authorization.destination_name
+                entries = set(parent.root_entries())
+                if destination not in entries:
+                    if stage not in entries:
+                        parent.create_directory(stage, exist_ok=False)
+                    for relative, content in sorted(files.items()):
+                        parts = relative.split("/")
+                        for index in range(1, len(parts)):
+                            parent.create_directory(
+                                f"{stage}/{'/'.join(parts[:index])}", exist_ok=True
+                            )
+                        target = f"{stage}/{relative}"
+                        current = parent.stat_optional(target)
+                        if current is None:
+                            staged = parent.stage_bytes(target, content)
+                            parent.publish(staged, replace=False)
+                        elif current.sha256 != hashlib.sha256(content).hexdigest():
+                            raise ValueError(f"migration staged content conflict: {relative}")
+                    _verify_tree(parent, stage, files)
+                    destination_identity = parent.publish_directory(stage, destination)
+                else:
+                    if stage in entries:
+                        raise ValueError("published destination and staging tree both exist")
+                    with open_native_backend(
+                        authorization.destination_parent / destination
+                    ) as destination_backend:
+                        if set(destination_backend.root_entries()) != {
+                            "AGENTS.md", ".project-corpus"
+                        }:
+                            raise ValueError("published migration root contains unexpected entries")
+                        _verify_tree(destination_backend, ".project-corpus", {
+                            key.removeprefix(".project-corpus/"): value
+                            for key, value in files.items()
+                            if key.startswith(".project-corpus/")
+                        })
+                        if destination_backend.read_bytes("AGENTS.md") != files["AGENTS.md"]:
+                            raise ValueError("published migration AGENTS mismatch")
+                        destination_identity = destination_backend.root_identity
+
+    validation = validate_v2_project(destination_path)
+    if not validation.valid:
+        raise ValueError("published migration is not V2-conformant")
+    policy = parse_project_policy(files[".project-corpus/policy.toml"])
+    grant = TrustGrant(
+        authorization.project_id, destination_path, destination_identity,
+        policy.digest, capabilities, authorization.filesystem,
+        frozenset({"cli"}), authorization.approved_at, "2.0",
+    )
+    if trust_path.exists():
+        if load_trust_grant(trust_path) != grant:
+            raise ValueError("existing trust grant differs from migration result")
+    else:
+        write_trust_grant(trust_path, grant, replace=False)
+    return {
+        "ok": True,
+        "project_id": authorization.project_id,
+        "destination": str(destination_path),
+        "root_identity": destination_identity,
+        "plan_sha256": authorization.plan_sha256,
+        "source_preserved": True,
+    }

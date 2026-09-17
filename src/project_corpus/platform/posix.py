@@ -589,3 +589,51 @@ class PosixNativeBackend(NativePathBackend):
             return f"posix:{info.st_dev:x}:{info.st_ino:x}"
         finally:
             os.close(fd)
+
+    def root_entries(self) -> tuple[str, ...]:
+        return tuple(sorted(os.listdir(self._root_fd)))
+
+    def walk_files(self, relative: str) -> tuple[str, ...]:
+        parts = validate_relative_path(relative, windows=False)
+        try:
+            start = self._open_components(
+                parts, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0)
+            )
+        except OSError as exc:
+            raise BackendError("PATH_OPEN", str(exc)) from exc
+        files: list[str] = []
+
+        def visit(directory_fd: int, prefix: tuple[str, ...]) -> None:
+            names = sorted(os.listdir(directory_fd))
+            keys: dict[str, str] = {}
+            for name in names:
+                key = unicodedata.normalize("NFC", name).casefold()
+                if key in keys and keys[key] != name:
+                    raise BackendError("PORTABLE_NAME_COLLISION", name)
+                keys[key] = name
+                try:
+                    child = os.open(
+                        name,
+                        os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) |
+                        getattr(os, "O_CLOEXEC", 0),
+                        dir_fd=directory_fd,
+                    )
+                except OSError as exc:
+                    raise BackendError("PATH_OPEN", str(exc)) from exc
+                try:
+                    mode = os.fstat(child).st_mode
+                    child_prefix = prefix + (name,)
+                    if stat_module.S_ISDIR(mode):
+                        visit(child, child_prefix)
+                    elif stat_module.S_ISREG(mode):
+                        files.append("/".join(child_prefix))
+                    else:
+                        raise BackendError("UNSUPPORTED_OBJECT", "/".join(child_prefix))
+                finally:
+                    os.close(child)
+
+        try:
+            visit(start, parts)
+            return tuple(files)
+        finally:
+            os.close(start)

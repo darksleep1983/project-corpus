@@ -23,7 +23,28 @@ Conflicting V1 status markers produce
 an active operational state. Missing canonical files and case-colliding names
 fail the read.
 
-At this milestone the loader is a read-only compatibility component. Controlled
-CLI use will route reads through the production confined path backend after that
-backend is implemented. Direct use on a folder has the direct-folder guarantee
-level, not the controlled-runtime guarantee level.
+Direct planning remains a read-only compatibility operation with the
+direct-folder guarantee level. Controlled `migration authorize` and
+`migration apply` route all V1 reads through the qualified native backend.
+
+## Controlled apply
+
+Apply is deliberately separate from planning and never targets the V1 source:
+
+1. `migration authorize` reads V1 through confinement, pins its complete source
+   manifest, the deterministic plan digest, a separate absent destination name,
+   the destination-parent identity and filesystem in an external owner file.
+2. `migration apply` re-reads V1, requires both digests to match, stages a full
+   V2 directory as a sibling, verifies every expected entry and byte, and uses
+   create-only native directory publication.
+3. A pre-existing destination is never replaced. An interrupted staging pass is
+   resumable from the pinned authorization; a completed exact destination is
+   idempotently verified.
+4. The migration audit receipt is included before publication. Only after the
+   published tree validates does Runtime create the external trust grant with
+   the owner's explicitly requested post-migration capability ceiling.
+
+The external migration authorization is the bootstrap control-plane policy for
+an absent project; project content cannot create or modify it. After publication,
+ordinary four-way project authority applies. The V1 source is not modified or
+deleted, and cleanup remains a separate owner decision.

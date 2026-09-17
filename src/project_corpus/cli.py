@@ -12,7 +12,10 @@ import sys
 from .authority import RUNTIME_HARD_LIMITS, evaluate_authority
 from .compatibility import load_v1_corpus
 from .doctor import doctor
-from .migration import plan_v1_migration
+from .migration import (
+    apply_migration, authorize_migration, load_migration_authorization,
+    plan_v1_migration,
+)
 from .platform import open_native_backend
 from .policy import parse_project_policy
 from .transactions import ABSENT, MAX_MANAGED_BYTES, TransactionEngine, path_matches_scopes
@@ -120,6 +123,46 @@ def _cmd_migration_plan(args: argparse.Namespace) -> object:
     return plan_v1_migration(
         snapshot, project_id=args.project_id, logical_name=args.logical_name
     ).public_receipt()
+
+
+def _cmd_migration_authorize(args: argparse.Namespace) -> object:
+    source = Path(args.root).absolute()
+    destination = Path(args.destination).absolute()
+    authorization_path = Path(args.authorization).absolute()
+    _require_disjoint(source, destination, "MIGRATION_DESTINATION_NOT_SEPARATE")
+    _require_disjoint(source, authorization_path, "MIGRATION_AUTH_NOT_EXTERNAL")
+    _require_disjoint(destination, authorization_path, "MIGRATION_AUTH_NOT_EXTERNAL")
+    authorization = authorize_migration(
+        source, destination, authorization_path,
+        project_id=args.project_id, logical_name=args.logical_name,
+    )
+    return {
+        "ok": True,
+        "project_id": authorization.project_id,
+        "plan_sha256": authorization.plan_sha256,
+        "destination_name": authorization.destination_name,
+        "filesystem": authorization.filesystem,
+        "warnings_acknowledged": True,
+    }
+
+
+def _cmd_migration_apply(args: argparse.Namespace) -> object:
+    source = Path(args.root).absolute()
+    authorization_path = Path(args.authorization).absolute()
+    trust_path = Path(args.trust).absolute()
+    authorization = load_migration_authorization(authorization_path)
+    destination = authorization.destination_parent / authorization.destination_name
+    _require_disjoint(source, destination, "MIGRATION_DESTINATION_NOT_SEPARATE")
+    _require_disjoint(source, authorization_path, "MIGRATION_AUTH_NOT_EXTERNAL")
+    _require_disjoint(destination, authorization_path, "MIGRATION_AUTH_NOT_EXTERNAL")
+    _require_disjoint(destination, trust_path, "TRUST_GRANT_NOT_EXTERNAL")
+    capabilities = frozenset(args.allow or ())
+    outside = capabilities - RUNTIME_HARD_LIMITS
+    if outside or "migration.apply" in capabilities:
+        raise ValueError("invalid post-migration capability ceiling")
+    return apply_migration(
+        source, authorization_path, trust_path, capabilities=capabilities
+    )
 
 
 def _cmd_trust_create(args: argparse.Namespace) -> object:
@@ -256,6 +299,19 @@ def build_parser() -> argparse.ArgumentParser:
     command.add_argument("--project-id", required=True)
     command.add_argument("--logical-name", required=True)
     command.set_defaults(handler=_cmd_migration_plan)
+    command = migration.add_parser("authorize")
+    command.add_argument("root")
+    command.add_argument("--destination", required=True)
+    command.add_argument("--authorization", required=True)
+    command.add_argument("--project-id", required=True)
+    command.add_argument("--logical-name", required=True)
+    command.set_defaults(handler=_cmd_migration_authorize)
+    command = migration.add_parser("apply")
+    command.add_argument("root")
+    command.add_argument("--authorization", required=True)
+    command.add_argument("--trust", required=True)
+    command.add_argument("--allow", action="append", default=[])
+    command.set_defaults(handler=_cmd_migration_apply)
 
     trust = commands.add_parser("trust").add_subparsers(dest="trust_command", required=True)
     command = trust.add_parser("create")

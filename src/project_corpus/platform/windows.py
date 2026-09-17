@@ -45,6 +45,7 @@ STATUS_NO_MORE_FILES = 0x80000006
 ERROR_FILE_NOT_FOUND = 2
 ERROR_PATH_NOT_FOUND = 3
 ERROR_INSUFFICIENT_BUFFER = 122
+ERROR_DIRECTORY = 267
 LOCKFILE_EXCLUSIVE_LOCK = 0x2
 OWNER_SECURITY_INFORMATION = 0x1
 GROUP_SECURITY_INFORMATION = 0x2
@@ -722,3 +723,44 @@ class WindowsNativeBackend(NativePathBackend):
             return _identity(published)
         finally:
             published.close()
+
+    def root_entries(self) -> tuple[str, ...]:
+        return tuple(
+            sorted(name for name in _list_names(self._root) if name not in {".", ".."})
+        )
+
+    def walk_files(self, relative: str) -> tuple[str, ...]:
+        parts = validate_relative_path(relative, windows=True)
+        start = self._open(relative, directory=True)
+        files: list[str] = []
+
+        def visit(directory: _Handle, prefix: tuple[str, ...]) -> None:
+            names = sorted(
+                name for name in _list_names(directory) if name not in {".", ".."}
+            )
+            keys: dict[str, str] = {}
+            for name in names:
+                key = unicodedata.normalize("NFC", name).casefold()
+                if key in keys and keys[key] != name:
+                    raise BackendError("PORTABLE_NAME_COLLISION", name)
+                keys[key] = name
+                child_prefix = prefix + (name,)
+                try:
+                    child = _nt_open(directory, name, directory=True)
+                except BackendError as exc:
+                    if exc.code != "PATH_OPEN" or exc.native_code != ERROR_DIRECTORY:
+                        raise
+                    file_handle = _nt_open(directory, name, directory=False)
+                    file_handle.close()
+                    files.append("/".join(child_prefix))
+                else:
+                    try:
+                        visit(child, child_prefix)
+                    finally:
+                        child.close()
+
+        try:
+            visit(start, parts)
+            return tuple(files)
+        finally:
+            start.close()

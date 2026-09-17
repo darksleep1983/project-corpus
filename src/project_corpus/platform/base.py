@@ -91,3 +91,9 @@ class NativePathBackend(ABC):
 
     @abstractmethod
     def publish_directory(self, source: str, target: str) -> str: ...
+
+    @abstractmethod
+    def root_entries(self) -> tuple[str, ...]: ...
+
+    @abstractmethod
+    def walk_files(self, relative: str) -> tuple[str, ...]: ...

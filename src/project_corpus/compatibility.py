@@ -5,6 +5,8 @@ import hashlib
 from pathlib import Path
 import re
 
+from .platform.base import NativePathBackend
+
 
 V1_CURRENT_FILES = (
     "AGENTS.md",
@@ -103,6 +105,43 @@ def load_v1_corpus(root: Path) -> LegacySnapshot:
             relative = path.relative_to(root).as_posix()
             artifacts.append(_read_file(path, relative))
 
+    agents = next(item.text for item in files if item.relative_path == "AGENTS.md")
+    language = "ru" if re.search(r"(?m)^## \d+\. (?:Назначение|Цель)", agents) else "en"
+    return LegacySnapshot(files, tuple(artifacts), language)
+
+
+def load_v1_corpus_confined(backend: NativePathBackend) -> LegacySnapshot:
+    """Read a V1 corpus through an already-qualified confined backend."""
+    names: dict[str, list[str]] = {}
+    for name in backend.root_entries():
+        names.setdefault(name.casefold(), []).append(name)
+    collisions = {
+        key: values for key, values in names.items()
+        if key in {item.casefold() for item in V1_CURRENT_FILES} and len(values) > 1
+    }
+    if collisions:
+        raise LegacyCorpusError("V1_DUPLICATE_CANONICAL_NAME", str(collisions))
+    missing = [
+        name for name in V1_CURRENT_FILES
+        if name not in backend.root_entries()
+    ]
+    if missing:
+        raise LegacyCorpusError("V1_MISSING_CURRENT_FILE", ", ".join(missing))
+
+    def read(relative: str) -> LegacyFile:
+        data = backend.read_bytes(relative)
+        item = LegacyFile(relative, data, hashlib.sha256(data).hexdigest())
+        item.text
+        return item
+
+    files = tuple(read(name) for name in V1_CURRENT_FILES)
+    artifacts: list[LegacyFile] = []
+    top = set(backend.root_entries())
+    for directory in ("Tasks", "Report"):
+        if directory not in top:
+            continue
+        for relative in backend.walk_files(directory):
+            artifacts.append(read(relative))
     agents = next(item.text for item in files if item.relative_path == "AGENTS.md")
     language = "ru" if re.search(r"(?m)^## \d+\. (?:Назначение|Цель)", agents) else "en"
     return LegacySnapshot(files, tuple(artifacts), language)
