@@ -153,15 +153,18 @@ class PosixNativeBackend(NativePathBackend):
     def _open_read(self, relative: str) -> int:
         parts = validate_relative_path(relative, windows=False)
         flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
-        if platform.system() == "Linux":
-            try:
-                fd = self._openat2("/".join(parts), flags)
-            except OSError as exc:
-                if exc.errno not in {errno.ENOSYS, errno.EINVAL}:
-                    raise BackendError("PATH_OPEN", str(exc)) from exc
+        try:
+            if platform.system() == "Linux":
+                try:
+                    fd = self._openat2("/".join(parts), flags)
+                except OSError as exc:
+                    if exc.errno not in {errno.ENOSYS, errno.EINVAL}:
+                        raise
+                    fd = self._open_components(parts, flags)
+            else:
                 fd = self._open_components(parts, flags)
-        else:
-            fd = self._open_components(parts, flags)
+        except OSError as exc:
+            raise BackendError("PATH_OPEN", str(exc)) from exc
         mode = os.fstat(fd).st_mode
         if not stat_module.S_ISREG(mode):
             os.close(fd)
