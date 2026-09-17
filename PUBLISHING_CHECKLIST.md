@@ -20,5 +20,6 @@
 7. Confirm that public-facing status wording and the security reporting route
    are current.
 8. Configure description, topics, and Private Vulnerability Reporting.
-9. Prepare `v0.1.0-preview` as a draft release only after the content is frozen.
+9. Create the `v2.0.0` tag or release only after the frozen release-candidate
+   P10 attestation and a separate explicit owner release command.
 10. Change visibility to Public only after a separate owner decision.

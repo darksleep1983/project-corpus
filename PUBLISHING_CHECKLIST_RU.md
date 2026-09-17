@@ -20,5 +20,6 @@
    которые GitHub не передал.
 7. Убедиться, что публичный статус и путь сообщения об уязвимостях актуальны.
 8. Настроить description, topics и Private Vulnerability Reporting.
-9. Подготовить `v0.1.0-preview` как draft release только после заморозки content.
+9. Создавать tag или release `v2.0.0` только после P10 attestation для
+   замороженного release candidate и отдельной явной команды владельца.
 10. Переключать visibility на Public только после отдельного решения владельца.

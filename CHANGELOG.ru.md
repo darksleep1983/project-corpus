@@ -2,7 +2,7 @@
 
 [English](CHANGELOG.md)
 
-## Unreleased
+## 2.0.0 — 2026-09-17
 
 - Добавлен независимый Markdown-first Project Corpus Protocol V2 с разделёнными
   ролями canonical state и явными conformance rules.

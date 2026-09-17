@@ -12,9 +12,9 @@ Project Corpus keeps that state in a compact set of ordinary Markdown files on
 your computer. There is no application to install and no required Python
 runtime. MCP is optional.
 
-## V2 implementation preview
+## Project Corpus V2
 
-This branch adds the Markdown-first, vendor-neutral
+Project Corpus V2 adds the Markdown-first, vendor-neutral
 [Project Corpus Protocol V2](protocol/v2/README.md) while keeping the existing
 V1 templates and workflow intact. Protocol V2 remains usable manually with no
 installation.
@@ -134,10 +134,10 @@ More: [how it works](docs/how-it-works.md), [FAQ](docs/faq.md),
 
 ## Current status
 
-Project Corpus is an early-stage open-source project intended for public use.
-The bilingual templates, three access modes, documentation links, and repository
-integrity are checked automatically. The protocol and guides may continue to
-evolve before the first tagged release.
+Project Corpus V2 is the current open-source generation. The bilingual
+templates, three access modes, documentation links, repository integrity and
+optional Runtime are checked automatically. Release changes are recorded in
+the [changelog](CHANGELOG.md).
 
 ## Feedback
 
