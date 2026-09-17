@@ -6,8 +6,21 @@ Status: implementation complete for owner review; not merged; not released
 
 Implementation branch: `v2/implementation`
 
-Final qualification evidence was captured at branch HEAD
-`e862e44d4abf62a5a8b92fb202d5f779c539d234`.
+Evidence provenance is:
+
+- implementation qualification target:
+  `e862e44d4abf62a5a8b92fb202d5f779c539d234`;
+- P10 scanned HEAD: `e862e44d4abf62a5a8b92fb202d5f779c539d234`;
+- P10 counts: 620 objects, 40 commits and 13 findings;
+- P10 result: release `NO-GO / OWNER_REVIEW_REQUIRED`;
+- evidence-sync branch HEAD:
+  `fda4370bfc90cd7f02768a8bd6960ebbcb820041`;
+- post-sync CI: GitHub Actions run `35233928484`, 6/6 jobs PASS and
+  93 tests PASS.
+
+`e862e44` is the fixed qualification and scan target, not the current branch
+HEAD. `fda4370` contains only evidence/docs changes plus the integrity manifest;
+it did not change implementation and was not included in the recorded P10 scan.
 
 The branch was built as independently tested logical commits. The sequence is
 recorded by `git log main..v2/implementation`; its milestone heads are:
@@ -100,7 +113,8 @@ local NTFS, Ubuntu local ext4 and macOS local APFS, each on Python 3.11 and
 | `35183457729` | production directory publication |
 | `35205827671` | controlled V1 migration |
 | `35206204618` | stdio MCP |
-| `35207733720` | final `e862e44` qualification, P10 scanner and complete 93-test suite |
+| `35207733720` | `e862e44` implementation qualification and P10 scanner suite |
+| `35233928484` | `fda4370` post-sync verification: 6/6 jobs and 93 tests PASS |
 
 The final local suite also passes 93 tests on Windows; five POSIX-only probes
 are correctly skipped there. Wheel construction for `2.0.0.dev0` succeeds.
@@ -137,15 +151,22 @@ rendered binary patches, blobs/trees/tags and metadata, plus locally available
 unreachable objects. Output contains locations and classifications but never
 matched values.
 
-The recorded P10 run scanned final qualification HEAD `e862e44`, all 620
-locally available objects and all 40 locally available commit objects/rendered
-patches in the available non-shallow clone. It found 13 redacted location-level
-findings: 6 `personal_infrastructure`, 7 `private_url`, and 0 credential, token
-or private-key findings. Details without values and the exact five refs are in
-[`security/P10_RESULTS.md`](security/P10_RESULTS.md). The scanner cannot inspect
-server-side objects GitHub did not transfer.
+The recorded P10 run scanned implementation qualification target `e862e44`, all
+620 locally available objects and all 40 locally available commit
+objects/rendered patches in the available non-shallow clone. It found 13
+redacted location-level findings: 6 `personal_infrastructure`, 7 `private_url`,
+and 0 credential, token or private-key findings. Evidence-sync commit `fda4370`
+was created afterward, contains only evidence/docs plus the integrity manifest,
+and was not part of that scan. Details without values and the exact five refs
+are in [`security/P10_RESULTS.md`](security/P10_RESULTS.md). The scanner cannot
+inspect server-side objects GitHub did not transfer.
 
 Release gate: `NO-GO`. No history rewrite or exception has been assumed.
+
+For a future release, final P10 must run on the frozen release-candidate HEAD
+after every repository commit is complete. The release attestation must be
+stored outside commit history, such as a CI or release artifact, so recording
+evidence does not create a self-invalidating evidence-commit loop.
 
 ## Deviations and known limitations
 
