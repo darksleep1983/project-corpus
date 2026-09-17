@@ -12,6 +12,20 @@ Project Corpus хранит это в компактном наборе обыч
 компьютере. Устанавливать приложение не нужно. Python не требуется. MCP
 необязателен.
 
+## Preview реализации V2
+
+Эта ветка добавляет Markdown-first и vendor-neutral
+[Project Corpus Protocol V2](protocol/v2/README.md), сохраняя существующие
+V1-шаблоны и workflow работоспособными. Protocol V2 по-прежнему можно
+использовать вручную без установки.
+
+[Необязательный reference Runtime](docs/runtime/cli.md) для Python 3.11+
+реализует validation, enforcement внешне выданных полномочий, нативные confined
+filesystem transactions, audit/recovery, неразрушительную миграцию V1,
+локальный CLI и локальный stdio MCP adapter. Поведение Runtime не определяет и
+не может молча изменять Protocol. Точные уровни гарантий и проверенные локальные
+filesystem перечислены в [platform matrix](docs/security/platform-guarantees.md).
+
 ## Идея за одну минуту
 
 ```text
@@ -106,7 +120,9 @@ Report/
 - Project Corpus — протокол работы с документами, а не sandbox безопасности.
 - Реальный доступ задают AI-клиент, права файловой системы или выбранный вами
   MCP-сервер.
-- Репозиторий не поставляет, не запускает и не проверяет MCP-сервер.
+- V1 direct-folder и manual workflow не получают гарантий Runtime.
+- Необязательный V2 Runtime предоставляет только локальный CLI и stdio MCP; в
+  нём нет HTTP/remote MCP, и он не проверяет сторонние серверы.
 - Сохранённый Report не доказывает, что сервис или внешняя система сейчас
   исправны.
 - Не храните в Corpus пароли, токены, cookies, seed-фразы или API-ключи.

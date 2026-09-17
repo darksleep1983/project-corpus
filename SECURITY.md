@@ -14,6 +14,9 @@ a public issue.
 Never include real tokens, cookies, credentials, private keys, seed phrases,
 private Corpus files, or identifying local paths in a report.
 
-This repository contains no executable server. Security reports about a
-third-party MCP server belong to that server's maintainer unless the problem is
-caused by Project Corpus documentation.
+This repository contains an optional V2 reference Runtime: a local CLI and a
+stdio MCP adapter. Report vulnerabilities in that code through the private
+route above. It contains no HTTP/remote MCP server, arbitrary command executor,
+or execution sandbox. Reports about a third-party MCP server belong to that
+server's maintainer unless the problem is caused by Project Corpus Protocol or
+documentation.
