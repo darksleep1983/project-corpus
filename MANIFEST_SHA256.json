@@ -3,11 +3,9 @@
   "files": {
     ".gitattributes": "d60f352d0db1404c70afb4bb8b2ca3fd1c610572aa40720e8a0b7baa7885418c",
     ".github/ISSUE_TEMPLATE/bug.yml": "c2f835ada6be3810f0c9ff6d30d9173b4f4dea6c7eaf3684ebab9e95d84c1dfd",
-    ".github/ISSUE_TEMPLATE/bug_report.md": "9d405494053c4277166c883db98d10cbd0882712834c81bf5050934028986753",
     ".github/ISSUE_TEMPLATE/config.yml": "8de29223fefff31a05af14c01cb86ecca64520be6b05e611b7bd739c7dba2263",
     ".github/ISSUE_TEMPLATE/docs.yml": "faa07647eba964d7d3aa4cd778e41319bbf8097d1a140a60ab1674c09f168376",
     ".github/ISSUE_TEMPLATE/feature.yml": "d982ef81150418e491d0b2d397dab634c8a42ddd7ab65991890e0f2f6f42ec91",
-    ".github/ISSUE_TEMPLATE/feature_request.md": "e62b7f689a783ae2ed4226adf491ce44626ebd982027bdcf84685f0a1a04a90d",
     ".github/ISSUE_TEMPLATE/security-reference.yml": "a9b51cb7132587c8f82d82a45e0d1299a008baf62627c21fb530d427c44923bb",
     ".github/pull_request_template.md": "d741315978affa4dc604eb1dfcd2113d93c1790de5160aa4f6049f27b0a67cd2",
     ".github/workflows/docs.yml": "1ea5650da3ef98c229bdd943f07844f42d448c1d6c1f0034b178a70fbcc1559f",
