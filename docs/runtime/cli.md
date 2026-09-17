@@ -1,6 +1,6 @@
 # Reference CLI
 
-Status: controlled adapter under platform qualification
+Status: controlled adapter qualified on the listed local filesystems
 
 The CLI is an optional Runtime adapter. The Markdown Protocol remains usable
 without installing it. Commands return JSON and use exit code `2` for a
@@ -59,3 +59,17 @@ current SHA-256.
 
 The CLI contains no Git commit/push, HTTP MCP, shell execution, sandbox,
 orchestration, distributed locking or multi-project server operation.
+
+## Qualification evidence
+
+GitHub Actions run `35182881428` passed all six jobs on 2026-09-17:
+
+- Windows local NTFS, Python 3.11 and 3.12;
+- Ubuntu local ext4, Python 3.11 and 3.12;
+- macOS local APFS, Python 3.11 and 3.12.
+
+The matrix executed 78 tests, including negative authority, scope, stale-policy,
+embedded-grant, unprovisioned-state, CRLF and transaction failure cases. This
+evidence does not qualify network, FUSE, removable or other filesystems and
+does not extend the transaction durability claims in
+[`platform-guarantees.md`](../security/platform-guarantees.md).
