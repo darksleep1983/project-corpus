@@ -4,6 +4,8 @@
 
 ## Unreleased
 
+## 2.0.1 — 2026-09-17
+
 - Improved post-v2.0.0 README onboarding with a visual project-state flow, a
   60-second manual V2 quick start, and clearer optional Runtime setup.
 - Prepared public OSS productization assets: an English-first documentation
