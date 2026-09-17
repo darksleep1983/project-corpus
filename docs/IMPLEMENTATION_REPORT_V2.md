@@ -6,6 +6,9 @@ Status: implementation complete for owner review; not merged; not released
 
 Implementation branch: `v2/implementation`
 
+Final qualification evidence was captured at branch HEAD
+`e862e44d4abf62a5a8b92fb202d5f779c539d234`.
+
 The branch was built as independently tested logical commits. The sequence is
 recorded by `git log main..v2/implementation`; its milestone heads are:
 
@@ -21,11 +24,11 @@ recorded by `git log main..v2/implementation`; its milestone heads are:
 - `8f265a1` through `d80dd90` P9 and native create-only directory publication;
 - `4ae16b4` controlled, non-destructive V1 migration;
 - `7297103` and `3725bea` optional stdio MCP and qualification evidence;
-- `517a3fd` full-local-history release security gate.
+- `517a3fd` full-local-history release security gate;
+- `e862e44` finalized V2 documentation and this implementation report.
 
-Documentation/report finalization follows as a separate reviewed commit. No
-commit on this branch merges to `main`, creates a release, pushes project data,
-or adds Runtime Git commit/push behavior.
+No commit on this branch merges to `main`, creates a release, pushes project
+data, or adds Runtime Git commit/push behavior.
 
 ## Repository delta and implemented architecture
 
@@ -97,7 +100,7 @@ local NTFS, Ubuntu local ext4 and macOS local APFS, each on Python 3.11 and
 | `35183457729` | production directory publication |
 | `35205827671` | controlled V1 migration |
 | `35206204618` | stdio MCP |
-| `35207189523` | P10 scanner and complete 93-test suite |
+| `35207733720` | final `e862e44` qualification, P10 scanner and complete 93-test suite |
 
 The final local suite also passes 93 tests on Windows; five POSIX-only probes
 are correctly skipped there. Wheel construction for `2.0.0.dev0` succeeds.
@@ -134,11 +137,13 @@ rendered binary patches, blobs/trees/tags and metadata, plus locally available
 unreachable objects. Output contains locations and classifications but never
 matched values.
 
-The recorded P10 run is complete for the available non-shallow clone and found
-no credential, token or private-key category. It did find redacted personal
-infrastructure fixtures/examples and historical private-network references.
-Details without values are in [`security/P10_RESULTS.md`](security/P10_RESULTS.md).
-The scanner cannot inspect server-side objects GitHub did not transfer.
+The recorded P10 run scanned final qualification HEAD `e862e44`, all 620
+locally available objects and all 40 locally available commit objects/rendered
+patches in the available non-shallow clone. It found 13 redacted location-level
+findings: 6 `personal_infrastructure`, 7 `private_url`, and 0 credential, token
+or private-key findings. Details without values and the exact five refs are in
+[`security/P10_RESULTS.md`](security/P10_RESULTS.md). The scanner cannot inspect
+server-side objects GitHub did not transfer.
 
 Release gate: `NO-GO`. No history rewrite or exception has been assumed.
 
