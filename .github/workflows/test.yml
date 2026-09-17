@@ -2,6 +2,11 @@ name: tests
 on:
   push:
   pull_request:
+
+# Do not inherit a repository-wide default token permission set.
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
