@@ -37,6 +37,8 @@
     "docs/adr/0002-canonical-state-documents.md": "f0e9f69f4443b052890a9d1567f838149d510c90eb8305e0d90f329306054ffa",
     "docs/adr/0003-policy-trust-boundary.md": "ddbc8d802df24cc3660ba3d70d3817e775359698d56135e6249a5771315528d5",
     "docs/adr/0004-filesystem-security-foundation.md": "65f18ca08461b9509d80fe744a728de1501e7d575d48f75778ae9988956066fd",
+    "docs/assets/social-preview.png": "54c45b76ef9b52d6793ce91ce0be2a2e086c7f089c433ad2a2cf845a770151a9",
+    "docs/assets/social-preview.svg": "0829487ae2f7ec1d0637310ff9dd9e96b8b0230e56962e129799120e91b14f05",
     "docs/clients/chatgpt.md": "d79fcff4e68953ef7f64797cbb86ccbb1eac617b1c263ecdbe4e3e77cee3b6d5",
     "docs/clients/chatgpt.ru.md": "9c660c57c1098eafd837180c12413b8dc107e24fbc42df5263cd5665be6b67b1",
     "docs/clients/claude-code.md": "e2f4af574d7d7bfeb13ae71aa47186af6863aa5396d61d677f3714d0694d0d7e",
