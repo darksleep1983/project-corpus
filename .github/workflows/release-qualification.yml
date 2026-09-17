@@ -1,0 +1,58 @@
+name: release qualification
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_sha:
+        description: Frozen 40-character release-candidate commit SHA
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate frozen commit input
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          [[ "$RELEASE_SHA" =~ ^[0-9a-f]{40}$ ]] || {
+            echo "release_sha must be a lowercase 40-character commit SHA" >&2
+            exit 2
+          }
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_sha }}
+          fetch-depth: 0
+      - name: Verify checked-out commit
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install qualification tools
+        run: python -m pip install build twine
+      - name: Run complete test suite
+        env:
+          PYTHONPATH: src
+        run: python -m unittest discover -s tests -v
+      - name: Build source and wheel distributions
+        run: python -m build --sdist --wheel
+      - name: Validate package metadata and record hashes
+        run: |
+          python -m twine check dist/*
+          sha256sum dist/* > dist/SHA256SUMS
+      - name: Upload qualified distributions
+        uses: actions/upload-artifact@v4
+        with:
+          name: project-corpus-${{ inputs.release_sha }}
+          path: dist/
+          if-no-files-found: error
+      - name: Require separate P10 owner decision
+        run: |
+          echo "P10 is not automated by this workflow."
+          echo "Run the release-history scan on this frozen commit and retain owner-reviewed attestation outside Git history."

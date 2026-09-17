@@ -1,0 +1,15 @@
+policy_version = "2.0"
+project_id = "software-status-filter"
+profile = "READ_ONLY"
+
+[capabilities]
+allow = ["corpus.read", "corpus.stat", "corpus.validate"]
+
+[scopes]
+read = [".project-corpus/state/**", ".project-corpus/tasks/**", ".project-corpus/reports/**"]
+write = []
+
+[requirements]
+expected_hash = true
+verified_readback = true
+audit_receipt = true

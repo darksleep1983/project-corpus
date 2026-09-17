@@ -2,6 +2,12 @@
 
 [Русская версия](README.ru.md)
 
+[![CI](https://github.com/darksleep1983/project-corpus/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/darksleep1983/project-corpus/actions/workflows/test.yml)
+[![Docs build](https://github.com/darksleep1983/project-corpus/actions/workflows/docs.yml/badge.svg?branch=main)](https://github.com/darksleep1983/project-corpus/actions/workflows/docs.yml)
+[![Python](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-MIT-66d9c2)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/darksleep1983/project-corpus?display_name=tag&sort=semver)](https://github.com/darksleep1983/project-corpus/releases)
+
 **Persistent project state and authority for AI agents.**
 
 Project Corpus is a Markdown-first, vendor-neutral protocol that lets ChatGPT,
@@ -196,6 +202,11 @@ Ordinary synchronization must not rewrite `AGENTS.md` or
 must not claim that it saved them on your computer.
 
 ## Important limits
+
+Manual and direct-folder modes are not enforced Runtime modes. Controlled
+Runtime guarantees are scoped to documented operations on qualified local
+NTFS, ext4, and APFS filesystems; read the [security model](docs/security.md)
+for the complete boundaries.
 
 - Project Corpus is a documentation protocol, not a security sandbox.
 - Real access is controlled by your AI client, filesystem permissions, or your

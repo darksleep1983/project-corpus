@@ -7,6 +7,9 @@
 - Улучшено знакомство с проектом в README после v2.0.0: добавлены наглядная
   схема состояния проекта, ручной 60-секундный старт V2 и более ясное описание
   опционального Runtime.
+- Подготовлены OSS-материалы: англоязычный documentation site, практические
+  V2-примеры, issue forms, package-readiness metadata и owner-gated планы для
+  Pages, PyPI, release и MCP distribution.
 
 ## 2.0.0 — 2026-09-17
 

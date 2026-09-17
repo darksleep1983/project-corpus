@@ -1,0 +1,30 @@
+name: Security reference (non-sensitive)
+description: Ask for a public clarification without reporting a vulnerability.
+title: "security docs: "
+labels: [security]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **STOP if this is a vulnerability report.** Do not submit exploit details,
+        private infrastructure, secrets, or identifying paths in a public issue.
+        Follow [SECURITY.md](https://github.com/darksleep1983/project-corpus/blob/main/SECURITY.md)
+        and use GitHub Private Vulnerability Reporting, or the maintainer's private
+        contact route when private reporting is unavailable.
+
+        This form is only for a non-sensitive clarification of published security
+        documentation or guarantee levels.
+  - type: textarea
+    id: question
+    attributes:
+      label: Public security documentation question
+      placeholder: Ask about a documented guarantee level or usage boundary.
+    validations:
+      required: true
+  - type: checkboxes
+    id: disclosure
+    attributes:
+      label: Disclosure check
+      options:
+        - label: This contains no exploit details, secrets, private infrastructure, or identifying paths.
+          required: true

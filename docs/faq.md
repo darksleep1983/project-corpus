@@ -2,30 +2,67 @@
 
 [Русская версия](faq.ru.md)
 
+## Is this just another memory bank?
+
+No. A memory bank helps an agent remember information. Project Corpus also
+defines canonical identity, current operational state, evidence, exact next
+action, and authority boundaries.
+
 ## Do I need MCP?
 
 No. Use a direct local folder or manual file uploads. MCP is optional.
 
 ## Do I need Python or an installer?
 
-No. Copy the English or Russian template folder and start working.
+No for the Markdown Protocol. Copy the V2 template and start working manually.
+Python 3.11+ is needed only for the optional local Runtime.
 
-## Is this tied to ChatGPT, Codex, or Claude?
+## Can I use it with ChatGPT, Codex, or Claude?
 
-No. Any client that can read Markdown files can use manual mode. Clients with
-local file tools can use direct-folder mode.
+Yes. Any client that can read Markdown can use manual mode. Clients with local
+file tools can use direct-folder mode.
 
-## Can it control my computer?
+## Can the Runtime access my whole disk?
 
-The repository contains instructions and templates, not executable automation.
-Your AI client or chosen MCP server can act only within the permissions you give
-it. Review those permissions separately.
+Not by project content alone. Controlled Runtime operations are bounded by its
+hard limits, an external owner trust grant that pins one physical root, project
+policy, and the client capability subset. Direct-folder mode remains governed by
+the permissions you give the AI client.
+
+## Is it a sandbox?
+
+No. The Markdown Protocol is not a security sandbox. The optional Runtime
+provides scoped guarantees only in documented controlled modes on qualified
+local filesystems. It does not make a third-party client or MCP host safe.
+
+## Does it work on network drives?
+
+Do not assume so. Network, FUSE, removable, and other unqualified filesystems
+are outside the Runtime's measured guarantees and controlled mutation fails
+closed when the filesystem is unqualified.
+
+## Can multiple agents edit at once?
+
+Use one authoritative writer at a time. The Runtime has local writer controls
+for its supported single-project mode; it does not provide distributed locking
+or multi-project coordination.
+
+## Why `PROJECT.md` and `STATUS.md`?
+
+Stable identity and operational state change at different rates. Separate
+canonical documents make authority clearer and reduce unnecessary conflicts.
+
+## Why not a database?
+
+Markdown remains inspectable, portable, vendor-neutral, and usable without an
+installation. A database may be used by another tool, but it is not required to
+use this Protocol.
 
 ## Does it send my whole project to the internet?
 
-Project Corpus itself sends nothing. A cloud AI receives whatever you upload or
-whatever a connected tool reads for it. Review the client's data policy and
-share only what is needed.
+Project Corpus itself sends nothing. A cloud AI receives what you upload or what
+a connected tool reads for it. Review the client's data policy and share only
+what is needed.
 
 ## Can I keep two projects in one Corpus?
 
@@ -45,3 +82,14 @@ evidence.
 ## Does manual mode update my local files?
 
 No. The AI returns replacement files. You back up and save them yourself.
+
+## Can I migrate V1?
+
+Yes. The Runtime provides read-only migration planning and separate controlled,
+create-only V2 publication. V1 templates remain unchanged; see the migration
+guide before authorizing an apply step.
+
+## Is PyPI available yet?
+
+Not yet. Until a public package is released, install the optional Runtime from
+a local repository clone with `python -m pip install .`.

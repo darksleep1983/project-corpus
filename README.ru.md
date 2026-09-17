@@ -2,6 +2,12 @@
 
 [English](README.md)
 
+[![CI](https://github.com/darksleep1983/project-corpus/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/darksleep1983/project-corpus/actions/workflows/test.yml)
+[![Docs build](https://github.com/darksleep1983/project-corpus/actions/workflows/docs.yml/badge.svg?branch=main)](https://github.com/darksleep1983/project-corpus/actions/workflows/docs.yml)
+[![Python](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-MIT-66d9c2)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/darksleep1983/project-corpus?display_name=tag&sort=semver)](https://github.com/darksleep1983/project-corpus/releases)
+
 **Постоянное состояние проекта и слой полномочий для ИИ-агентов.**
 
 Project Corpus — Markdown-first, независимый от конкретного ИИ протокол. Он
@@ -199,6 +205,11 @@ Report/
 прямо сказать, что не сохранял их на вашем компьютере.
 
 ## Важные ограничения
+
+Manual и direct-folder режимы не являются enforced Runtime-режимами.
+Гарантии controlled Runtime ограничены документированными операциями на
+проверенных локальных filesystem NTFS, ext4 и APFS; полные границы описаны в
+[модели безопасности](docs/security.ru.md).
 
 - Project Corpus — протокол работы с документами, а не sandbox безопасности.
 - Реальный доступ задают AI-клиент, права файловой системы или выбранный вами

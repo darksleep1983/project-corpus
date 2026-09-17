@@ -1,14 +1,33 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "project-corpus"
 version = "2.0.1.dev0"
 description = "Optional reference Runtime for Project Corpus Protocol"
+readme = "README.md"
 requires-python = ">=3.11"
-license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["ai-agents", "markdown", "mcp", "project-memory", "project-state"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries",
+]
 dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/darksleep1983/project-corpus"
+Documentation = "https://darksleep1983.github.io/project-corpus/"
+Repository = "https://github.com/darksleep1983/project-corpus"
+Issues = "https://github.com/darksleep1983/project-corpus/issues"
+Changelog = "https://github.com/darksleep1983/project-corpus/blob/main/CHANGELOG.md"
 
 [project.scripts]
 project-corpus = "project_corpus.cli:main"
