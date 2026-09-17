@@ -493,3 +493,95 @@ class PosixNativeBackend(NativePathBackend):
         except Exception:
             os.close(parent_fd)
             raise
+
+    def create_directory(self, relative: str, *, exist_ok: bool) -> str:
+        parts = validate_relative_path(relative, windows=False)
+        current = os.dup(self._root_fd)
+        try:
+            for index, part in enumerate(parts):
+                self._reject_collision(current, part)
+                created = False
+                try:
+                    os.mkdir(part, 0o700, dir_fd=current)
+                    os.fsync(current)
+                    created = True
+                except FileExistsError:
+                    if index == len(parts) - 1 and not exist_ok:
+                        raise BackendError("TARGET_EXISTS", relative)
+                try:
+                    child = os.open(
+                        part,
+                        os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) |
+                        getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_CLOEXEC", 0),
+                        dir_fd=current,
+                    )
+                except OSError as exc:
+                    raise BackendError("PATH_OPEN", str(exc)) from exc
+                os.close(current)
+                current = child
+                if created:
+                    os.fsync(current)
+            info = os.fstat(current)
+            return f"posix:{info.st_dev:x}:{info.st_ino:x}"
+        finally:
+            os.close(current)
+
+    def directory_entries(self, relative: str) -> tuple[str, ...]:
+        parts = validate_relative_path(relative, windows=False)
+        try:
+            fd = self._open_components(
+                parts, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0)
+            )
+        except OSError as exc:
+            raise BackendError("PATH_OPEN", str(exc)) from exc
+        try:
+            return tuple(sorted(os.listdir(fd)))
+        finally:
+            os.close(fd)
+
+    def publish_directory(self, source: str, target: str) -> str:
+        source_parts = validate_relative_path(source, windows=False)
+        target_parts = validate_relative_path(target, windows=False)
+        if len(source_parts) != 1 or len(target_parts) != 1:
+            raise BackendError("DIRECTORY_PUBLISH_SCOPE", "root children required")
+        self._reject_collision(self._root_fd, target_parts[0])
+        libc = ctypes.CDLL(None, use_errno=True)
+        if platform.system() == "Linux":
+            rename = libc.renameat2
+            rename.argtypes = [
+                ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p,
+                ctypes.c_uint,
+            ]
+            result = rename(
+                self._root_fd, source_parts[0].encode(), self._root_fd,
+                target_parts[0].encode(), 1,
+            )
+        elif platform.system() == "Darwin":
+            rename = libc.renameatx_np
+            rename.argtypes = [
+                ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p,
+                ctypes.c_uint,
+            ]
+            result = rename(
+                self._root_fd, source_parts[0].encode(), self._root_fd,
+                target_parts[0].encode(), 0x4,
+            )
+        else:
+            raise BackendError("DIRECTORY_PUBLISH_UNSUPPORTED", platform.system())
+        if result != 0:
+            code = ctypes.get_errno()
+            raise BackendError(
+                "DIRECTORY_PUBLISH", os.strerror(code), native_code=code
+            )
+        os.fsync(self._root_fd)
+        try:
+            fd = self._open_components(
+                target_parts, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0)
+            )
+        except OSError as exc:
+            raise BackendError("PATH_OPEN", str(exc)) from exc
+        try:
+            info = os.fstat(fd)
+            return f"posix:{info.st_dev:x}:{info.st_ino:x}"
+        finally:
+            os.close(fd)

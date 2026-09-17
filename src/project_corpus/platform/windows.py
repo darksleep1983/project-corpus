@@ -662,3 +662,63 @@ class WindowsNativeBackend(NativePathBackend):
         except Exception:
             parent.close()
             raise
+
+    def create_directory(self, relative: str, *, exist_ok: bool) -> str:
+        parts = validate_relative_path(relative, windows=True)
+        current = _duplicate(self._root)
+        try:
+            for index, part in enumerate(parts):
+                names = _list_names(current)
+                key = unicodedata.normalize("NFC", part).casefold()
+                matches = [
+                    name for name in names
+                    if unicodedata.normalize("NFC", name).casefold() == key
+                ]
+                if matches and matches[0] != part:
+                    raise BackendError("PORTABLE_NAME_COLLISION", part)
+                if matches:
+                    if index == len(parts) - 1 and not exist_ok:
+                        raise BackendError("TARGET_EXISTS", relative)
+                    child = _nt_open(current, part, directory=True)
+                else:
+                    child = _nt_open(current, part, directory=True, create=True)
+                current.close()
+                current = child
+                self._verify_final(current)
+            return _identity(current)
+        finally:
+            current.close()
+
+    def directory_entries(self, relative: str) -> tuple[str, ...]:
+        handle = self._open(relative, directory=True)
+        try:
+            self._verify_final(handle)
+            return tuple(
+                sorted(name for name in _list_names(handle) if name not in {".", ".."})
+            )
+        finally:
+            handle.close()
+
+    def publish_directory(self, source: str, target: str) -> str:
+        source_parts = validate_relative_path(source, windows=True)
+        target_parts = validate_relative_path(target, windows=True)
+        if len(source_parts) != 1 or len(target_parts) != 1:
+            raise BackendError("DIRECTORY_PUBLISH_SCOPE", "root children required")
+        key = unicodedata.normalize("NFC", target_parts[0]).casefold()
+        for existing in _list_names(self._root):
+            if unicodedata.normalize("NFC", existing).casefold() == key:
+                raise BackendError("TARGET_EXISTS", target)
+        source_handle = _nt_open(
+            self._root, source_parts[0], directory=True, delete_access=True
+        )
+        try:
+            self._verify_final(source_handle)
+            _rename(source_handle, self._root, target_parts[0], False)
+        finally:
+            source_handle.close()
+        published = _nt_open(self._root, target_parts[0], directory=True)
+        try:
+            self._verify_final(published)
+            return _identity(published)
+        finally:
+            published.close()

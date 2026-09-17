@@ -89,6 +89,31 @@ class NativePathBackendTests(unittest.TestCase):
         self.assertEqual((self.root / "state" / "STATUS.md").read_bytes(), b"new")
         self.assertEqual((self.root / "PROJECT.md").read_bytes(), b"project")
 
+    def test_create_and_publish_directory_tree(self):
+        with open_native_backend(self.root) as backend:
+            stage_identity = backend.create_directory(".pc-tree-stage", exist_ok=False)
+            self.assertTrue(stage_identity)
+            backend.create_directory(".pc-tree-stage/.project-corpus/state", exist_ok=True)
+            self.assertEqual(
+                backend.directory_entries(".pc-tree-stage/.project-corpus"),
+                ("state",),
+            )
+            staged = backend.stage_bytes(
+                ".pc-tree-stage/.project-corpus/state/STATUS.md", b"state"
+            )
+            backend.publish(staged, replace=False)
+            published_identity = backend.publish_directory(
+                ".pc-tree-stage", "migrated"
+            )
+            self.assertEqual(stage_identity, published_identity)
+            self.assertEqual(
+                backend.read_bytes("migrated/.project-corpus/state/STATUS.md"),
+                b"state",
+            )
+            backend.create_directory(".pc-tree-other", exist_ok=False)
+            with self.assertRaisesRegex(BackendError, "TARGET_EXISTS"):
+                backend.publish_directory(".pc-tree-other", "migrated")
+
     def test_replace_requires_metadata_preparation(self):
         with open_native_backend(self.root) as backend:
             staged = backend.stage_bytes("state/STATUS.md", b"new")
