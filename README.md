@@ -2,29 +2,53 @@
 
 [Русская версия](README.ru.md)
 
-> A small, readable project memory that survives new AI chats.
+**Persistent project state and authority for AI agents.**
 
-Chats end. Models change. A new session may not know what the project is, what
-has already been decided, what was actually verified, or what should happen
-next.
+Project Corpus is a Markdown-first, vendor-neutral protocol that lets ChatGPT,
+Codex, Claude, and other AI agents resume a project from clean context without
+relying on chat memory.
 
-Project Corpus keeps that state in a compact set of ordinary Markdown files on
-your computer. There is no application to install and no required Python
-runtime. MCP is optional.
+It defines what the project is, which state is current, which rules are
+authoritative, what has been verified, what comes next, and which authority may
+change that state.
 
-## Project Corpus V2
+The [Protocol](protocol/v2/README.md) works with plain Markdown and requires no
+Runtime, database, or MCP server. It can be used manually and is independent of
+any AI vendor.
 
-Project Corpus V2 adds the Markdown-first, vendor-neutral
-[Project Corpus Protocol V2](protocol/v2/README.md) while keeping the existing
-V1 templates and workflow intact. Protocol V2 remains usable manually with no
-installation.
+An [optional reference Runtime](docs/runtime/cli.md) adds declarative policy
+enforcement, expected-hash filesystem transactions, audit/recovery, CLI
+tooling, and local stdio MCP. Runtime behavior does not define or silently
+amend the Protocol. Its enforced guarantees apply only in controlled modes on
+the qualified local filesystems listed in the
+[platform matrix](docs/security/platform-guarantees.md).
 
-An [optional reference Runtime](docs/runtime/cli.md) for Python 3.11+ implements
-validation, externally granted policy enforcement, native confined filesystem
-transactions, audit/recovery, non-destructive V1 migration, a local CLI, and a
-local stdio MCP adapter. Runtime behavior does not define or silently amend the
-Protocol. The exact guarantee levels and qualified local filesystems are listed
-in the [platform matrix](docs/security/platform-guarantees.md).
+> A memory bank tells an agent what it remembers. Project Corpus defines what
+> the project currently considers authoritative.
+
+## Why Project Corpus?
+
+AI sessions are disposable. Projects are not. Typical memory files help an
+agent recall information; Project Corpus also separates and defines:
+
+- canonical project identity;
+- current operational state;
+- authority boundaries and change permissions;
+- cited evidence versus saved claims that need re-verification;
+- the exact next action;
+- controlled state changes when the optional Runtime is used.
+
+## Protocol and Runtime
+
+| Project Corpus Protocol | Project Corpus Runtime |
+| --- | --- |
+| Markdown-first and vendor-neutral | Optional reference implementation |
+| No installation or database | CLI and validation |
+| Manual workflow supported | Policy enforcement and external owner trust |
+| MCP optional | Verified transactions, audit/recovery, local stdio MCP |
+
+The Protocol is the product contract. The Runtime is an optional enforcement
+layer for users who need stronger technical controls.
 
 ## The idea in one minute
 
@@ -36,7 +60,7 @@ copy a clean Corpus template
 → continue in a new session from the exact next action
 ```
 
-The Corpus contains:
+The maintained V1 Corpus template contains:
 
 ```text
 AGENTS.md
