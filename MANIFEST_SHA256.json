@@ -71,7 +71,7 @@
     "protocol/v2/policy-semantics.md": "fe34cbcfb5d0c01a1f50d0d7fcaa8b1a852eae5ee77f5aefa996f6f0f8398d51",
     "protocol/v2/specification.md": "4e236c8c1bb372c42caf881c121ff9a5af6b4a5d387a901e41f40a9da2955219",
     "protocol/v2/state-documents.md": "1beb6ce6ec947db69f437ea041a8b9afe38281c5df0b7e6bd68c1d78b153ba8c",
-    "prototypes/filesystem_security/PROTOTYPE_RESULTS.md": "a1eae95fbcf82dd9de044e0f1702be888d8a42837145a0be8f7896a839a364dc",
+    "prototypes/filesystem_security/PROTOTYPE_RESULTS.md": "54cbd86140f68937dea0e31f3c9c8ad86e089ae3d486b18db11cda7f6ea10031",
     "prototypes/filesystem_security/README.md": "15ae797d60701564b10b2b408fa09ede35b77cd7dde63c52873bbe5b1514b325",
     "prototypes/filesystem_security/__init__.py": "244c5c855563e5081e6144fb6297b8348a7bc10bb30c475505d21cc7b299d05c",
     "prototypes/filesystem_security/cas_probe.py": "001b8ae225f71cc4fd56e775b3798ec5bac8c2859ff6b5db7339d7aeb9626945",

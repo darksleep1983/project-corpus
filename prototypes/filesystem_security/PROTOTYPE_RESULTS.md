@@ -37,10 +37,19 @@ filesystem must fail managed mutation closed.
 | P6 managed-writer concurrency | PASS | PASS | PASS |
 | P7 recovery state model | PASS | PASS | PASS |
 | P8 backend choice | PASS | PASS | PASS |
+| P9 create-only directory publication | PASS | PASS | PASS |
 
 P1-P8 are closed for the named platform/filesystem combinations. This permits
 production implementation to begin; that implementation must independently pass
 the same and stronger tests before it can claim the guarantee level.
+
+P9 was added before implementing the migration bootstrap transaction. It proves
+create-only publication of a fully staged directory using handle-relative
+`NtSetInformationFile` on NTFS, `renameat2(RENAME_NOREPLACE)` on ext4 and
+`renameatx_np(RENAME_EXCL)` on APFS. A pre-existing destination fails rather
+than being replaced. GitHub Actions run `35183223557` passed this gate in all
+six OS/Python jobs. Production migration code must independently reproduce and
+verify these semantics; the prototype itself is not a Runtime API.
 
 ## Windows evidence
 
