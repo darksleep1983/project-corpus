@@ -140,7 +140,7 @@
     "src/project_corpus/platform/base.py": "62e5ddcf9d451ffc2c2dc9e59fae5313cc227c4c734db3a7b3e27eed92d1e728",
     "src/project_corpus/platform/common.py": "937be12eb04eddfd35ba0c3dbc67a5803c15437998afa7d99a56dae9fc031628",
     "src/project_corpus/platform/factory.py": "34074cc014720bdb2e7c1bac93b638cba75cd600d7eb3ece9fc147e77385399c",
-    "src/project_corpus/platform/posix.py": "6efccac5c5c05063649cbc8f7b3fa01e7e1e9af31552b9b6bec894c7924a8d1c",
+    "src/project_corpus/platform/posix.py": "d60d67903a004be5620d39ef47e321dea43007e7befb13684d510b59f597fd74",
     "src/project_corpus/platform/windows.py": "6b86c6e72f6f47cb7a7430d9b901e75b28bd7199ae7cb555dd2bd1d96320a8d5",
     "tests/test_native_path_backend.py": "2723ef1ea878109e99d5caec8d36fca238d6d2e0daf5d66045e8a6fb7d89e676",
     "docs/runtime/transactions.md": "643cdf15e18252fa5143437b5b9b3a96f3e5b36f5c19d1d63662caeed72afe26",

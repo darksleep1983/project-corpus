@@ -475,10 +475,17 @@ class PosixNativeBackend(NativePathBackend):
         parent_fd = self._open_parent(parts)
         try:
             self._reject_collision(parent_fd, parts[-1])
-            file_fd = os.open(
-                parts[-1], os.O_RDWR | os.O_CREAT | getattr(os, "O_NOFOLLOW", 0) |
-                getattr(os, "O_CLOEXEC", 0), 0o600, dir_fd=parent_fd,
+            common_flags = (
+                os.O_RDWR | getattr(os, "O_NOFOLLOW", 0) |
+                getattr(os, "O_CLOEXEC", 0)
             )
+            try:
+                file_fd = os.open(
+                    parts[-1], common_flags | os.O_CREAT | os.O_EXCL,
+                    0o600, dir_fd=parent_fd,
+                )
+            except FileExistsError:
+                file_fd = os.open(parts[-1], common_flags, dir_fd=parent_fd)
             if not stat_module.S_ISREG(os.fstat(file_fd).st_mode):
                 os.close(file_fd)
                 raise BackendError("LOCK_NOT_REGULAR", relative)
