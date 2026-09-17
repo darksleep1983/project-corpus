@@ -91,13 +91,10 @@ Runtime, MCP-сервер и установка пакета не нужны.
 
 ### Нужен ещё и enforcement?
 
-Сейчас необязательный Runtime устанавливается из локального клона, а не из
-PyPI:
+Необязательный Runtime устанавливается через PyPI:
 
 ```sh
-git clone https://github.com/darksleep1983/project-corpus.git
-cd project-corpus
-python -m pip install .
+pip install project-corpus
 project-corpus validate /path/to/your-project
 project-corpus doctor /path/to/your-project
 ```

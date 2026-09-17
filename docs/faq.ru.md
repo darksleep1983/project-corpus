@@ -93,5 +93,4 @@ authorizing apply прочитайте migration guide.
 
 ## Доступен ли PyPI?
 
-Пока нет. До выпуска публичного package устанавливайте необязательный Runtime
-из локального клона репозитория командой `python -m pip install .`.
+Да. Необязательный Runtime можно установить из PyPI командой `pip install project-corpus`.

@@ -89,7 +89,6 @@ Yes. The Runtime provides read-only migration planning and separate controlled,
 create-only V2 publication. V1 templates remain unchanged; see the migration
 guide before authorizing an apply step.
 
-## Is PyPI available yet?
+## Is PyPI available?
 
-Not yet. Until a public package is released, install the optional Runtime from
-a local repository clone with `python -m pip install .`.
+Yes. The optional Runtime can be installed from PyPI with `pip install project-corpus`.

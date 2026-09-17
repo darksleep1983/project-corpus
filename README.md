@@ -90,12 +90,10 @@ No Runtime, MCP server, or package installation is required.
 
 ### Want enforcement too?
 
-The optional Runtime is currently installed from a local clone, not from PyPI:
+The optional Runtime is installed via PyPI:
 
 ```sh
-git clone https://github.com/darksleep1983/project-corpus.git
-cd project-corpus
-python -m pip install .
+pip install project-corpus
 project-corpus validate /path/to/your-project
 project-corpus doctor /path/to/your-project
 ```
