@@ -570,6 +570,10 @@ class PosixNativeBackend(NativePathBackend):
             raise BackendError("DIRECTORY_PUBLISH_UNSUPPORTED", platform.system())
         if result != 0:
             code = ctypes.get_errno()
+            if code == errno.EEXIST:
+                raise BackendError(
+                    "TARGET_EXISTS", target, native_code=code
+                )
             raise BackendError(
                 "DIRECTORY_PUBLISH", os.strerror(code), native_code=code
             )
