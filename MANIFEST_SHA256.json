@@ -82,7 +82,7 @@
     "src/project_corpus/authority.py": "21ea48e944fa0c408beaabe529e6f8242770f0145f755fe833654ab28fca31c0",
     "src/project_corpus/compatibility.py": "644ada4d18fa6f0c9da9154920057c4593e01af5cc6bc834958c3c40b691505c",
     "src/project_corpus/doctor.py": "8385b8dc0e9aca09330564535574e15e6abd5ea92a28e5721623c9ff685e57a1",
-    "src/project_corpus/migration.py": "7620ed02ab4bc153b5a0a0d9509fbbbabd93dbb31aa10d3cd1d314244c159b74",
+    "src/project_corpus/migration.py": "25fdc6a345d160d6ce8883cd81c8418f970d4ec30532d54569538f28282a45bc",
     "src/project_corpus/policy.py": "8cca331e054623782cfc1ef73cc4b8615e1097de2d54a86e6e054cbfc11bcbec",
     "src/project_corpus/trust.py": "d317d1bf3ee6012d3e9569c3283f88b7ac2cbb39a235dd7a11d4a20a86e9a11f",
     "src/project_corpus/validation.py": "7fc3b9e8cf44ced04502c57e37e85ebcb4dfe74efcf692c0b9fab72b0d9bac34",
@@ -138,10 +138,14 @@
     "docs/runtime/native-path-backend.md": "b0f6561ec2c4a286efdd56fc23be9a31eaa4c0095555a90ac1b0326bdac14938",
     "src/project_corpus/platform/__init__.py": "43cdf06b843dc7d994f46930029ba9d7200d8407d3ba24a2424c7ba6d9046cb8",
     "src/project_corpus/platform/base.py": "62e5ddcf9d451ffc2c2dc9e59fae5313cc227c4c734db3a7b3e27eed92d1e728",
-    "src/project_corpus/platform/common.py": "0334b28a81a645aaf6de58cbda2fa2f54389b9c0ed40aa76e7cf7f3f7416ea05",
+    "src/project_corpus/platform/common.py": "937be12eb04eddfd35ba0c3dbc67a5803c15437998afa7d99a56dae9fc031628",
     "src/project_corpus/platform/factory.py": "34074cc014720bdb2e7c1bac93b638cba75cd600d7eb3ece9fc147e77385399c",
-    "src/project_corpus/platform/posix.py": "1d15cbd4c459775357f110e858a4c8644cd060a5e3855a0b6c991dd4cb58249e",
+    "src/project_corpus/platform/posix.py": "6efccac5c5c05063649cbc8f7b3fa01e7e1e9af31552b9b6bec894c7924a8d1c",
     "src/project_corpus/platform/windows.py": "6b86c6e72f6f47cb7a7430d9b901e75b28bd7199ae7cb555dd2bd1d96320a8d5",
-    "tests/test_native_path_backend.py": "efe9d67ce51fe04bab4461197c3d6ac44383164d16adbb96bbfab55194797a5c"
+    "tests/test_native_path_backend.py": "2723ef1ea878109e99d5caec8d36fca238d6d2e0daf5d66045e8a6fb7d89e676",
+    "docs/runtime/transactions.md": "643cdf15e18252fa5143437b5b9b3a96f3e5b36f5c19d1d63662caeed72afe26",
+    "src/project_corpus/transactions.py": "458581d6996c887ee00c85d82895e7415466f3c9e5236397057b7c35aa357a61",
+    "templates/v2/minimal/.project-corpus/audit/.gitkeep": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "tests/test_transactions.py": "434529e92cf07aa34d2518e897ee88446b798b073a14845d31145db27a2ef200"
   }
 }

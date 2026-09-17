@@ -181,11 +181,12 @@ class NativePathBackendTests(unittest.TestCase):
             "state//double.md",
             "state/./dot.md",
             "state/line\nfeed.md",
+            "state/file.md:stream",
+            "state/CON.txt",
+            "state/back\\slash.md",
         ]
         if sys.platform == "win32":
-            candidates.extend(
-                ["state/file.md:stream", "//server/share/file", "state/CON.txt"]
-            )
+            candidates.append("//server/share/file")
         with open_native_backend(self.root) as backend:
             for candidate in candidates:
                 with self.subTest(candidate=candidate):

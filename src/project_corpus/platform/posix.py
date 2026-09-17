@@ -307,9 +307,9 @@ class PosixNativeBackend(NativePathBackend):
         return tuple((name, os.getxattr(fd, name)) for name in names)
 
     @staticmethod
-    def _darwin_acl_equal(left_fd: int, right_fd: int) -> bool:
+    def _darwin_acl(fd: int) -> bytes | None:
         if platform.system() != "Darwin":
-            return True
+            return None
         libc = ctypes.CDLL(None, use_errno=True)
         acl_get_fd = libc.acl_get_fd
         acl_get_fd.argtypes = [ctypes.c_int]
@@ -319,57 +319,36 @@ class PosixNativeBackend(NativePathBackend):
         acl_to_text.restype = ctypes.c_void_p
         acl_free = libc.acl_free
         acl_free.argtypes = [ctypes.c_void_p]
-        def read_acl(fd: int) -> int | None:
-            ctypes.set_errno(0)
-            value = acl_get_fd(fd)
-            if value:
-                return value
+        ctypes.set_errno(0)
+        acl = acl_get_fd(fd)
+        if not acl:
             code = ctypes.get_errno()
             if code == errno.ENOENT:
                 return None
             raise BackendError(
                 "METADATA_QUERY", os.strerror(code), native_code=code
             )
-
-        left = read_acl(left_fd)
-        right = read_acl(right_fd)
-        if left is None or right is None:
-            if left is not None:
-                acl_free(left)
-            if right is not None:
-                acl_free(right)
-            return left is None and right is None
-        left_text = ctypes.c_void_p()
-        right_text = ctypes.c_void_p()
+        text = ctypes.c_void_p()
         try:
-            left_size = ctypes.c_ssize_t()
-            right_size = ctypes.c_ssize_t()
-            left_text = ctypes.c_void_p(acl_to_text(left, ctypes.byref(left_size)))
-            right_text = ctypes.c_void_p(acl_to_text(right, ctypes.byref(right_size)))
-            if not left_text.value or not right_text.value:
+            size = ctypes.c_ssize_t()
+            text = ctypes.c_void_p(acl_to_text(acl, ctypes.byref(size)))
+            if not text.value:
                 code = ctypes.get_errno()
                 raise BackendError(
                     "METADATA_QUERY", os.strerror(code), native_code=code
                 )
-            return (
-                left_size.value == right_size.value and
-                ctypes.string_at(left_text, left_size.value) ==
-                ctypes.string_at(right_text, right_size.value)
-            )
+            return ctypes.string_at(text, size.value)
         finally:
-            if left_text.value:
-                acl_free(left_text)
-            if right_text.value:
-                acl_free(right_text)
-            acl_free(left)
-            acl_free(right)
+            if text.value:
+                acl_free(text)
+            acl_free(acl)
 
     @classmethod
     def _metadata_for_fd(cls, fd: int) -> tuple[tuple[object, ...], str]:
         info = os.fstat(fd)
         fields: tuple[object, ...] = (
             info.st_uid, info.st_gid, stat_module.S_IMODE(info.st_mode),
-            getattr(info, "st_flags", 0), cls._xattrs(fd),
+            getattr(info, "st_flags", 0), cls._xattrs(fd), cls._darwin_acl(fd),
         )
         return fields, hashlib.sha256(repr(fields).encode("utf-8")).hexdigest()
 
@@ -388,7 +367,7 @@ class PosixNativeBackend(NativePathBackend):
                 raise BackendError("CUSTOM_METADATA_UNSUPPORTED", "owner or group differs")
             if self._xattrs(target_fd) != self._xattrs(data.file_fd):
                 raise BackendError("CUSTOM_METADATA_UNSUPPORTED", "extended attributes differ")
-            if not self._darwin_acl_equal(target_fd, data.file_fd):
+            if self._darwin_acl(target_fd) != self._darwin_acl(data.file_fd):
                 raise BackendError("CUSTOM_METADATA_UNSUPPORTED", "ACL differs")
             os.fchmod(data.file_fd, mode)
             os.fsync(data.file_fd)

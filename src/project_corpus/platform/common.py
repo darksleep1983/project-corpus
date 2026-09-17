@@ -33,12 +33,10 @@ def validate_relative_path(value: str, *, windows: bool) -> tuple[str, ...]:
     if "\x00" in value or any(ord(char) < 32 for char in value):
         raise PathValidationError("control characters are forbidden")
     if "\\" in value:
-        if not windows:
-            raise PathValidationError("backslash is not portable")
-        value = value.replace("\\", "/")
+        raise PathValidationError("backslash is not portable")
     if value.startswith("/") or re.match(r"^[A-Za-z]:", value):
         raise PathValidationError("absolute, drive, UNC or device path is forbidden")
-    if windows and ":" in value:
+    if ":" in value:
         raise PathValidationError("drive and ADS syntax is forbidden")
     parts = value.split("/")
     if PurePosixPath(value).is_absolute() or any(
@@ -48,11 +46,10 @@ def validate_relative_path(value: str, *, windows: bool) -> tuple[str, ...]:
     for part in parts:
         if unicodedata.normalize("NFC", part) != part:
             raise PathValidationError("path must use NFC spelling")
-        if windows:
-            if part.endswith((" ", ".")):
-                raise PathValidationError("trailing space or dot is forbidden")
-            if any(char in '<>:"/\\|?*' for char in part):
-                raise PathValidationError("reserved character is forbidden")
-            if part.split(".", 1)[0].upper() in WINDOWS_RESERVED:
-                raise PathValidationError("reserved device name is forbidden")
+        if part.endswith((" ", ".")):
+            raise PathValidationError("trailing space or dot is forbidden")
+        if any(char in '<>:"/\\|?*' for char in part):
+            raise PathValidationError("reserved character is forbidden")
+        if part.split(".", 1)[0].upper() in WINDOWS_RESERVED:
+            raise PathValidationError("reserved device name is forbidden")
     return tuple(parts)

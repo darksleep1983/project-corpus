@@ -193,6 +193,7 @@ generated views are non-authoritative unless current state explicitly cites them
     planned: list[PlannedFile] = [
         _planned_text("AGENTS.md", agents_text, ("AGENTS.md",)),
         _planned_text(".project-corpus/policy.toml", policy_text, ("CORPUS_ACCESS_CURRENT.md",)),
+        PlannedFile(".project-corpus/audit/.gitkeep", b"\n", ()),
         _planned_text(
             ".project-corpus/state/PROJECT.md", project_text,
             ("AGENTS.md", "PROJECT_ROADMAP_CURRENT.md"),
