@@ -169,7 +169,7 @@ def _stage_token(*parts: str) -> str:
     return hashlib.sha256("\0".join(parts).encode()).hexdigest()[:32]
 
 
-def _inside(path: str, scopes: tuple[str, ...]) -> bool:
+def path_matches_scopes(path: str, scopes: tuple[str, ...]) -> bool:
     for scope in scopes:
         if scope.endswith("/**"):
             prefix = scope[:-3]
@@ -192,12 +192,14 @@ class TrustedRuntimeStore:
 
     def __init__(self, root: Path):
         self.root = root
-        self.backend = open_native_backend(root)
         try:
+            self.backend = open_native_backend(root)
             for marker in ("journal/.keep", "backups/.keep", "locks/.keep"):
                 self.backend.stat(marker)
         except Exception:
-            self.backend.close()
+            backend = getattr(self, "backend", None)
+            if backend is not None:
+                backend.close()
             raise TransactionError(
                 "RUNTIME_STORE_NOT_PROVISIONED",
                 "owner-controlled journal, backups and locks directories are required",
@@ -366,7 +368,7 @@ class TransactionEngine:
             raise TransactionError("CONTENT_ENCODING", str(exc)) from exc
         if not self.authority.permits(capability):
             raise TransactionError("CAPABILITY_DENIED", capability)
-        if not _inside(target, self.policy.write_scopes):
+        if not path_matches_scopes(target, self.policy.write_scopes):
             raise TransactionError("WRITE_SCOPE_DENIED", target)
         rules = {
             "state.update": ("update", ".project-corpus/state/STATUS.md"),

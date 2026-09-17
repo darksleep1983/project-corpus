@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import json
 import os
 from pathlib import Path, PurePath
 import re
@@ -51,7 +52,109 @@ def grant_path(project_id: str, trust_directory: Path | None = None) -> Path:
     return (trust_directory or default_trust_directory()) / f"{project_id}.toml"
 
 
+def runtime_state_path(trust_grant_path: Path, project_id: str) -> Path:
+    if not re.fullmatch(r"[a-z0-9][a-z0-9._-]{2,63}", project_id):
+        raise TrustError("TRUST_PROJECT_ID", "invalid project id")
+    return trust_grant_path.absolute().parent / "runtime" / project_id
+
+
+def serialize_trust_grant(grant: TrustGrant) -> bytes:
+    def quoted(value: str) -> str:
+        return json.dumps(value, ensure_ascii=False)
+
+    capabilities = ", ".join(quoted(item) for item in sorted(grant.capability_ceiling))
+    transports = ", ".join(quoted(item) for item in sorted(grant.transports))
+    text = f'''grant_version = "1"
+project_id = {quoted(grant.project_id)}
+physical_root = {quoted(str(grant.physical_root))}
+root_identity = {quoted(grant.root_identity)}
+policy_sha256 = {quoted(grant.policy_sha256)}
+capability_ceiling = [{capabilities}]
+filesystem = {quoted(grant.filesystem)}
+transports = [{transports}]
+approved_at = {quoted(grant.approved_at)}
+protocol_version = {quoted(grant.protocol_version)}
+'''
+    return text.encode("utf-8")
+
+
+def _reject_symlink_ancestors(path: Path) -> None:
+    candidate = path.absolute()
+    existing: list[Path] = []
+    while True:
+        existing.append(candidate)
+        if candidate.parent == candidate:
+            break
+        candidate = candidate.parent
+    for item in reversed(existing):
+        if item.exists() and item.is_symlink():
+            raise TrustError("TRUST_SYMLINK", str(item))
+
+
+def write_trust_grant(path: Path, grant: TrustGrant, *, replace: bool = False) -> None:
+    path = path.absolute()
+    _reject_symlink_ancestors(path.parent)
+    path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    if path.exists() and not replace:
+        raise TrustError("TRUST_EXISTS", str(path))
+    if path.is_symlink():
+        raise TrustError("TRUST_SYMLINK", str(path))
+    temp = path.with_name(f".{path.name}.{os.urandom(8).hex()}.tmp")
+    descriptor = os.open(temp, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    try:
+        content = serialize_trust_grant(grant)
+        view = memoryview(content)
+        while view:
+            view = view[os.write(descriptor, view):]
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+    try:
+        staged = load_trust_grant(temp)
+        if staged != grant:
+            raise TrustError("TRUST_VERIFY", str(temp))
+        os.replace(temp, path)
+        if os.name != "nt":
+            directory = os.open(path.parent, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
+            try:
+                os.fsync(directory)
+            finally:
+                os.close(directory)
+        loaded = load_trust_grant(path)
+        if loaded != grant:
+            raise TrustError("TRUST_VERIFY", str(path))
+    finally:
+        try:
+            temp.unlink()
+        except FileNotFoundError:
+            pass
+
+
+def provision_runtime_state(path: Path) -> None:
+    path = path.absolute()
+    _reject_symlink_ancestors(path)
+    path.mkdir(parents=True, exist_ok=True, mode=0o700)
+    if path.is_symlink() or not path.is_dir():
+        raise TrustError("RUNTIME_STATE_ROOT", str(path))
+    for name in ("journal", "backups", "locks"):
+        directory = path / name
+        _reject_symlink_ancestors(directory)
+        directory.mkdir(exist_ok=True, mode=0o700)
+        marker = directory / ".keep"
+        if marker.is_symlink() or (marker.exists() and not marker.is_file()):
+            raise TrustError("RUNTIME_STATE_MARKER", str(marker))
+        if not marker.exists():
+            descriptor = os.open(marker, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            try:
+                os.write(descriptor, b"\n")
+                os.fsync(descriptor)
+            finally:
+                os.close(descriptor)
+
+
 def load_trust_grant(path: Path) -> TrustGrant:
+    path = path.absolute()
+    _reject_symlink_ancestors(path)
     if path.is_symlink():
         raise TrustError("TRUST_SYMLINK", str(path))
     try:

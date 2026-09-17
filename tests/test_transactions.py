@@ -72,10 +72,10 @@ project_id = "transaction-fixture"
 profile = "SAFE_EDIT"
 
 [capabilities]
-allow = ["corpus.read", "corpus.stat", "corpus.validate", "state.update", "task.create", "report.create"]
+allow = ["corpus.read", "corpus.stat", "corpus.validate", "state.update", "task.create", "report.create", "audit.read"]
 
 [scopes]
-read = [".project-corpus/state/**", ".project-corpus/tasks/**", ".project-corpus/reports/**"]
+read = [".project-corpus/state/**", ".project-corpus/tasks/**", ".project-corpus/reports/**", ".project-corpus/audit/**"]
 write = [".project-corpus/state/STATUS.md", ".project-corpus/tasks/**", ".project-corpus/reports/**"]
 
 [requirements]
@@ -142,6 +142,7 @@ def make_fixture(base: Path) -> tuple[Path, Path, TrustGrant, bytes, bytes]:
         capability_ceiling=frozenset({
             "corpus.read", "corpus.stat", "corpus.validate",
             "state.update", "task.create", "report.create",
+            "audit.read",
         }),
         filesystem=filesystem,
         transports=frozenset({"cli", "stdio-mcp"}),

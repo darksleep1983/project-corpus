@@ -7,6 +7,7 @@ import tempfile
 import unittest
 
 from project_corpus.doctor import doctor
+from project_corpus.platform import open_native_backend
 
 
 def tree_hashes(root: Path) -> dict[str, str]:
@@ -71,21 +72,24 @@ class DoctorTests(unittest.TestCase):
         self.assertFalse(report.ok)
         self.assertIn("GENERATED_VIEW_UNMARKED", {item.code for item in report.checks})
 
-    def test_matching_trust_is_still_identity_unverified_before_native_backend(self):
+    def test_trust_root_identity_and_filesystem_are_verified_natively(self):
         with tempfile.TemporaryDirectory(prefix="pc-doctor-trust-") as temp:
             base = Path(temp)
             project = base / "project"
             shutil.copytree(self.root / "templates" / "v2" / "minimal", project)
             policy = (project / ".project-corpus" / "policy.toml").read_bytes()
+            with open_native_backend(project) as backend:
+                identity = backend.root_identity
+                filesystem = backend.filesystem
             trust = base / "trust.toml"
             trust.write_text(
                 f'''grant_version = "1"
 project_id = "example-project"
 physical_root = "{project.as_posix()}"
-root_identity = "not-yet-observed"
+root_identity = "{identity}"
 policy_sha256 = "{hashlib.sha256(policy).hexdigest()}"
 capability_ceiling = ["corpus.read", "corpus.validate"]
-filesystem = "test-local"
+filesystem = "{filesystem}"
 transports = ["cli"]
 approved_at = "2026-09-16T00:00:00Z"
 protocol_version = "2.0"
@@ -94,9 +98,9 @@ protocol_version = "2.0"
             report = doctor(project, trust_grant_path=trust)
         self.assertTrue(report.ok)
         self.assertEqual(report.guarantee_level, "DIRECT_FOLDER_OBSERVABLE")
-        self.assertIn(
-            "TRUST_ROOT_IDENTITY_UNVERIFIED", {item.code for item in report.checks}
-        )
+        codes = {item.code for item in report.checks}
+        self.assertIn("ROOT_IDENTITY", codes)
+        self.assertIn("FILESYSTEM_QUALIFIED", codes)
 
 
 if __name__ == "__main__":

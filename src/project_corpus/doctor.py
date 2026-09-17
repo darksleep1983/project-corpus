@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from .compatibility import LegacyCorpusError, load_v1_corpus
+from .platform import BackendError, open_native_backend
 from .trust import TrustError, load_trust_grant
 from .validation import ValidationIssue, validate_v2_project
 
@@ -55,10 +56,29 @@ def doctor(root: Path, *, trust_grant_path: Path | None = None) -> DoctorReport:
                     checks.append(DoctorCheck("POLICY_DRIFT", "FAIL", "owner approval required"))
                 if trust.physical_root != root:
                     checks.append(DoctorCheck("TRUST_ROOT_PATH_MISMATCH", "FAIL", "configured root differs"))
-                checks.append(DoctorCheck(
-                    "TRUST_ROOT_IDENTITY_UNVERIFIED", "WARN",
-                    "native root identity is evaluated after the path backend milestone",
-                ))
+                else:
+                    try:
+                        with open_native_backend(root) as backend:
+                            if backend.root_identity != trust.root_identity:
+                                checks.append(DoctorCheck(
+                                    "ROOT_IDENTITY_MISMATCH", "FAIL",
+                                    "external grant differs from opened root identity",
+                                ))
+                            else:
+                                checks.append(DoctorCheck(
+                                    "ROOT_IDENTITY", "PASS", backend.root_identity,
+                                ))
+                            if backend.filesystem != trust.filesystem:
+                                checks.append(DoctorCheck(
+                                    "FILESYSTEM_MISMATCH", "FAIL",
+                                    f"grant={trust.filesystem} observed={backend.filesystem}",
+                                ))
+                            else:
+                                checks.append(DoctorCheck(
+                                    "FILESYSTEM_QUALIFIED", "PASS", backend.filesystem,
+                                ))
+                    except BackendError as exc:
+                        checks.append(DoctorCheck(exc.code, "FAIL", exc.detail))
             except TrustError as exc:
                 checks.append(DoctorCheck(exc.code, "FAIL", exc.detail))
         ok = not any(item.status == "FAIL" for item in checks)
