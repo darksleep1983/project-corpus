@@ -95,7 +95,7 @@
     "src/project_corpus/platform/windows.py": "6b86c6e72f6f47cb7a7430d9b901e75b28bd7199ae7cb555dd2bd1d96320a8d5",
     "src/project_corpus/policy.py": "8cca331e054623782cfc1ef73cc4b8615e1097de2d54a86e6e054cbfc11bcbec",
     "src/project_corpus/transactions.py": "6102aee73cb1f2ba8515159f98abb9054adf29f22c165ffc09847b800a7925bd",
-    "src/project_corpus/trust.py": "a8d7ae4ed58c3c29b18032941b6ce56040faac5449cf4b113e75ead1c0b4c5e2",
+    "src/project_corpus/trust.py": "47cdd5202bb0ad5bace036314427968d40d62a9d996aca677682218906bcfd04",
     "src/project_corpus/validation.py": "f1b048b067c626b5219ed7d26af599609913e930efef11d9c2b1f3186a6ccace",
     "template/en/AGENTS.md": "b622d20c16da05e5e4b3382d4cb999bb574767a9fe65f054bf22b882d8d8d652",
     "template/en/CORPUS_ACCESS_CURRENT.md": "45c82832f393ce76c79c5e2a62e0d777ccf68a216ce7e1e71ea5fb7204f17e32",

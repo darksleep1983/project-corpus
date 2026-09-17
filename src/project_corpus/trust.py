@@ -78,22 +78,15 @@ protocol_version = {quoted(grant.protocol_version)}
     return text.encode("utf-8")
 
 
-def _reject_symlink_ancestors(path: Path) -> None:
-    candidate = path.absolute()
-    existing: list[Path] = []
-    while True:
-        existing.append(candidate)
-        if candidate.parent == candidate:
-            break
-        candidate = candidate.parent
-    for item in reversed(existing):
-        if item.exists() and item.is_symlink():
-            raise TrustError("TRUST_SYMLINK", str(item))
+def _canonical_config_path(path: Path) -> Path:
+    absolute = path.absolute()
+    if absolute.is_symlink():
+        raise TrustError("TRUST_SYMLINK", str(absolute))
+    return absolute.resolve(strict=False)
 
 
 def write_trust_grant(path: Path, grant: TrustGrant, *, replace: bool = False) -> None:
-    path = path.absolute()
-    _reject_symlink_ancestors(path.parent)
+    path = _canonical_config_path(path)
     path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
     if path.exists() and not replace:
         raise TrustError("TRUST_EXISTS", str(path))
@@ -131,14 +124,14 @@ def write_trust_grant(path: Path, grant: TrustGrant, *, replace: bool = False) -
 
 
 def provision_runtime_state(path: Path) -> None:
-    path = path.absolute()
-    _reject_symlink_ancestors(path)
+    path = _canonical_config_path(path)
     path.mkdir(parents=True, exist_ok=True, mode=0o700)
     if path.is_symlink() or not path.is_dir():
         raise TrustError("RUNTIME_STATE_ROOT", str(path))
     for name in ("journal", "backups", "locks"):
         directory = path / name
-        _reject_symlink_ancestors(directory)
+        if directory.is_symlink():
+            raise TrustError("RUNTIME_STATE_ROOT", str(directory))
         directory.mkdir(exist_ok=True, mode=0o700)
         marker = directory / ".keep"
         if marker.is_symlink() or (marker.exists() and not marker.is_file()):
@@ -153,10 +146,7 @@ def provision_runtime_state(path: Path) -> None:
 
 
 def load_trust_grant(path: Path) -> TrustGrant:
-    path = path.absolute()
-    _reject_symlink_ancestors(path)
-    if path.is_symlink():
-        raise TrustError("TRUST_SYMLINK", str(path))
+    path = _canonical_config_path(path)
     try:
         data = tomllib.loads(path.read_bytes().decode("utf-8"))
     except (OSError, UnicodeDecodeError, tomllib.TOMLDecodeError) as exc:
