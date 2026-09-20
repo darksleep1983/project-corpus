@@ -99,7 +99,11 @@ project-corpus doctor /path/to/your-project
 ```
 
 It adds validation/doctor, external owner trust, policy enforcement,
-expected-hash transactions, audit/recovery, and optional local stdio MCP.
+expected-hash transactions, audit/recovery, optional local stdio MCP, and
+read-only corpus discovery. Use `project-corpus search ROOT QUERY`,
+`project-corpus timeline ROOT SELECTOR`, or `project-corpus show ROOT ARTIFACT`
+to retrieve bounded local context. Search and timeline output is explicitly
+non-authoritative discovery metadata; canonical files remain authoritative.
 Controlled writes require an external owner trust grant; follow the
 [Runtime CLI guide](docs/runtime/cli.md) rather than treating project content as
 authority.

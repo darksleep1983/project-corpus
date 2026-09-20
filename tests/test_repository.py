@@ -15,7 +15,12 @@ class RepositoryTests(unittest.TestCase):
             for path in self.root.rglob("*")
             if path.is_file()
             and ".git" not in path.parts
+            and not (
+                path.relative_to(self.root).parts[0] == ".project-corpus"
+                or (path.parent == self.root and path.name == "AGENTS.md")
+            )
             and "__pycache__" not in path.parts
+            and ".pytest_cache" not in path.parts
             and path.suffix != ".pyc"
             and path.name != "MANIFEST_SHA256.json"
         }

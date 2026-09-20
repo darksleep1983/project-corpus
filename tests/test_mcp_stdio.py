@@ -44,6 +44,16 @@ class StdioMcpTests(unittest.TestCase):
         code, result = cli(["runtime", "init", "--trust", str(self.trust)])
         self.assertEqual(code, 0, result)
 
+    def enable_discovery_policy(self) -> None:
+        policy = self.project / ".project-corpus" / "policy.toml"
+        policy.write_text(
+            policy.read_text(encoding="utf-8").replace(
+                '"corpus.validate",',
+                '"corpus.search", "corpus.timeline", "corpus.validate",',
+            ),
+            encoding="utf-8",
+        )
+
     @staticmethod
     def exchange(runtime: McpRuntime, messages: list[dict[str, object] | str]):
         lines = [item if isinstance(item, str) else json.dumps(item) for item in messages]
@@ -72,7 +82,7 @@ class StdioMcpTests(unittest.TestCase):
         self.assertEqual(responses[0]["result"]["protocolVersion"], "2025-11-25")
         self.assertEqual(
             [tool["name"] for tool in responses[1]["result"]["tools"]],
-            ["corpus.read"],
+            ["corpus.read", "corpus.show"],
         )
         self.assertFalse(responses[2]["result"]["isError"])
         self.assertEqual(
@@ -146,6 +156,79 @@ class StdioMcpTests(unittest.TestCase):
         self.assertEqual(responses[0]["error"]["code"], -32700)
         self.assertEqual(responses[1]["error"]["code"], -32002)
         self.assertTrue(responses[3]["result"]["isError"])
+
+    def test_discovery_tools_call_successfully_over_json_rpc(self):
+        self.enable_discovery_policy()
+        task = self.project / ".project-corpus" / "tasks" / "task-discovery.md"
+        task.write_text(
+            "# Discovery task\n\nCreated-At: 2026-09-20T10:00:00Z\n\nneedle\n",
+            encoding="utf-8",
+        )
+        capabilities = ("mcp.stdio", "corpus.read", "corpus.search", "corpus.timeline")
+        self.provision(capabilities)
+        runtime = McpRuntime(self.trust, frozenset(capabilities))
+        responses = self.exchange(runtime, [
+            {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {
+                "protocolVersion": "2025-11-25", "capabilities": {},
+                "clientInfo": {"name": "test", "version": "1"},
+            }},
+            {"jsonrpc": "2.0", "method": "notifications/initialized"},
+            {"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {
+                "name": "corpus.search", "arguments": {"query": "needle", "type": "task", "limit": 1},
+            }},
+            {"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {
+                "name": "corpus.timeline", "arguments": {"selector": "needle"},
+            }},
+            {"jsonrpc": "2.0", "id": 4, "method": "tools/call", "params": {
+                "name": "corpus.show", "arguments": {"path": ".project-corpus/tasks/task-discovery.md"},
+            }},
+        ])
+        self.assertEqual(responses[0]["result"]["serverInfo"]["version"], "2.1.0")
+        for response in responses[1:]:
+            self.assertFalse(response["result"]["isError"], response)
+        self.assertTrue(responses[1]["result"]["structuredContent"]["non_authoritative"])
+        self.assertEqual(responses[2]["result"]["structuredContent"]["events"][0]["path"], ".project-corpus/tasks/task-discovery.md")
+        self.assertIn("needle", responses[3]["result"]["structuredContent"]["content"])
+
+    def test_discovery_tool_capability_and_read_scope_denials_use_tool_results(self):
+        self.enable_discovery_policy()
+        task = self.project / ".project-corpus" / "tasks" / "task-denied.md"
+        task.write_text("# Denied\n\nneedle\n", encoding="utf-8")
+        self.provision(("mcp.stdio", "corpus.read"))
+        runtime = McpRuntime(self.trust, frozenset({"mcp.stdio", "corpus.read"}))
+        responses = self.exchange(runtime, [
+            {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {
+                "protocolVersion": "2025-11-25", "capabilities": {},
+                "clientInfo": {"name": "test", "version": "1"},
+            }},
+            {"jsonrpc": "2.0", "method": "notifications/initialized"},
+            {"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {
+                "name": "corpus.search", "arguments": {"query": "needle", "type": "task", "limit": 1},
+            }},
+        ])
+        self.assertTrue(responses[1]["result"]["isError"])
+        self.assertIn("tool capability denied", responses[1]["result"]["structuredContent"]["detail"])
+
+        self.trust = self.base / "owner" / "trust" / "mcp-scope.toml"
+        policy = self.project / ".project-corpus" / "policy.toml"
+        policy.write_text(
+            policy.read_text(encoding="utf-8").replace('".project-corpus/tasks/**", ', ""),
+            encoding="utf-8",
+        )
+        self.provision(("mcp.stdio", "corpus.read"))
+        runtime = McpRuntime(self.trust, frozenset({"mcp.stdio", "corpus.read"}))
+        responses = self.exchange(runtime, [
+            {"jsonrpc": "2.0", "id": 3, "method": "initialize", "params": {
+                "protocolVersion": "2025-11-25", "capabilities": {},
+                "clientInfo": {"name": "test", "version": "1"},
+            }},
+            {"jsonrpc": "2.0", "method": "notifications/initialized"},
+            {"jsonrpc": "2.0", "id": 4, "method": "tools/call", "params": {
+                "name": "corpus.show", "arguments": {"path": ".project-corpus/tasks/task-denied.md"},
+            }},
+        ])
+        self.assertTrue(responses[1]["result"]["isError"])
+        self.assertIn("read scope denied", responses[1]["result"]["structuredContent"]["detail"])
 
 
 if __name__ == "__main__":

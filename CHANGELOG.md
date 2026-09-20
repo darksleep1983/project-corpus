@@ -4,6 +4,11 @@
 
 ## Unreleased
 
+## 2.1.0
+
+- Added optional local, read-only source-aware discovery: deterministic search, timestamp-backed timelines and safe artifact show/read through the Runtime CLI and stdio MCP.
+- Discovery views are explicitly non-authoritative; they do not create an index, alter Protocol V2, or add network, database or write dependencies.
+
 ## 2.0.1 — 2026-09-17
 
 - Improved post-v2.0.0 README onboarding with a visual project-state flow, a

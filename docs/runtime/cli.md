@@ -11,6 +11,9 @@ fail-closed validation, authority, confinement or transaction error.
 ```text
 project-corpus doctor PROJECT_ROOT [--trust OWNER_GRANT]
 project-corpus validate PROJECT_ROOT
+project-corpus search PROJECT_ROOT QUERY [--type state|task|report|history] [--limit 1..100]
+project-corpus timeline PROJECT_ROOT SELECTOR
+project-corpus show PROJECT_ROOT ARTIFACT_PATH
 project-corpus migration plan V1_ROOT --project-id ID --logical-name NAME
 project-corpus migration authorize V1_ROOT --destination NEW_V2_ROOT \
   --authorization OWNER_FILE --project-id ID --logical-name NAME
@@ -23,6 +26,13 @@ configuration and provisions its external lock state. `apply` creates a
 separate, previously absent V2 destination with create-only directory
 publication; neither command changes V1. `validate` is direct-folder
 observation and does not claim Runtime enforcement.
+
+`search`, `timeline` and `show` are likewise direct-folder, read-only
+observations: like `validate` and `doctor`, they do not require an owner trust
+grant. Their boundary is OS ACLs, V2 conformance, policy `read_scopes` and
+native backend confinement. Controlled writes and stdio MCP authority remain
+external-owner-trust-gated; direct-folder discovery does not broaden that
+capability boundary.
 
 ## Owner trust and Runtime state
 

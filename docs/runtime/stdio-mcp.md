@@ -25,6 +25,9 @@ argument.
 
 - `corpus.read` — scoped UTF-8 read with stat/hash evidence;
 - `corpus.stat` — scoped size, hash and native identity;
+- `corpus.search` — non-authoritative source-aware search within policy read scopes;
+- `corpus.timeline` — non-authoritative timestamp-backed corpus references;
+- `corpus.show` — one policy-scoped Markdown corpus artifact;
 - `state.update` — fixed STATUS target with required expected SHA-256;
 - `task.create` — create-only conforming Task at its ID-derived path;
 - `report.create` — create-only conforming Report at its ID-derived path;

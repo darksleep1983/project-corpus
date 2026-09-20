@@ -11,6 +11,7 @@ import sys
 
 from .authority import RUNTIME_HARD_LIMITS, evaluate_authority
 from .compatibility import load_v1_corpus
+from .discovery import search, show, timeline
 from .doctor import doctor
 from .migration import (
     apply_migration, authorize_migration, load_migration_authorization,
@@ -41,6 +42,16 @@ def _json(value: object, *, stream=None) -> None:
     if stream is None:
         stream = sys.stdout
     stream.write(json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n")
+
+
+def _discovery_limit(value: str) -> int:
+    try:
+        limit = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("limit must be an integer between 1 and 100") from exc
+    if not 1 <= limit <= 100:
+        raise argparse.ArgumentTypeError("limit must be between 1 and 100")
+    return limit
 
 
 def _same_path(left: Path, right: Path) -> bool:
@@ -99,6 +110,18 @@ def _engine(args: argparse.Namespace, capability: str) -> TransactionEngine:
         session_capabilities={capability},
         transport="cli",
     )
+
+
+def _cmd_search(args: argparse.Namespace) -> object:
+    return search(Path(args.root), args.query, artifact_type=args.artifact_type, limit=args.limit)
+
+
+def _cmd_timeline(args: argparse.Namespace) -> object:
+    return timeline(Path(args.root), args.selector)
+
+
+def _cmd_show(args: argparse.Namespace) -> object:
+    return show(Path(args.root), args.artifact)
 
 
 def _cmd_doctor(args: argparse.Namespace) -> object:
@@ -308,6 +331,21 @@ def build_parser() -> argparse.ArgumentParser:
     command = commands.add_parser("validate")
     command.add_argument("root")
     command.set_defaults(handler=_cmd_validate)
+
+    command = commands.add_parser("search")
+    command.add_argument("root")
+    command.add_argument("query")
+    command.add_argument("--type", dest="artifact_type", choices=("state", "task", "report", "history"))
+    command.add_argument("--limit", type=_discovery_limit, default=20)
+    command.set_defaults(handler=_cmd_search)
+    command = commands.add_parser("timeline")
+    command.add_argument("root")
+    command.add_argument("selector")
+    command.set_defaults(handler=_cmd_timeline)
+    command = commands.add_parser("show")
+    command.add_argument("root")
+    command.add_argument("artifact")
+    command.set_defaults(handler=_cmd_show)
 
     migration = commands.add_parser("migration").add_subparsers(dest="migration", required=True)
     command = migration.add_parser("plan")

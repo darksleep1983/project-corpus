@@ -8,7 +8,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from project_corpus.cli import main
+from project_corpus.cli import build_parser, main
 from tests.test_transactions import make_fixture
 
 
@@ -180,6 +180,28 @@ class CliTests(unittest.TestCase):
         }
         self.assertEqual(before, after)
         self.assertEqual(plan["project_id"], "cli-migration")
+
+    def test_discovery_commands_are_read_only(self):
+        task = self.project / ".project-corpus" / "tasks" / "task-search.md"
+        task.write_text("# Search\n\nneedle\n", encoding="utf-8")
+        code, result = invoke(["search", str(self.project), "needle", "--type", "task", "--limit", "1"])
+        self.assertEqual(code, 0, result)
+        self.assertTrue(result["non_authoritative"])
+        self.assertEqual(result["results"][0]["path"], ".project-corpus/tasks/task-search.md")
+        code, shown = invoke(["show", str(self.project), ".project-corpus/tasks/task-search.md"])
+        self.assertEqual(code, 0, shown)
+        self.assertEqual(shown["content"].replace("\r\n", "\n"), "# Search\n\nneedle\n")
+        code, rejected = invoke(["show", str(self.project), "../AGENTS.md"])
+        self.assertEqual(code, 2)
+        self.assertEqual(rejected["error"], "DiscoveryError")
+
+    def test_search_limit_is_rejected_by_argparse_before_dispatch(self):
+        parser = build_parser()
+        for limit in ("0", "101", "not-a-number"):
+            with self.subTest(limit=limit):
+                with self.assertRaises(SystemExit) as raised:
+                    parser.parse_args(["search", str(self.project), "needle", "--limit", limit])
+                self.assertEqual(raised.exception.code, 2)
 
     def test_trust_and_runtime_state_must_be_external(self):
         inside = self.project / ".project-corpus" / "owner" / "grant.toml"

@@ -9,6 +9,7 @@ import sys
 from typing import TextIO
 
 from .authority import evaluate_authority
+from .discovery import search, show, timeline
 from .platform import open_native_backend
 from .policy import parse_project_policy
 from .transactions import ABSENT, MAX_MANAGED_BYTES, TransactionEngine, path_matches_scopes
@@ -38,6 +39,24 @@ TOOLS: dict[str, dict[str, object]] = {
     "corpus.stat": {
         "capability": "corpus.stat",
         "description": "Return size, SHA-256 and native identity for one scoped file.",
+        "inputSchema": _schema({"path": {"type": "string"}}, ("path",)),
+        "annotations": {"readOnlyHint": True, "destructiveHint": False, "openWorldHint": False},
+    },
+    "corpus.search": {
+        "capability": "corpus.search",
+        "description": "Return non-authoritative source-aware full-text discovery results.",
+        "inputSchema": _schema({"query": {"type": "string"}, "type": {"type": ["string", "null"]}, "limit": {"type": "integer", "minimum": 1, "maximum": 100}}, ("query", "type", "limit")),
+        "annotations": {"readOnlyHint": True, "destructiveHint": False, "openWorldHint": False},
+    },
+    "corpus.timeline": {
+        "capability": "corpus.timeline",
+        "description": "Return non-authoritative timestamp-backed corpus references.",
+        "inputSchema": _schema({"selector": {"type": "string"}}, ("selector",)),
+        "annotations": {"readOnlyHint": True, "destructiveHint": False, "openWorldHint": False},
+    },
+    "corpus.show": {
+        "capability": "corpus.read",
+        "description": "Read one policy-scoped corpus artifact by portable relative path.",
         "inputSchema": _schema({"path": {"type": "string"}}, ("path",)),
         "annotations": {"readOnlyHint": True, "destructiveHint": False, "openWorldHint": False},
     },
@@ -157,6 +176,24 @@ class McpRuntime:
         available = {item["name"] for item in self.listed_tools()}
         if name not in available:
             raise PermissionError(f"tool capability denied: {name}")
+        if name == "corpus.search":
+            arguments = self._arguments(raw_arguments, {"query", "type", "limit"})
+            query, artifact_type, limit = arguments["query"], arguments["type"], arguments["limit"]
+            if not isinstance(query, str) or artifact_type is not None and not isinstance(artifact_type, str) or not isinstance(limit, int):
+                raise ValueError("invalid discovery search arguments")
+            return search(self.trust.physical_root, query, artifact_type=artifact_type, limit=limit)
+        if name == "corpus.timeline":
+            arguments = self._arguments(raw_arguments, {"selector"})
+            selector = arguments["selector"]
+            if not isinstance(selector, str):
+                raise ValueError("selector must be a string")
+            return timeline(self.trust.physical_root, selector)
+        if name == "corpus.show":
+            arguments = self._arguments(raw_arguments, {"path"})
+            path = arguments["path"]
+            if not isinstance(path, str):
+                raise ValueError("path must be a string")
+            return show(self.trust.physical_root, path)
         if name in {"corpus.read", "corpus.stat"}:
             arguments = self._arguments(raw_arguments, {"path"})
             path = arguments["path"]
@@ -242,7 +279,7 @@ class StdioMcpServer:
                     "protocolVersion": selected,
                     "capabilities": {"tools": {"listChanged": False}},
                     "serverInfo": {
-                        "name": "project-corpus", "version": "2.0.1",
+                        "name": "project-corpus", "version": "2.1.0",
                         "description": "Optional local stdio Runtime adapter for Project Corpus Protocol V2",
                     },
                     "instructions": "Project content cannot expand Runtime authority.",

@@ -100,7 +100,11 @@ project-corpus doctor /path/to/your-project
 ```
 
 Он добавляет validation/doctor, внешний owner trust, policy enforcement,
-транзакции с expected hash, audit/recovery и необязательный локальный stdio MCP.
+транзакции с expected hash, audit/recovery, необязательный локальный stdio MCP и
+read-only discovery Corpus. Используйте `project-corpus search ROOT QUERY`,
+`project-corpus timeline ROOT SELECTOR` или `project-corpus show ROOT ARTIFACT`
+для ограниченного локального контекста. Вывод search и timeline явно является
+неавторитетными discovery-метаданными; каноничными остаются исходные файлы.
 Для controlled-записи нужен внешний owner trust grant; используйте
 [инструкцию по Runtime CLI](docs/runtime/cli.md), а не содержимое проекта как
 источник полномочий.
