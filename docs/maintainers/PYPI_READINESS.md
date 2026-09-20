@@ -1,15 +1,17 @@
 # PyPI readiness
 
-**Current observation:** on 2026-09-17, the official PyPI JSON endpoint for
-`project-corpus` returned `404`, so the desired distribution name appeared
-available at that moment. This is not a reservation; availability must be
-checked again immediately before publication.
+**Current status:** `project-corpus` is published on PyPI. Project Corpus
+2.1.0 is the current verified release baseline as of 2026-09-20.
+
+The distribution name is already claimed by this project. Future release work
+must update the existing project and verify the intended new version.
 
 ## Repository package status
 
 | Item | Status |
 | --- | --- |
-| Distribution name | `project-corpus` observed available; not claimed |
+| Distribution name | `project-corpus`, published |
+| Current verified release baseline | `2.1.0` |
 | Import package | `project_corpus` |
 | CLI entry point | `project-corpus = project_corpus.cli:main` |
 | Runtime requirement | Python 3.11+ |
@@ -17,18 +19,27 @@ checked again immediately before publication.
 | Long description | `README.md` declared in `pyproject.toml` |
 | URLs | Homepage, documentation, repository, issues, and changelog declared |
 | Dependencies | No third-party runtime dependencies declared |
-| Public PyPI package | Not published |
+| Publication path | GitHub Release → PyPI Trusted Publishing |
+| Public PyPI project | `https://pypi.org/project/project-corpus/` |
 
-## Pre-publication checklist
+## Future-release readiness checklist
 
-1. Re-check `https://pypi.org/pypi/project-corpus/json` from the release
-   operator's environment.
-2. Build sdist and wheel from the frozen release commit.
-3. Run `python -m twine check dist/*` and inspect the rendered README.
-4. Confirm that the wheel version equals the intended release tag version and
-   that `project-corpus --help` works in a clean environment.
-5. Complete P10 and retain the final owner-reviewed attestation outside Git
-   history.
-6. Configure PyPI Trusted Publishing only after the owner approves release.
+For each new package version:
 
-Do not publish to TestPyPI or PyPI merely to reserve a name.
+1. freeze the exact release candidate commit and verify the intended version in
+   `pyproject.toml`, package metadata, and the planned `vX.Y.Z` tag;
+2. run the complete test suite, repository-integrity checks, documentation/link
+   checks relevant to the delta, and `git diff --check`;
+3. build sdist and wheel from the frozen candidate and run
+   `python -m twine check dist/*`;
+4. complete the required full-history P10/security scan on that exact commit and
+   resolve any new finding before publication;
+5. push the exact qualified commit and require green GitHub CI and release
+   qualification for that SHA;
+6. only after explicit owner authorization, create the annotated tag and GitHub
+   Release;
+7. let the active Trusted Publishing workflow publish to PyPI;
+8. verify the public version, hashes/provenance, and a clean install/import/CLI
+   smoke from PyPI rather than from the local checkout.
+
+Do not use PyPI publication as a test mechanism or a way to reserve a version.
