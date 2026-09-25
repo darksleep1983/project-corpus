@@ -219,7 +219,7 @@
     "tests/test_doctor.py": "17302df98f98f36d273eda81add2cb71568d75279b6082e70c98d3ebfedce5e5",
     "tests/test_filesystem_security_prototypes.py": "19e7b540666a015bece0a1179a32213e06e2b35d351ff9d22482da356a1afb20",
     "tests/test_mcp_stdio.py": "9cd0b27a3179c5ff634d5f7082afc0b92ecdf02b81eabae855ddb029f070f196",
-    "tests/test_migration_apply.py": "607677b60144596c74aef86d850c90ba0dec42f37782820aa862629e2eb9db94",
+    "tests/test_migration_apply.py": "b693c01d5854ebfb342e436d98a47559e494a2440b54afad311cc811de0da4be",
     "tests/test_native_path_backend.py": "ca956138b00966483462a723acbdb8847b4f2c4b3a4dda1afb1cbfd24c8e0ab6",
     "tests/test_policy_trust.py": "42f7006f48a5e71cea599ad814b33e0d37da612a8eac48376424e55a29efb660",
     "tests/test_protocol_v2_conformance.py": "747f1656a49182d0f3333a6c8cf4fb5a390b77c7ba7661157fd698560d5420e9",

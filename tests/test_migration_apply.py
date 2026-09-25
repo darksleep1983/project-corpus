@@ -76,7 +76,7 @@ class MigrationApplyTests(unittest.TestCase):
                 digest,
             )
         grant = load_trust_grant(self.trust)
-        self.assertEqual(grant.physical_root, self.destination)
+        self.assertEqual(grant.physical_root.resolve(), self.destination.resolve())
         self.assertEqual(grant.project_id, "migrated-project")
         self.assertEqual(grant.capability_ceiling, {"corpus.read", "corpus.validate"})
         self.assertEqual(result["plan_sha256"], authorization["plan_sha256"])
