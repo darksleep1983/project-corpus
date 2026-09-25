@@ -7,8 +7,8 @@ The repository uses the active workflow
 Release and publishes `project-corpus` through PyPI Trusted Publishing.
 
 The GitHub `pypi` environment and the PyPI Trusted Publisher are configured.
-The 2.1.0 release verified the complete path, including GitHub build provenance
-and PyPI Integrity provenance.
+The 2.2.0 release verified the complete path, including GitHub build provenance
+and PyPI Integrity attestations, followed by a clean public-install smoke.
 
 The neighboring `.github/workflows/publish-pypi.yml.example` file is retained
 only as a reference/template artifact. It is not the active publication path.

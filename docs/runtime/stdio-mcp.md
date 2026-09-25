@@ -50,9 +50,15 @@ and the verified filesystem operation.
 
 ## Qualification evidence
 
-GitHub Actions run `35206204618` passed 90 tests in all six Windows/Ubuntu/macOS
-and Python 3.11/3.12 jobs. The adapter suite covers lifecycle framing, strict
+Historical adapter qualification: GitHub Actions run `35206204618` passed 90
+tests in all six Windows/Ubuntu/macOS and Python 3.11/3.12 jobs. The adapter
+suite covers lifecycle framing, strict
 arguments, scoped reads, capability/transport denial and a mutation through the
 production transaction engine. The run qualifies only local stdio on the
 platform/filesystem combinations listed in `platform-guarantees.md`; it is not
 evidence for HTTP, remote clients or network filesystems.
+
+For the published 2.2.0 release, [final CI](https://github.com/darksleep1983/project-corpus/actions/runs/36141154110)
+and [release qualification](https://github.com/darksleep1983/project-corpus/actions/runs/36141267231)
+passed on the release commit. These are current release evidence; the earlier
+adapter run remains historical qualification evidence.

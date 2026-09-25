@@ -1,32 +1,32 @@
-# План метаданных GitHub
+# Метаданные GitHub
 
 [English](REPOSITORY_METADATA.md)
 
-**Статус: только предложение.** Этот файл фиксирует рекомендуемое публичное
-состояние; он не меняет настройки GitHub.
+**Статус: текущее публичное состояние проверено 2026-09-25.** Файл описывает
+метаданные GitHub и не меняет настройки репозитория.
 
 ## Текущее наблюдение
 
 - Visibility: public.
 - Description: `Persistent project state and authority for AI agents —
   Markdown-first protocol with optional policy-enforced CLI and MCP runtime.`
-- Homepage: не задан.
-- Social preview: не задан.
-- Topics: слишком широкие и частично привязаны к именам клиентов (всего 14).
+- Homepage: <https://darksleep1983.github.io/project-corpus/>.
+- Topics: установлены десять из списка ниже.
+- PyPI distribution: <https://pypi.org/project/project-corpus/2.2.0/>.
+- Social preview: установка в GitHub Settings напрямую не подтверждена.
 
-## Рекомендуемые публичные метаданные
+## Публичные метаданные
 
 Description — оставить текущий. Он точно показывает разделение Protocol/Runtime
 и не создаёт впечатления, что MCP обязателен.
 
-Homepage — после owner approval для GitHub Pages:
+Homepage:
 
 ```text
 https://darksleep1983.github.io/project-corpus/
 ```
 
-Topics — использовать эти десять точных topics вместо client-name или общего
-keyword spam:
+Topics — сейчас установлены эти десять:
 
 ```text
 ai-agents
@@ -41,9 +41,6 @@ developer-tools
 ai-tools
 ```
 
-Social preview — после owner approval загрузить
-`docs/assets/social-preview.png` в GitHub Settings. Это PNG 1280×640 —
-рекомендованный GitHub размер для social rendering; файл меньше лимита 1 MB.
-
-Не добавляйте PyPI badge, пока не появится публичный distribution. В README
-оставлены только badges CI, docs build, Python, MIT license и GitHub Release.
+Social preview — `docs/assets/social-preview.png` доступен для загрузки в
+GitHub Settings; наличие файла в репозитории не доказывает, что preview
+установлен. README может ссылаться на опубликованный PyPI distribution.

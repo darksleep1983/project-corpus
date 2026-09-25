@@ -1,32 +1,32 @@
-# GitHub metadata plan
+# GitHub metadata
 
 [Русская версия](REPOSITORY_METADATA.ru.md)
 
-**Status: proposal only.** This file records a recommended final public state;
-it does not change GitHub repository settings.
+**Status: current public state verified on 2026-09-25.** This file documents
+GitHub metadata; it does not change repository settings.
 
 ## Current observation
 
 - Visibility: public.
 - Description: `Persistent project state and authority for AI agents —
   Markdown-first protocol with optional policy-enforced CLI and MCP runtime.`
-- Homepage: not set.
-- Social preview: not set.
-- Topics: broad and partly client-specific (14 total).
+- Homepage: <https://darksleep1983.github.io/project-corpus/>.
+- Topics: the ten listed below are set.
+- PyPI distribution: <https://pypi.org/project/project-corpus/2.2.0/>.
+- Social preview: installation in GitHub Settings has not been directly verified.
 
-## Recommended public metadata
+## Public metadata
 
 Description — retain the current description. It accurately presents the
 Protocol/Runtime separation without claiming that MCP is required.
 
-Homepage — after GitHub Pages receives owner approval:
+Homepage:
 
 ```text
 https://darksleep1983.github.io/project-corpus/
 ```
 
-Topics — use these ten precise topics rather than client-name or generic keyword
-spam:
+Topics — these ten are currently set:
 
 ```text
 ai-agents
@@ -41,9 +41,6 @@ developer-tools
 ai-tools
 ```
 
-Social preview — upload `docs/assets/social-preview.png` in GitHub Settings
-after owner approval. It is 1280×640 PNG, the size GitHub recommends for best
-social rendering, and remains below GitHub's 1 MB limit.
-
-Do not add a PyPI badge until a public distribution actually exists. The README
-uses only CI, docs-build, Python, MIT license, and GitHub Release badges.
+Social preview — `docs/assets/social-preview.png` is available for upload in
+GitHub Settings; its repository presence does not prove that a preview is set.
+The README may link to the published PyPI distribution.

@@ -7,6 +7,8 @@
 [![Python](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-66d9c2)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/darksleep1983/project-corpus?display_name=tag&sort=semver)](https://github.com/darksleep1983/project-corpus/releases)
+[![PyPI](https://img.shields.io/pypi/v/project-corpus)](https://pypi.org/project/project-corpus/)
+[![Protocol 2.0](https://img.shields.io/badge/Protocol-2.0-66d9c2)](protocol/v2/README.md)
 
 **Постоянное состояние проекта и слой полномочий для ИИ-агентов.**
 
@@ -116,6 +118,13 @@ Context Bundles и receipts, проверку candidates, диагностику
 authority. LLM, сеть, внешняя БД и новые зависимости не требуются. Bundles
 предназначены для любого AI-клиента. Новое знание требует явного promotion
 supervisor/owner; будущие адаптеры Graphiti/Cognee остаются необязательными.
+
+```sh
+project-corpus context build ROOT --index ROOT/.project-corpus/cache/context.sqlite3
+project-corpus context query ROOT "query" --index ROOT/.project-corpus/cache/context.sqlite3
+project-corpus context bundle ROOT "query" --index ROOT/.project-corpus/cache/context.sqlite3
+project-corpus context doctor ROOT --index ROOT/.project-corpus/cache/context.sqlite3
+```
 
 ## Protocol и Runtime
 

@@ -2,8 +2,11 @@
 
 [Русская версия](own-mcp.ru.md)
 
-Project Corpus does not ship an MCP server. Use `OWNER_MCP` only when you have
-chosen and reviewed a server or file connector that you trust.
+This V1 `OWNER_MCP` access mode uses a server or file connector you choose and
+review; the V1 template does not ship one. Separately, the optional V2 Runtime
+ships its own [local stdio MCP adapter](../runtime/stdio-mcp.md), started with
+`project-corpus mcp ...` under external owner trust and project policy. Its
+capabilities do not establish those of a third-party server.
 
 ## Minimum requirements
 
@@ -17,8 +20,9 @@ Configure the server for one exact Corpus root. Prefer a server that can:
 - verify writes by readback;
 - return an audit receipt.
 
-These protections are recommendations, not features of this repository. Record
-only capabilities you have actually verified.
+These are recommendations for the third-party server in V1 `OWNER_MCP`, not
+claims about that server's features. Record only capabilities you have actually
+verified.
 
 ## Connect it
 

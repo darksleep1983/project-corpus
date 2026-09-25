@@ -1,6 +1,6 @@
 # Release pipeline
 
-**Current status:** active and verified through Project Corpus 2.1.0.
+**Current status:** active and verified through Project Corpus 2.2.0.
 
 The repository's release path is deliberately owner-controlled:
 
@@ -44,7 +44,7 @@ match, rebuilds the distributions from the tag target, validates them, creates
 GitHub build provenance, and publishes through PyPI Trusted Publishing.
 
 The `pypi` environment and Trusted Publisher are already configured and were
-verified by the 2.1.0 release. No long-lived PyPI API token is required.
+verified by the 2.2.0 release. No long-lived PyPI API token is required.
 
 Tag creation, GitHub Release publication, PyPI publication, repository setting
 changes, and any new security exception remain explicit owner-controlled

@@ -7,6 +7,8 @@
 [![Python](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-66d9c2)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/darksleep1983/project-corpus?display_name=tag&sort=semver)](https://github.com/darksleep1983/project-corpus/releases)
+[![PyPI](https://img.shields.io/pypi/v/project-corpus)](https://pypi.org/project/project-corpus/)
+[![Protocol 2.0](https://img.shields.io/badge/Protocol-2.0-66d9c2)](protocol/v2/README.md)
 
 **Persistent project state and authority for AI agents.**
 
@@ -115,6 +117,13 @@ The index stores provenance and hashes without source text; it is not semantic
 authority. No LLM, network, external database, or new dependency is required.
 Bundles are designed for any AI consumer. Candidate knowledge needs explicit
 supervisor/owner promotion; future Graphiti/Cognee adapters are optional.
+
+```sh
+project-corpus context build ROOT --index ROOT/.project-corpus/cache/context.sqlite3
+project-corpus context query ROOT "query" --index ROOT/.project-corpus/cache/context.sqlite3
+project-corpus context bundle ROOT "query" --index ROOT/.project-corpus/cache/context.sqlite3
+project-corpus context doctor ROOT --index ROOT/.project-corpus/cache/context.sqlite3
+```
 
 ## Protocol and Runtime
 

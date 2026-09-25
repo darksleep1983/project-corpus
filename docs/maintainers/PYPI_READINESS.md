@@ -1,7 +1,10 @@
 # PyPI readiness
 
 **Current status:** `project-corpus` is published on PyPI. Project Corpus
-2.1.0 is the current verified release baseline as of 2026-09-20.
+2.2.0 is the current verified release baseline as of 2026-09-25. Its GitHub
+Release and PyPI Trusted Publishing completed successfully; GitHub build
+provenance, PyPI Integrity attestations, and a clean public-install smoke were
+verified.
 
 The distribution name is already claimed by this project. Future release work
 must update the existing project and verify the intended new version.
@@ -11,7 +14,7 @@ must update the existing project and verify the intended new version.
 | Item | Status |
 | --- | --- |
 | Distribution name | `project-corpus`, published |
-| Current verified release baseline | `2.1.0` |
+| Current verified release baseline | `2.2.0` |
 | Import package | `project_corpus` |
 | CLI entry point | `project-corpus = project_corpus.cli:main` |
 | Runtime requirement | Python 3.11+ |

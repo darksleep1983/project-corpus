@@ -12,6 +12,22 @@ action, and authority boundaries.
 
 No. Use a direct local folder or manual file uploads. MCP is optional.
 
+## What is Context Intelligence?
+
+An optional 2.2.0 Runtime feature that builds a disposable index from scoped
+Markdown, retrieves source-backed context by authority and time, and assembles
+bounded Context Bundles for any AI agent.
+
+## Is a Context Bundle authoritative?
+
+No. It is a non-authoritative guide to relevant sources. Read the canonical
+Markdown files before making an authority or current-state claim.
+
+## Does it require an LLM, vector DB, or external database?
+
+No. The local index is rebuildable; no LLM, vector database, external database,
+or network is required.
+
 ## Do I need Python or an installer?
 
 No for the Markdown Protocol. Copy the V2 template and start working manually.

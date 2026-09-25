@@ -35,6 +35,16 @@ has the exact paths and a ready-to-use loading prompt.
 The Runtime implements the Protocol; it never silently defines or broadens it.
 For security and platform boundaries, start with the [security model](security.md).
 
+## Context Intelligence 2.2.0
+
+Canonical Markdown → Rebuildable Context Index → Authority/temporal retrieval →
+Bounded Context Bundle → Any AI agent.
+
+Markdown remains the truth. Context Intelligence helps an agent find the right
+truth. This optional Runtime feature returns source-backed, non-authoritative
+context; the agent must read the primary files before making authority claims.
+See the [Context Intelligence guide](runtime/context.md).
+
 ## Existing V1 projects
 
 V1 remains supported. The V2 migration path plans changes read-only and creates

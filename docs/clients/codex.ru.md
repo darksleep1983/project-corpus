@@ -17,7 +17,21 @@ Codex обнаруживает `AGENTS.md` по пути от project root до 
 - <https://developers.openai.com/codex/agent-configuration/agents-md>
 - <https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex>
 
-## Свой MCP
+## Встроенный MCP V2 Runtime
+
+Необязательный V2 Runtime включает локальный stdio MCP. После настройки
+внешнего owner trust grant и project policy для точного корня V2 Corpus можно
+подключить, например, read-only набор возможностей:
+
+```bash
+codex mcp add project-corpus -- project-corpus mcp --trust OWNER_GRANT --allow mcp.stdio --allow corpus.read --allow corpus.stat
+```
+
+Trust grant должен разрешать transport `stdio-mcp` и каждую запрошенную
+capability. См. [инструкцию stdio MCP](../runtime/stdio-mcp.md). Этот adapter
+отделён от режима V1 `OWNER_MCP`.
+
+## V1 OWNER_MCP или сторонний MCP
 
 Codex хранит MCP-настройки в `config.toml`. Desktop-приложение ChatGPT, Codex CLI
 и IDE extension используют общую конфигурацию. Добавляйте только доверенный
@@ -37,4 +51,5 @@ codex mcp list
 
 Официальная инструкция: <https://developers.openai.com/codex/mcp>
 
-Project Corpus не поставляет `<server-command>`.
+Для стороннего сервера замените `<server-command>` его настоящей командой.
+Его возможности не зависят от встроенного V2 adapter.
