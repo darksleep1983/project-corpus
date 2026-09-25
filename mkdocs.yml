@@ -35,6 +35,7 @@ nav:
   - Runtime:
       - Overview: runtime.md
       - CLI: runtime/cli.md
+      - Context Intelligence: runtime/context.md
       - Doctor: runtime/doctor.md
       - Transactions: runtime/transactions.md
       - Stdio MCP: runtime/stdio-mcp.md

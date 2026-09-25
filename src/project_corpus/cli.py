@@ -11,6 +11,9 @@ import sys
 
 from .authority import RUNTIME_HARD_LIMITS, evaluate_authority
 from .compatibility import load_v1_corpus
+from .context import build_index, open_index, query_index, compile_bundle, memory_doctor, evaluate_dataset, validate_candidate
+from .context.index import collect
+from .context.schema import ContextError
 from .discovery import search, show, timeline
 from .doctor import doctor
 from .migration import (
@@ -319,6 +322,31 @@ def _cmd_security_scan(args: argparse.Namespace) -> object:
     return report.public_receipt()
 
 
+def _scoped_json(root: str, name: str) -> object:
+    base = Path(root).resolve(strict=True)
+    path = Path(name).absolute()
+    if path.is_symlink() or not path.resolve(strict=False).is_relative_to(base):
+        raise ContextError("CONTEXT_INPUT_PATH", "JSON input must be a regular file inside project root")
+    if not path.is_file() or path.stat().st_size > 1024 * 1024:
+        raise ContextError("CONTEXT_INPUT_PATH", "JSON input must be a file of at most 1 MiB")
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _cmd_context(args: argparse.Namespace) -> object:
+    if args.context_command == "build":
+        return build_index(args.root, args.index)
+    if args.context_command == "doctor":
+        return memory_doctor(args.root, index=args.index)
+    if args.context_command == "candidate-validate":
+        return validate_candidate(collect(args.root), _scoped_json(args.root, args.input))
+    corpus = open_index(args.root, args.index)
+    if args.context_command == "query":
+        return query_index(corpus, args.query, limit=args.limit)
+    if args.context_command == "bundle":
+        return compile_bundle(corpus, args.query, max_tokens=args.max_tokens)
+    return evaluate_dataset(corpus, _scoped_json(args.root, args.dataset))
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="project-corpus")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -346,6 +374,37 @@ def build_parser() -> argparse.ArgumentParser:
     command.add_argument("root")
     command.add_argument("artifact")
     command.set_defaults(handler=_cmd_show)
+
+    context = commands.add_parser("context").add_subparsers(dest="context_command", required=True)
+    command = context.add_parser("build")
+    command.add_argument("root")
+    command.add_argument("--index", required=True)
+    command.set_defaults(handler=_cmd_context)
+    command = context.add_parser("query")
+    command.add_argument("root")
+    command.add_argument("query")
+    command.add_argument("--index", required=True)
+    command.add_argument("--limit", type=_discovery_limit, default=20)
+    command.set_defaults(handler=_cmd_context)
+    command = context.add_parser("bundle")
+    command.add_argument("root")
+    command.add_argument("query")
+    command.add_argument("--index", required=True)
+    command.add_argument("--max-tokens", type=int, default=1200)
+    command.set_defaults(handler=_cmd_context)
+    command = context.add_parser("doctor")
+    command.add_argument("root")
+    command.add_argument("--index", required=True)
+    command.set_defaults(handler=_cmd_context)
+    command = context.add_parser("eval")
+    command.add_argument("root")
+    command.add_argument("--index", required=True)
+    command.add_argument("--dataset", required=True)
+    command.set_defaults(handler=_cmd_context)
+    command = context.add_parser("candidate-validate")
+    command.add_argument("root")
+    command.add_argument("--input", required=True)
+    command.set_defaults(handler=_cmd_context)
 
     migration = commands.add_parser("migration").add_subparsers(dest="migration", required=True)
     command = migration.add_parser("plan")

@@ -4,6 +4,12 @@
 
 ## Unreleased
 
+## 2.2.0 — 2026-09-25
+
+- Добавлен необязательный пересобираемый Context Intelligence index в рамках policy; он не хранит текст источников и не требует внешней БД, LLM, сети или новых зависимостей.
+- Добавлены детерминированный authority-aware retrieval, явное временное supersession, ограниченные Context Bundle/Receipt v1, candidates с evidence, Memory Doctor и CorpusEval.
+- Добавлены CLI namespace `context` и read-only tools stdio MCP с отдельным capability. Protocol остаётся 2.0; ручные Corpus по-прежнему valid.
+
 ## 2.1.0
 
 - Добавлен необязательный локальный read-only discovery: детерминированный source-aware поиск, timeline по документированным timestamp и безопасный show/read артефакта через Runtime CLI и stdio MCP.

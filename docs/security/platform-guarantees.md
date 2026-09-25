@@ -22,6 +22,11 @@ Runtime reports a mode and a guarantee level.
 - Runtime cannot prevent an out-of-band editor from bypassing project policy,
   racing a managed writer or partially writing a file.
 - Direct-folder access never inherits the controlled CLI/MCP guarantee level.
+- Optional Context Intelligence reads sources through the native confined backend,
+  but its explicit `.project-corpus/cache/*.sqlite3` index is a rebuildable
+  direct-folder cache. Its bytes are built in memory and published through the
+  native confined backend, which rejects link/reparse escape. Index publication
+  is not a managed transaction or a canonical-state durability guarantee.
 
 ### Controlled CLI: runtime-enforced
 

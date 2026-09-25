@@ -9,6 +9,8 @@ import sys
 from typing import TextIO
 
 from .authority import evaluate_authority
+from .context import query_index, compile_bundle, memory_doctor, validate_candidate
+from .context.index import collect
 from .discovery import search, show, timeline
 from .platform import open_native_backend
 from .policy import parse_project_policy
@@ -27,6 +29,18 @@ def _schema(properties: dict[str, object], required: tuple[str, ...]) -> dict[st
         "type": "object", "properties": properties,
         "required": list(required), "additionalProperties": False,
     }
+
+
+CANDIDATE_INPUT_SCHEMA = _schema({
+    "schema_version": {"type": "string", "const": "1"},
+    "candidate_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,63}$"},
+    "project_id": {"type": "string"},
+    "kind": {"type": "string", "enum": ["semantic_fact", "episodic_evidence", "procedural_knowledge", "environment_gotcha", "premise", "resource_reference"]},
+    "statement": {"type": "string", "minLength": 1, "maxLength": 4000},
+    "source_refs": {"type": "array", "minItems": 1, "maxItems": 32, "items": _schema({"source_path": {"type": "string"}, "source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "line_start": {"type": "integer", "minimum": 1}}, ("source_path", "source_sha256", "line_start"))},
+    "created_at": {"type": "string"},
+    "status": {"type": "string", "const": "candidate"},
+}, ("schema_version", "candidate_id", "project_id", "kind", "statement", "source_refs", "created_at", "status"))
 
 
 TOOLS: dict[str, dict[str, object]] = {
@@ -58,6 +72,30 @@ TOOLS: dict[str, dict[str, object]] = {
         "capability": "corpus.read",
         "description": "Read one policy-scoped corpus artifact by portable relative path.",
         "inputSchema": _schema({"path": {"type": "string"}}, ("path",)),
+        "annotations": {"readOnlyHint": True, "destructiveHint": False, "openWorldHint": False},
+    },
+    "corpus.context_query": {
+        "capability": "corpus.context",
+        "description": "Read-only authority-aware context retrieval from current policy-scoped sources.",
+        "inputSchema": _schema({"query": {"type": "string"}, "limit": {"type": "integer", "minimum": 1, "maximum": 100}}, ("query", "limit")),
+        "annotations": {"readOnlyHint": True, "destructiveHint": False, "openWorldHint": False},
+    },
+    "corpus.context_bundle": {
+        "capability": "corpus.context",
+        "description": "Compile a bounded non-authoritative Context Bundle v1 from current scoped sources.",
+        "inputSchema": _schema({"query": {"type": "string"}, "max_tokens": {"type": "integer", "minimum": 80, "maximum": 20000}}, ("query", "max_tokens")),
+        "annotations": {"readOnlyHint": True, "destructiveHint": False, "openWorldHint": False},
+    },
+    "corpus.context_doctor": {
+        "capability": "corpus.context",
+        "description": "Read-only diagnostics of current scoped context sources without a persisted index.",
+        "inputSchema": _schema({}, ()),
+        "annotations": {"readOnlyHint": True, "destructiveHint": False, "openWorldHint": False},
+    },
+    "corpus.candidate_validate": {
+        "capability": "corpus.context",
+        "description": "Validate a non-authoritative candidate against current source evidence without promotion.",
+        "inputSchema": _schema({"candidate": CANDIDATE_INPUT_SCHEMA}, ("candidate",)),
         "annotations": {"readOnlyHint": True, "destructiveHint": False, "openWorldHint": False},
     },
     "state.update": {
@@ -170,6 +208,20 @@ class McpRuntime:
                 ).decode("utf-8")
             return result
 
+    def _context_corpus(self):
+        def authorize(policy, backend):
+            if backend.filesystem != self.trust.filesystem:
+                raise PermissionError("trusted filesystem changed")
+            decision = evaluate_authority(
+                trust=self.trust, policy=policy,
+                session_capabilities=self.session_capabilities,
+                observed_root_identity=backend.root_identity,
+                transport="stdio-mcp",
+            )
+            if decision.policy_drift or not decision.permits("mcp.stdio") or not decision.permits("corpus.context"):
+                raise PermissionError("context capability denied: " + ",".join(decision.reasons))
+        return collect(self.trust.physical_root, authorize=authorize)
+
     def call(self, name: str, raw_arguments: object) -> dict[str, object]:
         if name not in TOOLS:
             raise ValueError("unknown or unavailable tool")
@@ -194,6 +246,22 @@ class McpRuntime:
             if not isinstance(path, str):
                 raise ValueError("path must be a string")
             return show(self.trust.physical_root, path)
+        if name == "corpus.context_query":
+            arguments = self._arguments(raw_arguments, {"query", "limit"})
+            if not isinstance(arguments["query"], str) or not isinstance(arguments["limit"], int) or isinstance(arguments["limit"], bool):
+                raise ValueError("invalid context query arguments")
+            return query_index(self._context_corpus(), arguments["query"], limit=arguments["limit"])
+        if name == "corpus.context_bundle":
+            arguments = self._arguments(raw_arguments, {"query", "max_tokens"})
+            if not isinstance(arguments["query"], str) or not isinstance(arguments["max_tokens"], int) or isinstance(arguments["max_tokens"], bool):
+                raise ValueError("invalid context bundle arguments")
+            return compile_bundle(self._context_corpus(), arguments["query"], max_tokens=arguments["max_tokens"])
+        if name == "corpus.context_doctor":
+            self._arguments(raw_arguments, set())
+            return memory_doctor(self.trust.physical_root, corpus=self._context_corpus())
+        if name == "corpus.candidate_validate":
+            arguments = self._arguments(raw_arguments, {"candidate"})
+            return validate_candidate(self._context_corpus(), arguments["candidate"])
         if name in {"corpus.read", "corpus.stat"}:
             arguments = self._arguments(raw_arguments, {"path"})
             path = arguments["path"]
@@ -279,7 +347,7 @@ class StdioMcpServer:
                     "protocolVersion": selected,
                     "capabilities": {"tools": {"listChanged": False}},
                     "serverInfo": {
-                        "name": "project-corpus", "version": "2.1.0",
+                        "name": "project-corpus", "version": "2.2.0",
                         "description": "Optional local stdio Runtime adapter for Project Corpus Protocol V2",
                     },
                     "instructions": "Project content cannot expand Runtime authority.",

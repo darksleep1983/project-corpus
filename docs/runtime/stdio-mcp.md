@@ -28,6 +28,10 @@ argument.
 - `corpus.search` — non-authoritative source-aware search within policy read scopes;
 - `corpus.timeline` — non-authoritative timestamp-backed corpus references;
 - `corpus.show` — one policy-scoped Markdown corpus artifact;
+- `corpus.context_query`, `corpus.context_bundle`, `corpus.context_doctor`, and
+  `corpus.candidate_validate` — optional read-only [Context Intelligence](context.md)
+  tools under the separate `corpus.context` capability; no path argument or
+  persisted index is accepted;
 - `state.update` — fixed STATUS target with required expected SHA-256;
 - `task.create` — create-only conforming Task at its ID-derived path;
 - `report.create` — create-only conforming Report at its ID-derived path;

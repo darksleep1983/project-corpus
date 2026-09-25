@@ -34,6 +34,10 @@ native backend confinement. Controlled writes and stdio MCP authority remain
 external-owner-trust-gated; direct-folder discovery does not broaden that
 capability boundary.
 
+The optional [`context` namespace](context.md) builds a non-authoritative,
+rebuildable SQLite provenance index and provides query, bundle, doctor, eval,
+and candidate validation. It never writes canonical project state.
+
 ## Owner trust and Runtime state
 
 ```text

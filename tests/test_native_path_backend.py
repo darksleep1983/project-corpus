@@ -18,7 +18,7 @@ from project_corpus.platform.common import PathValidationError
 class NativePathBackendTests(unittest.TestCase):
     def setUp(self):
         repository = Path(__file__).resolve().parents[1]
-        self.temporary = tempfile.TemporaryDirectory(dir=repository)
+        self.temporary = tempfile.TemporaryDirectory(prefix="pc-native-")
         self.base = Path(self.temporary.name)
         self.root = self.base / "root"
         self.outside = self.base / "outside"

@@ -24,7 +24,7 @@ def invoke(arguments: list[str]) -> tuple[int, dict[str, object]]:
 class CliTests(unittest.TestCase):
     def setUp(self):
         repository = Path(__file__).resolve().parents[1]
-        self.temporary = tempfile.TemporaryDirectory(dir=repository)
+        self.temporary = tempfile.TemporaryDirectory(prefix="pc-cli-")
         self.base = Path(self.temporary.name)
         self.project, _, _, self.old, self.new = make_fixture(self.base)
         self.trust = self.base / "owner-config" / "trust" / "fixture.toml"

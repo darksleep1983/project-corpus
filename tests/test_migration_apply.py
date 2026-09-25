@@ -33,7 +33,7 @@ def hashes(root: Path) -> dict[str, str]:
 class MigrationApplyTests(unittest.TestCase):
     def setUp(self):
         repository = Path(__file__).resolve().parents[1]
-        self.temporary = tempfile.TemporaryDirectory(dir=repository)
+        self.temporary = tempfile.TemporaryDirectory(prefix="pc-migration-")
         self.base = Path(self.temporary.name)
         self.source = self.base / "v1"
         shutil.copytree(repository / "template" / "en", self.source)

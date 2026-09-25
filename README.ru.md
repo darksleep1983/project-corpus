@@ -109,6 +109,14 @@ read-only discovery Corpus. Используйте `project-corpus search ROOT Q
 [инструкцию по Runtime CLI](docs/runtime/cli.md), а не содержимое проекта как
 источник полномочий.
 
+Версия 2.2.0 добавляет необязательный [Context Intelligence](docs/runtime/context.ru.md):
+пересобираемый индекс в рамках policy, authority-aware поиск, ограниченные
+Context Bundles и receipts, проверку candidates, диагностику и локальную оценку.
+Индекс хранит provenance и хэши без текста источников и не является semantic
+authority. LLM, сеть, внешняя БД и новые зависимости не требуются. Bundles
+предназначены для любого AI-клиента. Новое знание требует явного promotion
+supervisor/owner; будущие адаптеры Graphiti/Cognee остаются необязательными.
+
 ## Protocol и Runtime
 
 | Project Corpus Protocol | Необязательный Project Corpus Runtime |

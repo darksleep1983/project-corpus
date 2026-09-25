@@ -108,6 +108,14 @@ Controlled writes require an external owner trust grant; follow the
 [Runtime CLI guide](docs/runtime/cli.md) rather than treating project content as
 authority.
 
+Version 2.2.0 adds optional [Context Intelligence](docs/runtime/context.md):
+rebuildable policy-scoped indexing, authority-aware retrieval, bounded Context
+Bundles and receipts, candidate validation, diagnostics, and local evaluation.
+The index stores provenance and hashes without source text; it is not semantic
+authority. No LLM, network, external database, or new dependency is required.
+Bundles are designed for any AI consumer. Candidate knowledge needs explicit
+supervisor/owner promotion; future Graphiti/Cognee adapters are optional.
+
 ## Protocol and Runtime
 
 | Project Corpus Protocol | Optional Project Corpus Runtime |

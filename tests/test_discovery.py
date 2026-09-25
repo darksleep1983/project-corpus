@@ -11,7 +11,7 @@ from tests.test_transactions import make_fixture
 class DiscoveryTests(unittest.TestCase):
     def setUp(self):
         repository = Path(__file__).resolve().parents[1]
-        self.temporary = tempfile.TemporaryDirectory(dir=repository)
+        self.temporary = tempfile.TemporaryDirectory(prefix="pc-discovery-")
         self.base = Path(self.temporary.name)
         self.project, _, _, _, _ = make_fixture(self.base)
         tasks = self.project / ".project-corpus" / "tasks"

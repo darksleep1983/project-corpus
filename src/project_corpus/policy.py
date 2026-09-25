@@ -17,16 +17,16 @@ PROJECT_ID = re.compile(r"^[a-z0-9][a-z0-9._-]{2,63}$")
 PROFILES = {"READ_ONLY", "SAFE_EDIT", "MAINTAINER"}
 PROFILE_CAPABILITIES = {
     "READ_ONLY": frozenset({
-        "corpus.read", "corpus.stat", "corpus.search", "corpus.timeline", "corpus.validate", "migration.plan",
+        "corpus.read", "corpus.stat", "corpus.search", "corpus.timeline", "corpus.context", "corpus.validate", "migration.plan",
         "audit.read", "git.status", "git.diff",
     }),
     "SAFE_EDIT": frozenset({
-        "corpus.read", "corpus.stat", "corpus.search", "corpus.timeline", "corpus.validate", "migration.plan",
+        "corpus.read", "corpus.stat", "corpus.search", "corpus.timeline", "corpus.context", "corpus.validate", "migration.plan",
         "state.update", "task.create", "report.create", "audit.read",
         "git.status", "git.diff", "mcp.stdio",
     }),
     "MAINTAINER": frozenset({
-        "corpus.read", "corpus.stat", "corpus.search", "corpus.timeline", "corpus.validate", "migration.plan",
+        "corpus.read", "corpus.stat", "corpus.search", "corpus.timeline", "corpus.context", "corpus.validate", "migration.plan",
         "migration.apply", "state.update", "task.create", "report.create",
         "audit.read", "mcp.stdio", "git.status", "git.diff",
     }),

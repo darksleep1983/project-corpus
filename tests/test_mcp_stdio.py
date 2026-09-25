@@ -23,8 +23,7 @@ def cli(arguments: list[str]) -> tuple[int, dict[str, object]]:
 
 class StdioMcpTests(unittest.TestCase):
     def setUp(self):
-        repository = Path(__file__).resolve().parents[1]
-        self.temporary = tempfile.TemporaryDirectory(dir=repository)
+        self.temporary = tempfile.TemporaryDirectory(prefix="pc-mcp-")
         self.base = Path(self.temporary.name)
         self.project, _, _, self.old, self.new = make_fixture(self.base)
         self.trust = self.base / "owner" / "trust" / "mcp.toml"
@@ -183,7 +182,7 @@ class StdioMcpTests(unittest.TestCase):
                 "name": "corpus.show", "arguments": {"path": ".project-corpus/tasks/task-discovery.md"},
             }},
         ])
-        self.assertEqual(responses[0]["result"]["serverInfo"]["version"], "2.1.0")
+        self.assertEqual(responses[0]["result"]["serverInfo"]["version"], "2.2.0")
         for response in responses[1:]:
             self.assertFalse(response["result"]["isError"], response)
         self.assertTrue(responses[1]["result"]["structuredContent"]["non_authoritative"])

@@ -165,7 +165,7 @@ def engine(trust: TrustGrant, runtime: Path, *, fault: str | None = None):
 class TransactionTests(unittest.TestCase):
     def setUp(self):
         repository = Path(__file__).resolve().parents[1]
-        self.temporary = tempfile.TemporaryDirectory(dir=repository)
+        self.temporary = tempfile.TemporaryDirectory(prefix="pc-transactions-")
         self.base = Path(self.temporary.name)
         self.project, self.runtime, self.trust, self.old, self.new = make_fixture(
             self.base

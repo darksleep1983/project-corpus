@@ -7,13 +7,13 @@ from .trust import TrustGrant
 
 
 RUNTIME_HARD_LIMITS = frozenset({
-    "corpus.read", "corpus.stat", "corpus.search", "corpus.timeline", "corpus.validate", "migration.plan",
+    "corpus.read", "corpus.stat", "corpus.search", "corpus.timeline", "corpus.context", "corpus.validate", "migration.plan",
     "migration.apply", "state.update", "task.create", "report.create",
     "audit.read", "mcp.stdio", "git.status", "git.diff",
 })
 DIAGNOSTIC_CAPABILITIES = frozenset({"corpus.validate"})
 READ_ONLY_CAPABILITIES = frozenset({
-    "corpus.read", "corpus.stat", "corpus.search", "corpus.timeline", "corpus.validate", "migration.plan",
+    "corpus.read", "corpus.stat", "corpus.search", "corpus.timeline", "corpus.context", "corpus.validate", "migration.plan",
     "audit.read", "git.status", "git.diff",
 })
 
