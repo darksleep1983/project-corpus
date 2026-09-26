@@ -1,3 +1,7 @@
+> **Архив / переезд.** Активная разработка перенесена в [Living Software Organism](https://github.com/darksleep1983/living-software-organism).
+>
+> Project Corpus сохранён как компонент долговременной идентичности, непрерывности и полномочий проекта в [`components/project-corpus/`](https://github.com/darksleep1983/living-software-organism/tree/main/components/project-corpus) объединённого репозитория. История самостоятельных Protocol/Runtime, релизы и документация остаются здесь для справки. Самостоятельные Protocol и Runtime по-прежнему пригодны для использования.
+
 # Project Corpus
 
 [English version](README.md)
