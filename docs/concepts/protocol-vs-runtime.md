@@ -11,3 +11,17 @@ Protocol semantics through implementation behavior.
 Manual and direct-folder workflows are useful, but they do not receive Runtime
 enforcement. Controlled guarantees are limited to the documented Runtime modes
 and qualified local filesystems.
+
+## Higher-level architectures
+
+Project Corpus provides durable project-owned identity and continuity. Lifecycle,
+recovery and orchestration frameworks can consume that substrate without becoming
+Protocol authority. Living Software Organism is a higher-level architecture and
+reference direction of this kind, not a required Project Corpus dependency or a
+claim that a public LSO repository/package exists. Organism functions and recovery
+execution contracts belong to their own layer. Manual Markdown operation remains
+independently useful without Runtime, MCP, a server or database.
+
+The same boundary is explained in the English `README.md` and
+Russian `README.ru.md` at the repository root. No Protocol or package version changes follow
+from this non-normative clarification.

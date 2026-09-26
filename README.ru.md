@@ -128,6 +128,15 @@ project-corpus context doctor ROOT --index ROOT/.project-corpus/cache/context.sq
 
 ## Protocol и Runtime
 
+Project Corpus — долговременная **принадлежащая проекту основа идентичности и
+непрерывности работы**. Более высокие lifecycle, recovery и orchestration frameworks
+могут опираться на эти файлы, сохраняя собственные контракты и ответственность за
+проверку. Living Software Organism — одно из таких направлений архитектуры и
+reference implementation; Project Corpus не требует его. Это объяснение границы
+слоёв, а не заявление о доступном публичном LSO-пакете или репозитории. Работа только
+с Markdown, вручную, без Runtime, MCP-сервера, базы данных или lifecycle framework
+остаётся поддерживаемой.
+
 | Project Corpus Protocol | Необязательный Project Corpus Runtime |
 | --- | --- |
 | Markdown-first и независимый от поставщика ИИ | Validation и controlled CLI |

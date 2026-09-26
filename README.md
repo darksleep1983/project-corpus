@@ -127,6 +127,14 @@ project-corpus context doctor ROOT --index ROOT/.project-corpus/cache/context.sq
 
 ## Protocol and Runtime
 
+Project Corpus is the durable **project-owned identity and continuity substrate**.
+Higher-level lifecycle, recovery or orchestration frameworks may build on those
+files while retaining their own contracts and verification responsibilities.
+Living Software Organism is one such higher-level architecture/reference
+direction; Project Corpus does not require it. This describes a layering boundary,
+not an available public LSO package or repository. Using only Markdown, manually,
+without a Runtime, MCP server, database or lifecycle framework remains supported.
+
 | Project Corpus Protocol | Optional Project Corpus Runtime |
 | --- | --- |
 | Markdown-first and vendor-neutral | Validation and controlled CLI |
