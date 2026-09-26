@@ -1,6 +1,6 @@
 # Project Corpus
 
-[English](README.md)
+[English version](README.md)
 
 [![CI](https://github.com/darksleep1983/project-corpus/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/darksleep1983/project-corpus/actions/workflows/test.yml)
 [![Docs build](https://github.com/darksleep1983/project-corpus/actions/workflows/docs.yml/badge.svg?branch=main)](https://github.com/darksleep1983/project-corpus/actions/workflows/docs.yml)
@@ -10,58 +10,23 @@
 [![PyPI](https://img.shields.io/pypi/v/project-corpus)](https://pypi.org/project/project-corpus/)
 [![Protocol 2.0](https://img.shields.io/badge/Protocol-2.0-66d9c2)](protocol/v2/README.md)
 
-**Постоянное состояние проекта и слой полномочий для ИИ-агентов.**
+**Долговременная идентичность, непрерывность и полномочия проекта для работы с ИИ.**
 
-Project Corpus — Markdown-first, независимый от конкретного ИИ протокол. Он
-позволяет ChatGPT, Codex, Claude и другим агентам входить в проект с чистого
-контекста и продолжать работу, не полагаясь на память предыдущего чата.
+AI-сессии и модели меняются. Понимание проекта о самом себе, его текущее
+состояние и доказательства этого состояния должны сохраняться дольше. Project
+Corpus — независимый от поставщика Markdown-first protocol, который даёт этим
+сведениям понятное место внутри проекта. Он определяет, что является
+каноническим и текущим, что проверено, какой следующий шаг нужен и какие правила
+ограничивают изменения.
 
-Каноническая идентичность проекта, текущее состояние, доказательства, точное
-следующее действие и границы полномочий сохраняются в файлах и не исчезают
-вместе с ИИ-сессией. [Protocol](protocol/v2/README.md) требует только Markdown;
-[необязательный Runtime](docs/runtime/cli.md) добавляет технический enforcement.
+Protocol полезен самостоятельно. Необязательный Python Runtime добавляет
+локальную проверку, контролируемые операции, audit/recovery, CLI и stdio MCP.
 
-```mermaid
-flowchart LR
-  subgraph without_corpus["Без Project Corpus"]
-    direction TB
-    A1["ИИ-сессия A"] --> M["память чата / разрозненные заметки"]
-    M --> E["сессия закончилась"]
-    E --> B1["ИИ-сессия B"]
-    B1 --> I["восстановление проекта из неполного контекста"]
-  end
-  subgraph with_corpus["С Project Corpus"]
-    direction TB
-    A2["ИИ-сессия A"] --> C["Project Corpus"]
-    C --> P["PROJECT.md — что это за проект"]
-    C --> S["STATUS.md — где проект сейчас"]
-    C --> T["Tasks — разрешённая работа"]
-    C --> R["Reports — доказательства"]
-    C --> Y["Policy — ограничения со стороны проекта"]
-    C --> B2["ИИ-сессия B"]
-    B2 --> L["загрузка канонического состояния"]
-    L --> N["продолжение с точного следующего действия"]
-  end
-```
+## Начните за три шага
 
-> ИИ-сессии временны. Состояние проекта — нет.
-
-## Больше, чем memory bank
-
-Memory bank помогает агенту помнить информацию. Project Corpus дополнительно
-определяет, что канонично, что актуально, что считается доказательством, что
-делать дальше и кто вправе менять состояние.
-
-## Быстрый старт за 60 секунд
-
-Runtime, MCP-сервер и установка пакета не нужны.
-
-1. Скачайте или клонируйте этот репозиторий.
-2. Скопируйте содержимое
-   [`templates/v2/minimal/`](templates/v2/minimal/) в корень своего проекта.
-   Из локальной копии репозитория:
-
-   macOS/Linux:
+1. Скачайте или клонируйте этот репозиторий. Скопируйте
+   [`templates/v2/minimal/`](templates/v2/minimal/) в корень проекта, который
+   вы хотите продолжать между AI-сессиями:
 
    ```sh
    cp -R templates/v2/minimal/. /path/to/your-project/
@@ -74,26 +39,45 @@ Runtime, MCP-сервер и установка пакета не нужны.
    Copy-Item -Recurse -Force .\templates\v2\minimal\.project-corpus C:\path\to\your-project\
    ```
 
-3. Заполните [`.project-corpus/state/PROJECT.md`](templates/v2/minimal/.project-corpus/state/PROJECT.md):
-   укажите ID и долговременную идентичность проекта.
-4. Заполните [`.project-corpus/state/STATUS.md`](templates/v2/minimal/.project-corpus/state/STATUS.md):
-   укажите тот же ID, проверенный baseline, блокеры, ссылки на evidence и
-   точное следующее действие.
-5. Дайте ChatGPT, Codex, Claude или другому агенту доступ к папке проекта. В
-   обычный чат загрузите `AGENTS.md`, `PROJECT.md` и `STATUS.md`. При ручной
-   загрузке также добавьте активную Task и все Reports, на которые ссылается
-   `STATUS.md`. Затем напишите:
+2. Заполните `.project-corpus/state/PROJECT.md` устойчивой идентичностью
+   проекта. Используйте тот же ID проекта в `.project-corpus/state/STATUS.md` и
+   `.project-corpus/policy.toml`; в STATUS укажите проверенное текущее
+   состояние, блокеры, доказательства и точное следующее действие.
+3. Дайте AI-клиенту доступ к папке проекта или загрузите `AGENTS.md`,
+   `PROJECT.md`, `STATUS.md` и относящиеся к работе активную Task и Reports.
+   Попросите следовать `AGENTS.md`, прочитать каноническое состояние, назвать
+   актуальные факты и продолжить с точного следующего шага.
 
-   > Загрузи Project Corpus этого проекта. Следуй `AGENTS.md`; полностью прочти
-   > `.project-corpus/state/PROJECT.md` и
-   > `.project-corpus/state/STATUS.md`; если доступны активная Task или указанные
-   > Reports, загрузи только эти относящиеся к текущей работе артефакты; назови
-   > ID проекта, текущий статус, активную Task и точное следующее действие;
-   > затем продолжи с этого действия.
+В [Quick Start](docs/quickstart.md) есть готовый запрос для загрузки контекста.
 
-### Нужен ещё и enforcement?
+## Как это работает
 
-Необязательный Runtime устанавливается через PyPI:
+У каждого проекта есть собственный набор канонических Markdown-записей:
+
+- `PROJECT.md` описывает долговременную идентичность, назначение и границы.
+- `STATUS.md` фиксирует проверенное текущее состояние и следующий шаг.
+- `AGENTS.md` задаёт локальный workflow и правила полномочий.
+- Tasks ограничивают запрошенную работу; Reports фиксируют сделанное и
+  доказательства.
+
+В начале сессии AI читает эти источники и сверяет изменяемые факты с живым
+проектом. Это помогает не принять старый чат, сохранённую выжимку или одного
+исполнителя за актуальный источник полномочий проекта.
+
+## Protocol и необязательный Runtime
+
+| Project Corpus Protocol | Необязательный Project Corpus Runtime |
+| --- | --- |
+| Markdown-first, независим от поставщика и подходит для ручной работы | Локальная реализация на Python для дополнительного enforcement |
+| Не требует установки, базы данных или MCP | Validation, controlled CLI и локальный stdio MCP |
+| Переносимым источником полномочий остаются файлы проекта | Внешний owner trust, policy enforcement, транзакции, audit и recovery |
+
+Runtime реализует Protocol, но не определяет и не меняет молча его семантику.
+Технические гарантии действуют только в описанных controlled-режимах и на
+проверенных локальных файловых системах. См. [Protocol и Runtime](docs/concepts/protocol-vs-runtime.md)
+и [модель безопасности](docs/security.ru.md).
+
+Установка необязательного Runtime из PyPI:
 
 ```sh
 pip install project-corpus
@@ -101,177 +85,52 @@ project-corpus validate /path/to/your-project
 project-corpus doctor /path/to/your-project
 ```
 
-Он добавляет validation/doctor, внешний owner trust, policy enforcement,
-транзакции с expected hash, audit/recovery, необязательный локальный stdio MCP и
-read-only discovery Corpus. Используйте `project-corpus search ROOT QUERY`,
-`project-corpus timeline ROOT SELECTOR` или `project-corpus show ROOT ARTIFACT`
-для ограниченного локального контекста. Вывод search и timeline явно является
-неавторитетными discovery-метаданными; каноничными остаются исходные файлы.
-Для controlled-записи нужен внешний owner trust grant; используйте
-[инструкцию по Runtime CLI](docs/runtime/cli.md), а не содержимое проекта как
-источник полномочий.
+Runtime 2.2.0 также включает необязательный [Context Intelligence](docs/runtime/context.ru.md):
+пересобираемый индекс в рамках policy и ограниченный контекст с источниками для
+любого AI-клиента. Результаты неавторитетны; источником истины остаётся
+канонический Markdown.
 
-Версия 2.2.0 добавляет необязательный [Context Intelligence](docs/runtime/context.ru.md):
-пересобираемый индекс в рамках policy, authority-aware поиск, ограниченные
-Context Bundles и receipts, проверку candidates, диагностику и локальную оценку.
-Индекс хранит provenance и хэши без текста источников и не является semantic
-authority. LLM, сеть, внешняя БД и новые зависимости не требуются. Bundles
-предназначены для любого AI-клиента. Новое знание требует явного promotion
-supervisor/owner; будущие адаптеры Graphiti/Cognee остаются необязательными.
+## Связь с архитектурами более высокого уровня
 
-```sh
-project-corpus context build ROOT --index ROOT/.project-corpus/cache/context.sqlite3
-project-corpus context query ROOT "query" --index ROOT/.project-corpus/cache/context.sqlite3
-project-corpus context bundle ROOT "query" --index ROOT/.project-corpus/cache/context.sqlite3
-project-corpus context doctor ROOT --index ROOT/.project-corpus/cache/context.sqlite3
-```
+Lifecycle-, recovery- и orchestration-архитектуры могут использовать Project
+Corpus как долговременную основу состояния проекта, сохраняя собственные
+контракты и ответственность за проверку. Living Software Organism (LSO) — одно
+из таких направлений архитектуры и reference direction. Project Corpus полезен
+самостоятельно и не требует LSO, Runtime, MCP, базы данных или определённого
+поставщика ИИ. Здесь описана архитектурная связь; это не заявление о доступном
+публичном пакете или репозитории LSO. Project Corpus не является LSO.
 
-## Protocol и Runtime
+## Существующие проекты V1
 
-Project Corpus — долговременная **принадлежащая проекту основа идентичности и
-непрерывности работы**. Более высокие lifecycle, recovery и orchestration frameworks
-могут опираться на эти файлы, сохраняя собственные контракты и ответственность за
-проверку. Living Software Organism — одно из таких направлений архитектуры и
-reference implementation; Project Corpus не требует его. Это объяснение границы
-слоёв, а не заявление о доступном публичном LSO-пакете или репозитории. Работа только
-с Markdown, вручную, без Runtime, MCP-сервера, базы данных или lifecycle framework
-остаётся поддерживаемой.
+Исходный workflow и шаблоны V1 по-прежнему поддерживаются. Необязательный
+Runtime может read-only спланировать миграцию V1 и создать отдельное назначение
+V2, не переписывая файлы V1. См. [обзор совместимости V1](docs/how-it-works.ru.md),
+инструкции для [прямой папки](docs/access/direct-folder.ru.md),
+[ручной сессии](docs/access/manual.ru.md) и [своего MCP](docs/access/own-mcp.ru.md),
+а также [инструкцию по миграции](docs/migration/v1-read-only-planner.md).
 
-| Project Corpus Protocol | Необязательный Project Corpus Runtime |
-| --- | --- |
-| Markdown-first и независимый от поставщика ИИ | Validation и controlled CLI |
-| Не требует установки или базы данных | Внешний owner trust и policy enforcement |
-| Поддерживает ручной workflow | Проверяемые записи и audit/recovery |
-| MCP необязателен | Необязательный локальный stdio MCP |
+## Документация
 
-Protocol — переносимый контракт продукта. Runtime реализует его, но не
-определяет и не может молча изменять. Технические гарантии действуют только в
-controlled-режимах на проверенных локальных filesystem из
-[platform matrix](docs/security/platform-guarantees.md).
+- [Quick Start](docs/quickstart.md)
+- [Как это работает](docs/how-it-works.ru.md)
+- [Частые вопросы](docs/faq.ru.md)
+- [Runtime и CLI](docs/runtime.md)
+- [Локальный stdio MCP](docs/runtime/stdio-mcp.md)
+- [Примеры](docs/examples.md)
+- [Безопасность](docs/security.ru.md)
+- [English README](README.md)
 
-## Поддерживаемый workflow V1
+## О проекте
 
-Исходный workflow V1 остаётся доступен для существующих проектов. Его шаблон
-содержит:
+Project Corpus Protocol имеет версию 2.0. Необязательный Python Runtime имеет
+версию 2.2.0, поддерживает Python 3.11+ и не требует сторонних runtime-
+зависимостей. История релизов находится в [changelog](CHANGELOG.ru.md). Вопросы
+и сообщения об ошибках размещайте в [GitHub Issues](https://github.com/darksleep1983/project-corpus/issues);
+не публикуйте содержимое личного Corpus или секреты.
 
-```text
-AGENTS.md
-OPERATOR_PROFILE.md
-PROJECT_ROADMAP_CURRENT.md
-CORPUS_ACCESS_CURRENT.md
-LOADER_PROMPT_CURRENT.md
-SESSION_HANDOFF_CURRENT.md
-SESSION_HANDOFF_FULL_CURRENT.md
-Tasks/
-Report/
-```
-
-`AGENTS.md` задаёт правила. Roadmap и handoff-файлы сохраняют текущее состояние.
-`Tasks/` содержит ограниченные рабочие задания, а `Report/` — доказательства
-выполненной работы.
-
-## Выберите режим доступа V1
-
-| Режим | Для чего подходит | Что происходит |
-| --- | --- | --- |
-| Прямая папка | Codex, Claude Code, ChatGPT Work и другие локальные агенты | Клиент получает доступ только к папке Corpus и читает или обновляет файлы напрямую. |
-| Свой MCP | Клиенты с поддержкой MCP-сервера или файлового connector | Вы подключаете доверенный сервер по своему выбору, ограничиваете его корнем Corpus и записываете его реальные возможности. |
-| Ручная сессия | Любой AI-чат без настройки | В начале загружаете семь current-файлов, а в конце сами сохраняете только возвращённые AI замены. |
-
-Во всех трёх режимах действует один протокол. Если MCP недоступен, это не
-блокирует работу: используйте прямую папку или ручной режим.
-
-Подробные инструкции:
-
-- [Прямая папка](docs/access/direct-folder.ru.md)
-- [Свой MCP](docs/access/own-mcp.ru.md)
-- [Ручные сессии](docs/access/manual.ru.md)
-
-## Пятиминутный старт V1
-
-1. Скачайте или клонируйте репозиторий.
-2. Скопируйте папку нужного языка в безопасное место и назовите её `Corpus`:
-   - `template/ru` для русского;
-   - `template/en` для английского.
-3. Откройте `CORPUS_ACCESS_CURRENT.md` и выберите режим доступа.
-4. Дайте AI подходящий текст из
-   [`PROJECT_INSTRUCTION_TEMPLATE.ru.md`](PROJECT_INSTRUCTION_TEMPLATE.ru.md).
-5. Обычными словами опишите, что хотите сделать.
-
-Например:
-
-> Начинаем новый проект. Хочу сделать локальный сортировщик фотографий. Сначала
-> помоги продумать архитектуру. Пока ничего не устанавливай, не удаляй, не
-> публикуй и ни с кем не связывайся.
-
-## Инструкции для клиентов
-
-- [ChatGPT](docs/clients/chatgpt.ru.md)
-- [Codex](docs/clients/codex.ru.md)
-- [Claude Code](docs/clients/claude-code.ru.md)
-- [Claude Desktop](docs/clients/claude-desktop.ru.md)
-- [Другие AI-клиенты](docs/clients/other-clients.ru.md)
-
-Интерфейсы клиентов и доступность функций по тарифам могут меняться. Поэтому
-изменчивая настройка клиента отделена от стабильного протокола Corpus, а в
-инструкциях даны ссылки на официальную документацию.
-
-## Ручной режим V1 действительно работает
-
-Если вы не хотите настраивать локальные папки или MCP:
-
-1. загрузите семь current-файлов в новую сессию;
-2. добавьте только нужные для задачи Tasks и Reports;
-3. попросите AI сначала прочитать `AGENTS.md` и выдать квитанцию загрузки;
-4. работайте как обычно;
-5. в конце попросите ручной пакет синхронизации;
-6. сохраните старые файлы в backup и запишите возвращённые замены.
-
-При обычной синхронизации нельзя переписывать `AGENTS.md` и
-`OPERATOR_PROFILE.md`. AI должен вернуть только реально изменившиеся файлы и
-прямо сказать, что не сохранял их на вашем компьютере.
-
-## Важные ограничения
-
-Manual и direct-folder режимы не являются enforced Runtime-режимами.
-Гарантии controlled Runtime ограничены документированными операциями на
-проверенных локальных filesystem NTFS, ext4 и APFS; полные границы описаны в
-[модели безопасности](docs/security.ru.md).
-
-- Project Corpus — протокол работы с документами, а не sandbox безопасности.
-- Реальный доступ задают AI-клиент, права файловой системы или выбранный вами
-  MCP-сервер.
-- V1 direct-folder и manual workflow не получают гарантий Runtime.
-- Необязательный V2 Runtime предоставляет только локальный CLI и stdio MCP; в
-  нём нет HTTP/remote MCP, и он не проверяет сторонние серверы.
-- Сохранённый Report не доказывает, что сервис или внешняя система сейчас
-  исправны.
-- Не храните в Corpus пароли, токены, cookies, seed-фразы или API-ключи.
-- Один Corpus предназначен для одного активного проекта.
-
-Подробнее: [как это работает](docs/how-it-works.ru.md),
-[частые вопросы](docs/faq.ru.md), [модель безопасности](docs/security.ru.md),
-[языки](docs/languages.ru.md) и [перенос или удаление Corpus](docs/uninstall.ru.md).
-
-## Текущий статус
-
-Project Corpus V2 — текущее поколение open-source проекта. Паритет русского и
-английского шаблонов, три режима доступа, ссылки документации, целостность
-репозитория и необязательный Runtime проверяются автоматически. Изменения
-релизов записываются в [истории изменений](CHANGELOG.ru.md).
-
-## Обратная связь
-
-Используйте [GitHub Issues](https://github.com/darksleep1983/project-corpus/issues)
-для сообщений об ошибках, вопросов и предложений. Не публикуйте секреты или
-содержимое личного Corpus.
-
-## Поддержать проект
-
-Project Corpus распространяется бесплатно по лицензии MIT. Добровольно поддержать
-развитие можно через USDT в сети TON; адрес и подробности находятся на
-[странице поддержки](SUPPORT.ru.md). Пожертвование не является покупкой и не
-даёт дополнительных прав или гарантий.
+Project Corpus распространяется бесплатно по лицензии MIT. Добровольные
+пожертвования описаны на [странице поддержки](SUPPORT.ru.md); они не дают
+дополнительных прав или гарантий.
 
 ## Лицензия
 

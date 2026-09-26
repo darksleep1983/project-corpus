@@ -1,29 +1,35 @@
-# MCP discovery plan
+# MCP directory discovery plan
 
-**Status: research and preparation only. Do not submit this project to any
-registry without an owner decision.**
+**Status: preparation only. Do not submit or publish a directory listing without
+an explicit owner decision.**
 
-Project Corpus currently provides an optional local stdio MCP adapter. It has no
-remote transport and is not yet published as a PyPI distribution, so it does not
-qualify for public package-backed listings today.
+Project Corpus includes an optional local stdio MCP adapter in the Python
+Runtime, distributed as the `project-corpus` package on
+[PyPI](https://pypi.org/project/project-corpus/). The adapter has no HTTP or
+remote transport. This document records a possible future review; it does not
+claim current eligibility or listing status for any third-party directory.
 
-| Channel | Status | Requirements | Does Project Corpus qualify today? | Later submission steps |
-| --- | --- | --- | --- | --- |
-| [Official MCP Registry](https://registry.modelcontextprotocol.io/docs) | Official; preview | Public package or remote endpoint, `server.json`, namespace authentication, package ownership verification | No. A public package and release metadata are still required. | Publish the package; add the required PyPI `mcp-name` ownership marker and reviewed `server.json`; validate with `mcp-publisher validate`; authenticate to the matching namespace; publish; verify the registry entry. |
-| [Smithery](https://smithery.ai/docs/build/publish) | Third-party | Public Streamable HTTP endpoint with OAuth, or a pre-built MCPB bundle for local stdio | No. The Runtime is stdio-only and does not publish an MCPB bundle. | First make an explicit product decision about remote hosting or MCPB packaging; prepare metadata/configuration; submit through Smithery; verify the generated listing and permissions. |
-| [Glama](https://glama.ai/mcp/faq) | Third-party | Public GitHub repository, server metadata, and successful automated indexing/health checks | Not yet. A reviewed installable distribution and listing metadata are needed. | Confirm its current submission policy; add only reviewed metadata such as `glama.json` if still required; submit the repository; inspect the generated configuration before announcing it. |
+## Before considering a submission
 
-## Required metadata before any listing
+- Confirm that a directory's current publisher policy supports the intended
+  local stdio package and that this adapter meets its requirements.
+- Review all requested metadata, ownership proofs, manifests, and authentication
+  steps against that directory's current official instructions.
+- Verify the exact package version, launch command, capabilities, filesystem
+  boundaries, repository URL, license, support, and security-reporting route.
+- Ensure the listing cannot imply HTTP transport, whole-disk access, arbitrary
+  tool dispatch, or guarantees beyond the documented controlled Runtime modes.
+- Record the owner's explicit decision and verify the resulting public listing
+  before announcing it.
 
-- A public, installable, versioned package with a verified CLI entry point.
-- An accurate stdio launch command and Python version requirement.
-- Exact capability and filesystem guarantee wording; no remote-MCP implication.
-- Repository URL, license, icon/social asset, support and security reporting route.
-- A reviewed `server.json` and registry namespace. For a GitHub namespace, use
-  the identity allowed by the publisher's GitHub authentication.
+## Possible directories
 
-## Safety rule
+These links are research starting points, not eligibility claims:
 
-Do not publish a registry record that suggests HTTP transport, remote operation,
-whole-disk access, or enforcement outside the documented controlled Runtime
-modes. Re-check each directory's current policies at the time of submission.
+- [Official MCP Registry](https://registry.modelcontextprotocol.io/docs)
+- [Smithery](https://smithery.ai/docs/build/publish)
+- [Glama](https://glama.ai/mcp/faq)
+
+Recheck each directory's current policies when an owner authorizes review. Do
+not publish a record that suggests remote operation or capabilities outside the
+local adapter contract.

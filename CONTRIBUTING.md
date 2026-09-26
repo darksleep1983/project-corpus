@@ -2,7 +2,8 @@
 
 [Русская версия](CONTRIBUTING.ru.md)
 
-Keep changes small, reviewable, and compatible with all three access modes.
+Keep changes small, reviewable, and compatible with the Markdown Protocol and
+optional Runtime.
 
 Before opening a pull request:
 
@@ -10,9 +11,11 @@ Before opening a pull request:
 2. do not add secrets, machine-specific paths, generated user Corpus data, or
    backups;
 3. update English and Russian user documentation together;
-4. keep the seven authority filenames and protected-file rules consistent;
+4. keep V1's seven authority filenames and protected-file rules consistent
+   where V1 behavior is documented;
 5. explain any change to access modes, synchronization, or safety boundaries;
 6. do not add a bundled server or required user runtime without an explicit
    architecture decision.
 
-Python is used only for repository tests; Project Corpus users do not need it.
+The Markdown Protocol does not require Python. Python 3.11+ is required only for
+the optional local Runtime and repository tests.

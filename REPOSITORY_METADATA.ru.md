@@ -1,46 +1,43 @@
-# Метаданные GitHub
+# Метаданные репозитория GitHub
 
 [English](REPOSITORY_METADATA.md)
 
-**Статус: текущее публичное состояние проверено 2026-09-25.** Файл описывает
-метаданные GitHub и не меняет настройки репозитория.
+**Проверено 2026-09-26:** публичный репозиторий — `darksleep1983/project-corpus`;
+его описание и темы ниже соответствуют согласованным владельцем значениям.
+Homepage ведёт на сайт документации Project Corpus. Этот файл фиксирует
+публичные значения, но не меняет настройки репозитория.
 
-## Текущее наблюдение
+## Description
 
-- Visibility: public.
-- Description: `Persistent project state and authority for AI agents —
-  Markdown-first protocol with optional policy-enforced CLI and MCP runtime.`
-- Homepage: <https://darksleep1983.github.io/project-corpus/>.
-- Topics: установлены десять из списка ниже.
-- PyPI distribution: <https://pypi.org/project/project-corpus/2.2.0/>.
-- Social preview: установка в GitHub Settings напрямую не подтверждена.
+```text
+Durable project identity, continuity and authority for AI-assisted work — Markdown-first protocol with optional CLI and MCP runtime.
+```
 
-## Публичные метаданные
-
-Description — оставить текущий. Он точно показывает разделение Protocol/Runtime
-и не создаёт впечатления, что MCP обязателен.
-
-Homepage:
+## Homepage
 
 ```text
 https://darksleep1983.github.io/project-corpus/
 ```
 
-Topics — сейчас установлены эти десять:
+## Topics
 
 ```text
 ai-agents
-agent-memory
-project-memory
+ai-assisted-development
+project-identity
+project-continuity
 project-state
 context-management
 model-context-protocol
 mcp
 markdown
 developer-tools
-ai-tools
 ```
 
-Social preview — `docs/assets/social-preview.png` доступен для загрузки в
-GitHub Settings; наличие файла в репозитории не доказывает, что preview
-установлен. README может ссылаться на опубликованный PyPI distribution.
+## Связанные публичные материалы
+
+- PyPI distribution: <https://pypi.org/project/project-corpus/2.2.0/>.
+- Сайт документации собирается и публикуется workflow
+  [`.github/workflows/docs.yml`](.github/workflows/docs.yml).
+- `docs/assets/social-preview.png` есть в репозитории. Его настройка как
+  GitHub social preview — отдельный параметр репозитория.

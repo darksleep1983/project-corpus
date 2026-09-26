@@ -1,7 +1,8 @@
 # GitHub Discussions plan
 
-**Status: proposal only.** Discussions are currently disabled and require an
-owner-side GitHub setting change.
+**Status: recommendation only.** This document suggests categories and
+moderation boundaries. Check current GitHub repository settings before making
+claims about availability or changing them.
 
 | Category | Purpose | Keep out |
 | --- | --- | --- |

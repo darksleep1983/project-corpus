@@ -1,6 +1,6 @@
 # Controlled filesystem transactions
 
-Status: production core matrix passed; controlled adapters not yet qualified
+Status: production transaction core and controlled CLI/stdio MCP adapters are qualified for the documented local filesystems.
 
 The transaction engine is a Runtime component, not part of the Markdown
 Protocol definition. It composes the native path backend with current external
@@ -61,6 +61,7 @@ authority denial, expected-hash conflicts, create/update separation, local
 writer serialization, exact backup/readback, audit conflicts, corrupt journals,
 all six crash checkpoints and unexpected post-crash content.
 
-This qualifies the transaction core only. Controlled CLI and stdio MCP claims
-require their own adapter tests proving that untrusted arguments cannot bypass
-this core.
+The transaction core evidence above is complemented by separate CLI and stdio
+MCP adapter qualification. See the
+[platform guarantee matrix](../security/platform-guarantees.md) for the named
+evidence and its exact scope.

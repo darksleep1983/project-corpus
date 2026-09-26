@@ -12,6 +12,13 @@ action, and authority boundaries.
 
 No. Use a direct local folder or manual file uploads. MCP is optional.
 
+## Is Project Corpus the Living Software Organism?
+
+No. Project Corpus is an independently useful project-state Protocol and
+optional Runtime. Living Software Organism is a higher-level architecture and
+reference direction that can use Project Corpus as a foundation. Project
+Corpus does not require LSO.
+
 ## What is Context Intelligence?
 
 An optional 2.2.0 Runtime feature that builds a disposable index from scoped
@@ -86,8 +93,9 @@ No. Use a separate Corpus for each active project.
 
 ## Can I rename the files?
 
-You can, but every protocol reference and client instruction must change
-together. The default names are designed as one set.
+V2 defines canonical paths and filenames; keep them unchanged so tools and
+clients can find the required records. Existing V1 projects keep their original
+names. Follow the migration guide to create a separate V2 destination.
 
 ## Why Tasks and Reports?
 

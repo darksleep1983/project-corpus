@@ -4,16 +4,27 @@
 
 Project Corpus is a documentation protocol, not a security boundary by itself.
 
+## Optional controlled Runtime
+
+The local Python Runtime adds policy-enforced CLI and stdio MCP operations.
+Controlled operations are bounded by Runtime hard limits, an external owner
+trust grant, project policy, and the client's requested capability subset.
+Guarantees apply only to the documented modes and qualified local filesystems;
+see the [platform and guarantee matrix](security/platform-guarantees.md).
+The Runtime is not a general-purpose sandbox and provides no HTTP or remote MCP.
+
 ## Direct-folder mode
 
 The AI client's sandbox and filesystem permissions decide what can be read or
 changed. Grant only the project and Corpus folders that are actually needed.
 
-## Your-own-MCP mode
+## V1 your-own-MCP mode
 
 Security depends on the server you choose, its authentication, root restriction,
-path validation, write policy, network exposure, and audit behavior. This
-repository does not provide or certify those controls.
+path validation, write policy, network exposure, and audit behavior. These
+recommendations describe a third-party server and do not certify its
+controls. The optional Project Corpus Runtime's own local stdio adapter is
+documented separately in the [stdio MCP guide](runtime/stdio-mcp.md).
 
 Prefer a server that restricts one exact root, blocks traversal, protects
 specific files, verifies stale writes, backs up old content, performs readback,

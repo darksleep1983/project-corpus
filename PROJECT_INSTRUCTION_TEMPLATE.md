@@ -1,4 +1,7 @@
-# Project instruction template
+# V1 project instruction template
+
+This template targets the original V1 seven-file layout. For a new project, use
+the [V2 Quick Start](docs/quickstart.md).
 
 Use this common instruction in every mode:
 

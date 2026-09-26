@@ -2,17 +2,22 @@
 
 [Русская версия](chatgpt.ru.md)
 
-## Easiest: manual mode
+## New projects: start with V2
 
-Create a ChatGPT Project, add the seven current files as project sources, and
-place the manual section of `PROJECT_INSTRUCTION_TEMPLATE.md` in Project
-instructions. Add only relevant Tasks and Reports to a chat.
-
-When replacing a current file, avoid leaving two sources with the same canonical
-filename. ChatGPT may offer to upload a duplicate rather than replace the old
-source.
+Follow the [V2 Quick Start](../quickstart.md). In a manual ChatGPT Project,
+upload `AGENTS.md`, `.project-corpus/state/PROJECT.md`, and
+`.project-corpus/state/STATUS.md`, then add only the active Task and Reports
+needed for the work. Keep canonical file names distinct when replacing sources.
 
 Official guide: <https://help.openai.com/en/articles/10169521-projects-in-chatgpt>
+
+## Existing V1 projects
+
+V1 uses seven current files. In a manual ChatGPT Project, add those files as
+project sources and put the manual section of
+`PROJECT_INSTRUCTION_TEMPLATE.md` in Project instructions. Add only relevant
+Tasks and Reports to each chat. For replacement files, avoid keeping duplicate
+sources with the same canonical name.
 
 ## Direct folder
 

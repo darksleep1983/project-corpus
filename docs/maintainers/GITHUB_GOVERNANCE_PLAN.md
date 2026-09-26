@@ -2,16 +2,9 @@
 
 **Status: recommendation only. No GitHub settings are changed by this file.**
 
-## Current observation
-
-At review time, `main` is the default branch; Issues are enabled; Discussions,
-Pages, environments, and rulesets are absent. Anonymous API access cannot read
-branch protection or Actions-permission settings, so the owner should verify
-those settings in the repository UI before applying a ruleset.
-
-Suggested issue labels to create only when the owner enables the new forms:
-`bug`, `enhancement`, `documentation`, and `security`. The security label is
-for non-sensitive documentation references, never vulnerability disclosure.
+Review the labels referenced by the tracked issue forms and create any missing
+labels only after an owner decision. The `security` label is for non-sensitive
+documentation references, never vulnerability disclosure.
 
 ## A. Solo maintainer
 

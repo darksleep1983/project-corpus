@@ -2,17 +2,24 @@
 
 [English](chatgpt.md)
 
-## Проще всего: ручной режим
+## Новые проекты: начните с V2
 
-Создайте ChatGPT Project, добавьте семь current-файлов как project sources, а
-секцию ручного режима из `PROJECT_INSTRUCTION_TEMPLATE.ru.md` поместите в Project
-instructions. В конкретный чат добавляйте только нужные Tasks и Reports.
-
-При замене current-файла не оставляйте два source с одинаковым каноническим
-именем. ChatGPT может предложить загрузить дубликат вместо замены старого файла.
+Следуйте [Quick Start для V2](../quickstart.md). Для ручной работы в ChatGPT
+Project загрузите `AGENTS.md`, `.project-corpus/state/PROJECT.md` и
+`.project-corpus/state/STATUS.md`, затем добавляйте только активную Task и
+Reports, нужные для работы. При замене источников сохраняйте уникальные
+канонические имена файлов.
 
 Официальная инструкция:
 <https://help.openai.com/en/articles/10169521-projects-in-chatgpt>
+
+## Существующие проекты V1
+
+В V1 используются семь current-файлов. Для ручной работы в ChatGPT Project
+добавьте эти файлы как project sources, а ручной раздел из
+`PROJECT_INSTRUCTION_TEMPLATE.ru.md` поместите в Project instructions. В каждый
+чат добавляйте только нужные Tasks и Reports. При замене файлов не оставляйте
+источники-дубликаты с одинаковыми каноническими именами.
 
 ## Прямая папка
 

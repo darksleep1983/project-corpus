@@ -1,9 +1,12 @@
-# Manual-session mode
+# V1 manual-session mode
 
 [Русская версия](manual.ru.md)
 
 Use `MANUAL_SESSION` with any AI chat when you do not want to configure local
 folder access or MCP.
+
+This guide describes the original V1 template. For a new V2 Corpus, follow the
+[V2 Quick Start](../quickstart.md).
 
 ## At the start of a new session
 

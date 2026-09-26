@@ -1,5 +1,5 @@
 site_name: Project Corpus
-site_description: Persistent project state and authority for AI agents.
+site_description: Durable project identity, continuity and authority for AI-assisted work. Markdown-first protocol with optional CLI and MCP runtime.
 site_url: https://darksleep1983.github.io/project-corpus/
 repo_url: https://github.com/darksleep1983/project-corpus
 repo_name: darksleep1983/project-corpus

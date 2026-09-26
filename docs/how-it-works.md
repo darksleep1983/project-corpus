@@ -1,48 +1,46 @@
-# How it works — without the jargon
+# How Project Corpus works
 
 [Русская версия](how-it-works.ru.md)
 
-Project Corpus separates project memory from any single chat or AI client.
+Project Corpus keeps a project's working identity and continuity in files the
+project owns. AI clients and sessions can change while those records stay with
+the project.
 
-## The seven current files
+## The V2 project record
 
-- `AGENTS.md` contains the operating rules.
-- `OPERATOR_PROFILE.md` defines the quality standard.
-- `PROJECT_ROADMAP_CURRENT.md` says what the project is and what happens next.
-- `CORPUS_ACCESS_CURRENT.md` records how the AI receives and synchronizes files.
-- `LOADER_PROMPT_CURRENT.md` is the short startup sequence.
-- the two handoff files preserve compact and detailed continuity.
+- `AGENTS.md` defines the project's local workflow and authority rules.
+- `.project-corpus/state/PROJECT.md` records durable identity, purpose, and
+  boundaries.
+- `.project-corpus/state/STATUS.md` records the verified current state,
+  blockers, evidence references, and exact next action.
+- `.project-corpus/tasks/` contains bounded work requests.
+- `.project-corpus/reports/` records completed work and evidence.
 
-`Tasks/` contains exact work orders. `Report/` records what was actually done and
-verified.
+At a new session, follow `AGENTS.md`, read canonical identity and current state,
+and load only the active Task and relevant evidence. Check facts that can change
+against the live project. A Task describes authorized work; a Report describes
+what was observed. Neither replaces canonical state.
 
-## Three doors to the same Corpus
-
-```text
-local folder tools ─┐
-your own MCP ───────┼→ the same seven current files
-manual uploads ─────┘
-```
-
-The access method changes, but the authority order and file roles do not.
-
-## In a new session
+## One protocol, several ways to use it
 
 ```text
-identify access mode
-→ obtain the seven current files
-→ read AGENTS.md first
-→ read the remaining current files
-→ load only relevant Tasks and Reports
-→ issue a loading receipt
-→ continue from the exact next action
+local project folder ──┐
+manual file upload ────┼──> the same project-owned Markdown records
+local stdio MCP ───────┘
 ```
 
-## At synchronization
+The Markdown Protocol works manually without installing the Runtime. The
+optional local Runtime adds validation and controlled operations for clients
+that need them. MCP is one access method; it is not the source of authority.
 
-Only factual changes are carried forward. `AGENTS.md` and
-`OPERATOR_PROFILE.md` stay protected during ordinary work. Direct-folder or MCP
-tools may write files if authorized; in manual mode the AI returns replacement
-files and the owner saves them.
+## V1 compatibility
 
-The files are the memory. MCP is only one optional way to reach them.
+Existing V1 projects keep their original seven-file layout and supported access
+guides. Those filenames belong to V1; new projects should start with the
+[V2 minimal template](https://github.com/darksleep1983/project-corpus/tree/main/templates/v2/minimal)
+and
+[Quick Start](quickstart.md). The optional Runtime can plan migration read-only
+and publish a separate V2 destination without rewriting V1 files. See the
+[direct-folder](access/direct-folder.md), [manual-session](access/manual.md),
+and [your-own-MCP](access/own-mcp.md) access guides and the
+[migration guide](migration/v1-read-only-planner.md).

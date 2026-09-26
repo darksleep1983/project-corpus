@@ -1,6 +1,6 @@
 # Project Corpus
 
-**Persistent project state and authority for AI agents.**
+**Durable project identity, continuity and authority for AI-assisted work.**
 
 AI sessions end; the project should not have to start from scratch. Project
 Corpus is a Markdown-first, vendor-neutral protocol that records what a project
@@ -11,11 +11,11 @@ govern change.
 
 ## In 30 seconds
 
-Project Corpus gives an agent durable, inspectable project state instead of
-asking it to reconstruct work from chat memory. The Protocol works as ordinary
-Markdown with no installation, database, or MCP server. An optional local
-Runtime adds validation, external owner trust, policy enforcement, verified
-writes, audit/recovery, and a local stdio MCP adapter.
+Project Corpus gives a project an owned, inspectable source for identity,
+current state, evidence, authority, and next actions across AI sessions. The
+Protocol works as ordinary Markdown with no installation, database, or MCP
+server. An optional local Runtime adds validation, external owner trust, policy
+enforcement, verified writes, audit/recovery, CLI, and a local stdio MCP adapter.
 
 ## Start manually
 
@@ -34,6 +34,11 @@ has the exact paths and a ready-to-use loading prompt.
 
 The Runtime implements the Protocol; it never silently defines or broadens it.
 For security and platform boundaries, start with the [security model](security.md).
+
+Higher-level lifecycle, recovery, or orchestration systems can build on Project
+Corpus while retaining their own contracts. Living Software Organism is one
+independent reference direction; Project Corpus is not LSO and does not require
+it.
 
 ## Context Intelligence 2.2.0
 

@@ -1,9 +1,9 @@
 # Native path backend
 
-Status: production primitive; backend matrix passed, transaction guarantee inactive
+Status: production filesystem primitive used by the qualified controlled Runtime.
 
 The Runtime uses an explicit native path backend for all controlled reads and
-for the filesystem primitives that a later transaction layer will compose.
+for the filesystem primitives composed by its transaction layer.
 Portable `Path.resolve()` checks are not a security boundary.
 
 ## Contract
@@ -25,7 +25,7 @@ The backend:
   whose owner/group/DACL differs from the staged file's inherited descriptor;
 - returns content hash and file identity from native handles;
 - provides a local inter-process writer lock and deterministic orphan-stage
-  cleanup for the later transaction/recovery layer;
+  cleanup used by the transaction/recovery layer;
 - fails managed mutation closed on a filesystem not explicitly qualified.
 
 The backend does **not** grant authority, select a policy, implement optimistic
@@ -65,6 +65,6 @@ OS/Python jobs: Windows/NTFS, Ubuntu/ext4 and macOS/APFS on Python 3.11 and
 raw exception; confinement held, the error contract was normalized, and the
 complete matrix was rerun.
 
-This qualifies only the native path primitive. The controlled CLI/MCP mutation
-guarantee remains inactive until the independent transaction, concurrency,
-recovery, policy and audit suites pass.
+This run qualifies the native path primitive. Controlled CLI and stdio MCP
+mutation guarantees also require the separate transaction and adapter evidence
+listed in the [platform guarantee matrix](../security/platform-guarantees.md).

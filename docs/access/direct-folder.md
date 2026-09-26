@@ -1,9 +1,12 @@
-# Direct-folder mode
+# V1 direct-folder mode
 
 [Русская версия](direct-folder.ru.md)
 
 Use `DIRECT_FOLDER` when an AI client can read local files and, if you allow it,
 write inside a selected workspace.
+
+This guide describes the original V1 template. For a new V2 Corpus, follow the
+[V2 Quick Start](../quickstart.md).
 
 ## Set it up
 
